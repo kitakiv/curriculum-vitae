@@ -17,8 +17,8 @@
   }
 }
 .theme-black {
-  --color-bg-100: #16213E;
-  --color-bg-33: #1A1A2E;
+  --color-bg-100: #27355c;
+  --color-bg-33: #21213b;
   --color-bg-0: #0F0F23;
   --color-round-100: #9C27B0;
   --color-round-0: #E91E63;
@@ -30,7 +30,7 @@
 }
 
 .theme-blue {
-  --color-bg-100: #E2E8F0;
+  --color-bg-100: #c0dbfe;
   --color-bg-33: #E2E8F0;
   --color-bg-0: #F8FAFC;
   --color-round-100: #5f85ff;

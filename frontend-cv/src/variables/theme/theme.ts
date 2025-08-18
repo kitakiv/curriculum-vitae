@@ -2,21 +2,21 @@ const theme = {
     blue: {
         theme: 'theme-blue',
         svg: {
-            path: '../../../../public/svg/blue.svg',
+            path: './svg/blue.svg',
             name: 'blue.svg'
         }
     },
     black: {
         theme: 'theme-black',
         svg: {
-            path: '../../../../public/svg/blue.svg',
+            path: './svg/black.svg',
             name: 'black.svg'
         }
     },
     static: {
-        theme: '../../../../public/svg/blue.svg',
+        theme: 'theme-static',
         svg: {
-            path: '',
+            path: './svg/static.svg',
             name: 'black.svg'
         }
     },
