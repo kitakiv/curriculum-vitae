@@ -25,9 +25,14 @@ module.exports = {
           '33%': { 'background-position': '100% 33%' },
           '100%': { 'background-position': '0% 33%' },
         },
+        'gradient-shift-reverse': {
+          '0%': { 'background-position': '100% 0%' },
+          '100%': { 'background-position': '0% 100%' },
+        }
       },
       animation: {
         'gradient-animate': 'gradient-shift 10s ease-in-out infinite alternate',
+        'gradient-animate-reverse': 'gradient-shift-reverse 3s ease-in-out infinite alternate-reverse',
       },
     },
   },
