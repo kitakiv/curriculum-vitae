@@ -24,10 +24,10 @@ export default function ThemeIcon() {
                         <Image className="group-hover:animate-spin" src={theme[item as keyof typeof theme].svg.path} alt="theme" width={20} height={20}/>
                     </ButtonHeader>
                     {showTheme && <div className="transition-all position-absolute top-11 right-0 rounded-md bg-light shadow">
-                        {allTheme.filter(item => item !== value).map((item) => {
+                        {allTheme.filter(themeItem => themeItem !== value).map((themeItem) => {
                         return (
-                            <ButtonHeader key={`theme-button-${item}`} click={() => dispatch(changeTheme(item))}>
-                                <Image className="group-hover:animate-spin transition-all" src={theme[item as keyof typeof theme].svg.path} alt="theme" width={20} height={20}/>
+                            <ButtonHeader key={`theme-button-${themeItem}`} click={() => dispatch(changeTheme(themeItem))}>
+                                <Image className="group-hover:animate-spin transition-all" src={theme[themeItem as keyof typeof theme].svg.path} alt="theme" width={20} height={20}/>
                             </ButtonHeader>
                             )
                         })}
