@@ -6,7 +6,7 @@ export default async function Page() {
   return (
     <>
      <Header />
-     <main className="flex min-h-screen flex-col items-center justify-between bg-gradient-to-b from-bg100 via-bg33 to-bg0">
+     <main className="flex flex-col items-center justify-between bg-gradient-to-b from-bg100 via-bg33 to-bg0">
       <AboutMeSection/>
       <ProjectSection/>
     </main>
