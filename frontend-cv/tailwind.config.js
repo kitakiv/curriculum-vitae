@@ -21,18 +21,13 @@ module.exports = {
       },
       keyframes: {
         'gradient-shift': {
-          '0%': { 'background-position': '0% 33%' },
-          '33%': { 'background-position': '100% 33%' },
-          '100%': { 'background-position': '0% 33%' },
+          '0%': { 'background-position': '0% 50%' },
+          '33%': { 'background-position': '100% 50%' },
+          '100%': { 'background-position': '0% 50%' },
         },
-        'gradient-shift-reverse': {
-          '0%': { 'background-position': '100% 0%' },
-          '100%': { 'background-position': '0% 100%' },
-        }
       },
       animation: {
         'gradient-animate': 'gradient-shift 10s ease-in-out infinite alternate',
-        'gradient-animate-reverse': 'gradient-shift-reverse 3s ease-in-out infinite alternate-reverse',
       },
     },
   },
