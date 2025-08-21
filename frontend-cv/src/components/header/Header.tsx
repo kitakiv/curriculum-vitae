@@ -8,21 +8,31 @@ import header from "@/variables/header/header";
 import HeaderImage from "@/components/header/components/HeaderImage";
 import HeaderSecondText from "@/components/header/components/HeaderSecondText";
 import PinkButton from "@/components/button/PinkButton";
+import Image from "next/image";
+import Link from "next/link";
+import aboutme from "@/variables/aboutme/aboutme";
 
 export default async function Header() {
     // const profile = await getProfile();
     return (
-        <header className="bg-gradient-to-br w-full h-screen from-bg100 via-bg33 to-bg0 bg-[length:200%_200%] animate-gradient-animate">
+        <header className="bg-gradient-to-br w-full h-screen from-bg100 via-bg33 to-bg0 bg-[length:200%_200%] animate-gradient-animate flex flex-col gap-4">
         <HeaderSection>
             <ThemeIcon key={header.keyIcons}/>
         </HeaderSection>
         <StartPage>
             <Rounds />
+            <HeaderImage path={header.path}/>
             <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
-            <HeaderImage path={header.path} />
-            <HeaderSecondText text={header.text} />
-            <PinkButton tailwind="absolute lg:bottom-10 sm:bottom-14 bottom-20 left-1/2 -translate-x-1/2">{header.button}</PinkButton>
         </StartPage >
+        <div className="w-full flex flex-col items-center gap-4">
+        <HeaderSecondText text={header.text} />
+        <Link href={`#${aboutme.id}`}>
+            <PinkButton tailwind="transition duration-700 group flex justify-between items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
+                {header.button}
+                <Image src={header.arrow} alt="arrow" width={20} height={20} className="w-0 opacity-0 group-hover:w-5 group-hover:opacity-100 transition duration-700"></Image>
+            </PinkButton>
+        </Link>
+        </div>
        </header>
     );
 }
