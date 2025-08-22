@@ -18,6 +18,7 @@ module.exports = {
         txFirst0: "var(--color-tx-first-0)",
         light: "var(--color-light)",
         black: "var(--color-black)",
+        zOpacity: "var(--zero-opacity)",
       },
       keyframes: {
         'gradient-shift': {

@@ -13,7 +13,7 @@ export default function HeaderSecondText({text}: {text: string}) {
 
     return (
         <span className="text-wrap min-h-[65px] text-center text-txSecond lg:text-2xl w-2/4 md:text-2xl text-xl">
-            {text.slice(0, length)}
+           {`${text.slice(0, length)}|`}
         </span>
     )
 }
