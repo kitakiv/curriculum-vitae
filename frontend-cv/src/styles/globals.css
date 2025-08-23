@@ -45,6 +45,23 @@
   --zero-opacity: rgba(0, 0, 0, 0);
 }
 
+
 .image-mask {
-  mask-image: linear-gradient(to left, black 70%, transparent);
+  mask-image: linear-gradient(to left, black 0%, transparent);
+  -webkit-mask-image: linear-gradient(to left, black 0%, transparent);
+}
+
+@screen sm {
+  .image-mask {
+    mask-image: linear-gradient(to left, black 10%, transparent);
+    -webkit-mask-image: linear-gradient(to left, black 10%, transparent);
+  }
+}
+
+@screen lg {
+  .image-mask {
+    mask-image: linear-gradient(to left, black 70%, transparent);
+    -webkit-mask-image: linear-gradient(to left, black 70%, transparent);
+  }
+
 }
