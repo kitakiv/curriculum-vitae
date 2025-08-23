@@ -13,7 +13,7 @@
     --color-tx-first-100: #9C27B0;
     --color-tx-first-0: #E91E63;
     --color-light: #fff;
-    --color-black: #000;
+    --color-black: #000000;
     --zero-opacity: rgba(0, 0, 0, 0);
   }
 }
@@ -41,6 +41,10 @@
   --color-tx-first-100: #0891B2;
   --color-tx-first-0: #1E40AF;
   --color-light: #fff;
-  --color-black: #000;
+  --color-black: #000000;
   --zero-opacity: rgba(0, 0, 0, 0);
+}
+
+.image-mask {
+  mask-image: linear-gradient(to left, black 70%, transparent);
 }
