@@ -11,12 +11,14 @@ import PinkButton from "@/components/button/PinkButton";
 import Image from "next/image";
 import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
+import MainText from "@/components/text/MainText";
 
 export default async function Header() {
     // const profile = await getProfile();
     return (
         <header className="bg-gradient-to-br w-full h-screen from-bg100 via-bg33 to-bg0 bg-[length:200%_200%] animate-gradient-animate flex flex-col gap-4">
         <HeaderSection>
+            <MainText>{header.name + " " + header.surname}</MainText>
             <ThemeIcon key={header.keyIcons}/>
         </HeaderSection>
         <StartPage>

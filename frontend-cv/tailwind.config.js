@@ -19,6 +19,7 @@ module.exports = {
         light: "var(--color-light)",
         black: "var(--color-black)",
         zOpacity: "var(--zero-opacity)",
+        projectBg: "var(--project-bg)",
       },
       keyframes: {
         'gradient-shift': {

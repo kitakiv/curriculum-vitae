@@ -1,4 +1,6 @@
 const header = {
+    name: "Victoria",
+    surname: "Surename",
     id: "header",
     button: "Learn About Me",
     firstTitle: "fullstack",

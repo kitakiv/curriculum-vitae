@@ -65,7 +65,7 @@ export default function Slider({images = imagesDefault, titles = imagesTitle }: 
         <div key={"sliders-dots"} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 flex gap-1">
             {images.map((_, index) => {
                 return (
-                    <div key={`image-slider-dot-${index}`} className="lg:w-9 lg:h-9 md:w-11 md:h-11 sm:w-20 sm:h-20 w-20 h-20 flex items-center justify-center group" key={`image-slider-dot-${index}`} onClick={() => setMainImage(index)}>
+                    <div key={`image-slider-dot-${index}`} className="lg:w-9 lg:h-9 md:w-11 md:h-11 sm:w-20 sm:h-20 w-20 h-20 flex items-center justify-center group"  onClick={() => setMainImage(index)}>
                         <div className={`w-3 h-3 rounded-full transition duration-700 ${mainImage === index ? "bg-gradient-to-br from-txFirst100 to-txFirst0" : "bg-light  group-hover:scale-125 cursor-pointer group-hover:bg-txFirst0"}`}></div>
                     </div>
                 )

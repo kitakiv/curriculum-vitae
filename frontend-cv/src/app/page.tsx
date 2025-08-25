@@ -1,6 +1,7 @@
 import Header from "@/components/header/Header";
 import AboutMeSection from "@/components/aboutme/AboutMeSection";
 import ProjectSection from "@/components/projects/ProjectSection";
+import Footer from "@/components/footer/Footer";
 
 export default async function Page() {
   return (
@@ -10,6 +11,7 @@ export default async function Page() {
       <AboutMeSection/>
       <ProjectSection/>
     </main>
+     <Footer />
     </>
   );
 }
