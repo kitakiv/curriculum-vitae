@@ -20,6 +20,7 @@ module.exports = {
         black: "var(--color-black)",
         zOpacity: "var(--zero-opacity)",
         projectBg: "var(--project-bg)",
+        footerTx: "var(--footer-tx)"
       },
       keyframes: {
         'gradient-shift': {
