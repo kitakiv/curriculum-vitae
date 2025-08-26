@@ -16,6 +16,7 @@
     --color-black: #000000;
     --zero-opacity: rgba(0, 0, 0, 0);
     --project-bg: #ffffff32;
+    --footer-tx: #7a7a7a;
   }
 }
 .theme-black {
@@ -31,6 +32,7 @@
   --color-black: #000;
   --zero-opacity: rgba(0, 0, 0, 0);
   --project-bg: #878787;
+  --footer-tx: #ffffff;
 }
 
 .theme-blue {
@@ -46,6 +48,7 @@
   --color-black: #000000;
   --zero-opacity: rgba(0, 0, 0, 0);
   --project-bg: #98c8ff;
+  --footer-tx: #464646;
 }
 
 

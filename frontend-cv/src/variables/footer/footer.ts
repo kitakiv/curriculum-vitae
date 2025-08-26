@@ -6,16 +6,19 @@ const footer = {
             name: 'location',
             contact: "Kyiv, Ukraine",
             svg: '/svg/location.svg',
+            href: "https://www.google.com/maps/place/Kyiv,+Ukraine",
         },
         {
             name: 'phone',
             contact: "+380 93 123 45 67",
             svg: '/svg/phone.svg',
+            href: "tel:0000000000000",
         },
         {
             name: 'email',
             contact: "kit@gmail.com",
             svg: '/svg/email.svg',
+            href: "mailto:kit@gmail.com",
         },
     ],
     id: "footer",
@@ -32,6 +35,11 @@ const footer = {
             svg: '/svg/linkedin.svg',
         },
     ]
+    ,
+    year: "© 2025",
+    rights: "All rights reserved.",
+    endTextSmall: "Available for freelance work",
+    endTextRight: "Built with ❤️ and lots of coffee"
 }
 
 
