@@ -34,8 +34,8 @@ export default function Slider({images = imagesDefault, titles = imagesTitle }: 
     }
     return (
     <div className={`lg:h-96 sm:h-80 h-64 lg:w-2/3 sm:w-4/5 w-5/6 relative  overflow-hidden flex bg-gradient-to-r from-txSecond to-bg0`}>
-        <div key="slider-left" className="absolute top-1/2 left-3  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-50 transition duration-700 border-light border-2 hover:scale-110"  onClick={changeLeft}></div>
-        <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-50 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
+        <div key="slider-left" className="absolute top-1/2 left-3  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110"  onClick={changeLeft}></div>
+        <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
         
         
         <div key="sliders-images" className={`transition duration-500 flex w-full h-full ease-out`} style={{transform: `translateX(-${mainImage * 100}%)`}}>
