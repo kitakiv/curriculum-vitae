@@ -9,7 +9,7 @@ import EndFooter from "@/components/footer/components/EndFotter";
 
 export default function Footer() {
     return (
-        <footer className="bg-gradient-to-b from-bg33 to-bg0">
+        <footer className="bg-gradient-to-b from-bg33 to-bg0" id={footer.id}>
             <div className="w-full flex flex-col lg:pt-14 md:py-12 sm:py-11 py-8 lg:px-6 md:px-6 sm:px-4 px-2 gap-4">
            <div  className="flex">
            <MainText tailwind="">{header.name + " " + header.surname}</MainText>

@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import themeReducer from "@/features/theme/themeSlice"
+import positionReducer from "@/features/position/PositionSlice"
 
 
 const store = configureStore({
     reducer: {
-      theme: themeReducer
+      theme: themeReducer,
+      position: positionReducer
     },
   })
 
