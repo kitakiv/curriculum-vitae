@@ -57,10 +57,24 @@
   -webkit-mask-image: linear-gradient(to left, black 0%, transparent);
 }
 
+.padding {
+  padding: 2.5rem 1rem;
+}
+
 @screen sm {
   .image-mask {
     mask-image: linear-gradient(to left, black 10%, transparent);
     -webkit-mask-image: linear-gradient(to left, black 10%, transparent);
+  }
+
+  .padding {
+    padding: 3rem 1rem;
+  }
+}
+
+@screen md {
+  .padding {
+    padding: 3.5rem 1.5rem;
   }
 }
 
@@ -68,6 +82,10 @@
   .image-mask {
     mask-image: linear-gradient(to left, black 70%, transparent);
     -webkit-mask-image: linear-gradient(to left, black 70%, transparent);
+  }
+
+  .padding {
+    padding: 4rem 1.5rem;
   }
 
 }
