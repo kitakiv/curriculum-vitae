@@ -1,8 +1,9 @@
 import TextGray from "@/components/text/TextGray"
 import TextHeading from "@/components/text/TextHeading"
 import projects from "@/variables/projects/projects"
-import CardProject from "./components/CardProject"
+import CardProject from "@/components/projects/components/CardProject"
 import { ProjectCard } from "@/types/index"
+import FadeInSection from "@/components/animation/FadeInSection"
 
 const demoProject: ProjectCard = {
     title: "Demo Project",
@@ -23,12 +24,18 @@ const anoutherDemoProject: ProjectCard = {
 export default function ProjectSection() {
     const projectsArray: ProjectCard[] = [...Array(6)].map((_, index) => (index % 2 === 0) ? demoProject : anoutherDemoProject);
     return (
-        <section className="flex flex-col items-center justify-center lg:py-16 md:py-14 sm:py-12 py-10 lg:px-6 md:px-6 sm:px-4 px-4 gap-4" id={projects.id}>
+        <section className="flex flex-col items-center justify-center padding gap-4" id={projects.id}>
+            <FadeInSection>
             <TextHeading>{projects.heading}</TextHeading>
+            </FadeInSection>
+            <FadeInSection>
             <TextGray tailwind="text-center">{projects.text}</TextGray>
+            </FadeInSection>
             <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-4 w-full">
                 {projectsArray.map((project, index) => (
-                    <CardProject key={`project-${index}`} project={project} />
+                    <FadeInSection key={`project-${index}`} >
+                        <CardProject  project={project} />
+                    </FadeInSection>
                 ))}
             </div>
         </section>
