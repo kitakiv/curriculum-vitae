@@ -6,7 +6,7 @@ import { changePosition } from "@/features/position/PositionSlice";
 
 export default function PositionWrapper({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
-    let previousScrollPosition = window.scrollY;
+    let previousScrollPosition = window.scrollY || 0;
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);

@@ -1,7 +1,7 @@
 'use client';
 import {useState, useEffect, useRef} from 'react';
 
-export default function FadeInSection({children, tailwind}: {children: React.ReactNode, tailwind?: string}) {
+export default function FadeInSection({children, tailwind, delay = 300, animation = {visible: "translateY(0)", hidden: "translateY(120px)"}}: {children: React.ReactNode, tailwind?: string, delay?: number, animation?: {visible: string, hidden: string}}) {
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -23,6 +23,6 @@ export default function FadeInSection({children, tailwind}: {children: React.Rea
     }, []);
 
     return (
-        <div className={`transition-all duration-1000 ${tailwind} ease-out transform`}  ref={ref} style={{opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(100px)', transitionDelay: '300ms'}}>{children}</div>
+        <div className={`transition-all duration-1000 ${tailwind} ease-out transform`}  ref={ref} style={{opacity: isVisible ? 1 : 0, transform: isVisible ? animation.visible : animation.hidden, transitionDelay: `${delay}ms`}}>{children}</div>
     )
 }

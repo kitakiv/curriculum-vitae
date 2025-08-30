@@ -20,7 +20,8 @@ module.exports = {
         black: "var(--color-black)",
         zOpacity: "var(--zero-opacity)",
         projectBg: "var(--project-bg)",
-        footerTx: "var(--footer-tx)"
+        footerTx: "var(--footer-tx)",
+        form: "var(--form)",
       },
       keyframes: {
         'gradient-shift': {
@@ -30,7 +31,7 @@ module.exports = {
         },
       },
       animation: {
-        'gradient-animate': 'gradient-shift 10s ease-in-out infinite alternate',
+        'gradient-animate': 'gradient-shift 3s ease-in-out infinite alternate',
       },
     },
   },
