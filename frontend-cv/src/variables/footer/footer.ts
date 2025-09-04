@@ -39,7 +39,8 @@ const footer = {
     year: "© 2025",
     rights: "All rights reserved.",
     endTextSmall: "Available for freelance work",
-    endTextRight: "Built with ❤️ and lots of coffee"
+    endTextRight: "Built with ❤️ and lots of coffee",
+    name: "Contacts"
 }
 
 

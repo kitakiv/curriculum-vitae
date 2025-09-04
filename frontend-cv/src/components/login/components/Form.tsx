@@ -19,7 +19,7 @@ export default function FormAdmin() {
                 <Image src={form.loginForm.svg} alt="logo" width={35} height={35}></Image>
               </div>
               <TextBlack tailwind='text-center w-full font-bold'>{form.loginForm.title}</TextBlack>
-              <SmallText tailwind='text-center w-full'>{form.loginForm.text}</SmallText>
+              <SmallText tailwind='text-center w-full  text-footerTx'>{form.loginForm.text}</SmallText>
               {form.loginForm.inputs.map((input) => (
                 <InputElement
                   key={input.id}

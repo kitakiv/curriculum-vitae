@@ -81,6 +81,10 @@
   animation: gradient-animate infinite;
 }
 
+.gradient {
+  background: linear-gradient(45deg, var(--color-tx-first-0), var(--color-tx-first-100));
+}
+
 @screen sm {
   .image-mask {
     mask-image: linear-gradient(to left, black 10%, transparent);
