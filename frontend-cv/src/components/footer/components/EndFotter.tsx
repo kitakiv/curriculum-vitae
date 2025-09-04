@@ -8,10 +8,10 @@ export default function EndFooter() {
             <div className="border-t-footerTx border-t-2 lg:pt-14 md:pt-12 sm:pt-11 pt-8 lg:pb-16 md:pb-14
              sm:pb-12 pb-8 w-full flex lg:flex-row sm:flex-col flex-col justify-between gap-2">
                 <div className="flex flex-col gap-3">
-                    <SmallText>{`${footer.year} ${header.name} ${header.surname}. ${footer.rights}`}</SmallText>
-                    <SmallText tailwind="opacity-60">{footer.endTextSmall}</SmallText>
+                    <SmallText tailwind="text-footerTx">{`${footer.year} ${header.name} ${header.surname}. ${footer.rights}`}</SmallText>
+                    <SmallText tailwind="opacity-60  text-footerTx">{footer.endTextSmall}</SmallText>
                 </div>
-                <SmallText tailwind="opacity-60">{footer.endTextRight}</SmallText>
+                <SmallText tailwind="opacity-60  text-footerTx">{footer.endTextRight}</SmallText>
             </div>
         </div>
     )

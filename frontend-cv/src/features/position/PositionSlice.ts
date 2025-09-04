@@ -2,11 +2,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/store/store'
 
 interface  PositionState {
-  value: true |false
+  value: {
+    position: boolean;
+    section: string;
+  };
 }
 
 const initialState: PositionState = {
-  value: false,
+  value: {
+    position: false,
+    section: "home",
+  },
 }
 
 export const positionSlice = createSlice({
@@ -14,12 +20,15 @@ export const positionSlice = createSlice({
   initialState,
   reducers: {
     changePosition: (state, action: PayloadAction<boolean>) => {
-      state.value = action.payload
+      state.value.position = action.payload
+    },
+    changeSection: (state, action: PayloadAction<string>) => {
+      state.value.section = action.payload
     },
   },
 })
 
-export const { changePosition } = positionSlice.actions
+export const { changePosition, changeSection } = positionSlice.actions
 
 export const selectPosition = (state: RootState) => state.position.value
 

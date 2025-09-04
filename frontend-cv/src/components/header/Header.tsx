@@ -12,15 +12,16 @@ import Image from "next/image";
 import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
 import MainText from "@/components/text/MainText";
-
+import BurgerMenu from "@/components/header/components/Menu";
 export default async function Header() {
     // const profile = await getProfile();
     return (
-        <header className=" w-full h-screen gradient-box flex flex-col justify-around gap-4">
+        <header className=" w-full h-screen gradient-box flex flex-col justify-around gap-4" id={header.id}>
             <HeaderSection>
-                <Link href='/'>
+                <Link href='/' className="lg:w-5/12 md:w-1/2">
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
+                <BurgerMenu />
                 <ThemeIcon key={header.keyIcons} />
             </HeaderSection>
             <StartPage>

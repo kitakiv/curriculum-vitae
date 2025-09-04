@@ -2,16 +2,22 @@
 "use client"
 import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { changePosition } from "@/features/position/PositionSlice";
+import { changePosition, changeSection } from "@/features/position/PositionSlice";
+import menu from "@/variables/menu/menu";
+
 
 export default function PositionWrapper({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
+    const sectionsIds = menu.menu.map((item) => item.id);
     let previousScrollPosition = window.scrollY || 0;
+    const offset = 150;
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleSection);
         return () => {
             window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("scroll", handleSection);
         };
     }, []);
 
@@ -27,6 +33,17 @@ export default function PositionWrapper({ children }: { children: React.ReactNod
         }
         previousScrollPosition = window.scrollY;
 	};
+
+    const handleSection  = (event: Event) => {
+       sectionsIds.forEach((id) => {
+        const element = document.getElementById(id);
+        const elementHeight = element?.offsetHeight || 0;
+        const elementTop = (element?.offsetTop || offset) - offset   || 0;
+        if (window.scrollY > elementTop && window.scrollY < elementTop + elementHeight) {
+            dispatch(changeSection(id));
+        }
+       })
+    }
     return <>
         {children}
     </>

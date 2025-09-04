@@ -21,7 +21,7 @@ export default function Contacts({ contacts }: { contacts: ContactsCard[] }) {
                         <div className="flex flex-col">
                             <span className="lg:text-md md:text-sm text-sm text-wrap text-txSecond font-bold">{contact.name.toUpperCase()}</span>
                             <a href={contact.href} target="_blank" rel="noopener noreferrer">
-                                <SmallText tailwind="opacity-70" >{contact.contact}</SmallText>
+                                <SmallText tailwind="opacity-70  text-footerTx" >{contact.contact}</SmallText>
                             </a>
                         </div>
                     </div>

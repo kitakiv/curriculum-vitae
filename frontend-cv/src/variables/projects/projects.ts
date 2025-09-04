@@ -5,7 +5,8 @@ const projects = {
     githubButton: "View on GitHub",
     githubSvg: "/svg/github.svg",
     demoButton: "View Deploy",
-    defaultImage: "/svg/image-broken.svg"
+    defaultImage: "/svg/image-broken.svg",
+    name: "projects"
 }
 
 export default projects;
