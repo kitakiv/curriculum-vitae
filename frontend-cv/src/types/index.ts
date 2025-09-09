@@ -20,5 +20,15 @@ class FollowCard {
     link: string = "";
     svg: string = "";
 }
+
+class InputType {
+    id: string = "";
+    label: string = "";
+    name: string = "";
+    placeholder: string = "";
+    type: string = "";
+    as?: "input" | "textarea" | "select" = "input";
+    readonly?: boolean = false
+}
 export type {SliderText}
-export {ProjectCard, ContactsCard, FollowCard}
+export {ProjectCard, ContactsCard, FollowCard, InputType}
