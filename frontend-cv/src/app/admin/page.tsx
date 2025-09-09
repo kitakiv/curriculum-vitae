@@ -1,7 +1,13 @@
+import HeaderLogin from "@/components/header/HeaderLogin";
+import AdminPage from "@/components/admin/Admin";
+
 export default function Admin() {
     return (
-        <main>
-            <h1 className="text-3xl text-red-800">Admin</h1>
+        <>
+        <HeaderLogin/>
+        <main className="bg-adminGr100 w-full h-full min-h-screen">
+         <AdminPage/>
         </main>
+        </>
     );
 }

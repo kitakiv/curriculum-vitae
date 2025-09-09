@@ -22,6 +22,11 @@ module.exports = {
         projectBg: "var(--project-bg)",
         footerTx: "var(--footer-tx)",
         form: "var(--form)",
+        adminTx: "var(--admin-tx0)",
+        adminGr0: "var(--admin-gr0)",
+        adminGr33: "var(--admin-gr33)",
+        adminTx100: "var(--admin-tx100)",
+        adminGr100: "var(--admin-gr100)",
       },
       keyframes: {
         'gradient-shift': {

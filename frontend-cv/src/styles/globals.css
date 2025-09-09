@@ -18,6 +18,11 @@
     --project-bg: #ffffff32;
     --footer-tx: #7a7a7a;
     --form: #fff;
+    --admin-tx0: #000000;
+    --admin-gr0: #808080;
+    --admin-gr33: #b2b2b2;
+    --admin-tx100: #343434;
+    --admin-gr100: #ffffff;
   }
 }
 .theme-black {
@@ -35,6 +40,11 @@
   --project-bg: #878787;
   --footer-tx: #ffffff;
   --form: #757575;
+  --admin-tx0: #ffffff;
+  --admin-gr33: #222222;
+  --admin-gr0: #333333;
+  --admin-tx100: #888888;
+  --admin-gr100: #000000;
 }
 
 .theme-blue {
@@ -52,6 +62,11 @@
   --project-bg: #98c8ff;
   --footer-tx: #464646;
   --form: #d7e5ff;
+  --admin-tx0: #000000;
+  --admin-gr0: #98c7f9db;
+  --admin-gr33: #bddfff;
+  --admin-tx100: #3d3d3d;
+  --admin-gr100: #d9f2ff;
 }
 
 
@@ -121,7 +136,7 @@
   }
 
   .padding-elements {
-    padding: 3.5rem 1rem;
+    padding: 3rem 1rem;
   }
 
 }

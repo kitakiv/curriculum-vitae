@@ -4,11 +4,7 @@ import Image from "next/image"
 import { SliderText } from "@/types/index";
 import TextBlack from "@/components/text/TextBlack";
 import TextWhite from "@/components/text/TextWhite";
-
-const imagesDefault = ["/image/developer1.jpg", "/image/developer2.jpg", "/image/developer3.jpg"];
-const imagesTitle: SliderText[] = [{ title: "Frontend", text: "I like to code things from scratch, and enjoy bringing ideas to life in the browser." },
-{ title: "Backend", text: "I have experience developing fast and optimised back-end systems and APIs." },
-{ title: "Fullstack", text: "I like to code things from scratch, and enjoy bringing ideas to life in the browser." }]
+import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 export default function Slider({ images = imagesDefault, titles = imagesTitle }: { images?: string[], titles?: SliderText[] }) {
     const [mainImage, setMainImage] = useState(0);
 
