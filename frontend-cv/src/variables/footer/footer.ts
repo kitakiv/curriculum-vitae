@@ -32,7 +32,7 @@ const footer = {
         {
             name: 'linkedin',
             link: "https://www.linkedin.com/",
-            svg: '/svg/linkedin.svg',
+            svg: '',
         },
     ]
     ,

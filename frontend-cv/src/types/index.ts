@@ -30,5 +30,13 @@ class InputType {
     as?: "input" | "textarea" | "select" = "input";
     readonly?: boolean = false
 }
-export type {SliderText}
-export {ProjectCard, ContactsCard, FollowCard, InputType}
+
+class MenuType {
+    name: string = "";
+    href: string = "";
+    id: string = "";
+}
+
+type FormType = "add" | "edit" | "oneElement";
+export type {SliderText, FormType};
+export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType};

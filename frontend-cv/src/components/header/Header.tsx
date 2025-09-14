@@ -9,6 +9,7 @@ import HeaderImage from "@/components/header/components/HeaderImage";
 import HeaderSecondText from "@/components/header/components/HeaderSecondText";
 import PinkButton from "@/components/button/PinkButton";
 import Image from "next/image";
+import menu from "@/variables/menu/menu";
 import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
 import MainText from "@/components/text/MainText";
@@ -21,7 +22,7 @@ export default async function Header() {
                 <Link href='/' className="lg:w-5/12 md:w-1/2">
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
-                <BurgerMenu />
+                <BurgerMenu burgerMenu={menu.mainHeader} />
                 <ThemeIcon key={header.keyIcons} />
             </HeaderSection>
             <StartPage>
