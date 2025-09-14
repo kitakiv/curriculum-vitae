@@ -32,17 +32,18 @@ export default function SliderForm({ sliderInfo, type = "edit", tailwind }: { sl
             <>
                 <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
                 {type === "edit" &&
-                    <Image src={image} alt="slider" width={1000} height={500} className="h-48 w-fit"></Image>
+                    <Image src={image} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                 }
 
                 {type === "add" ?
                     <AdminButton type="submit" tailwind='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 font-extrabold' click={() => setInputs(notReadonly)}>{form.moreInfoContent.buttonAdd}</AdminButton>
                     :
                     <>{inputs[0].readonly ?
-                        <AdminButton tailwind='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 font-extrabold' click={() => setInputs(notReadonly)}>{form.moreInfoContent.buttonEdit}</AdminButton>
+                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'><AdminButton click={() => setInputs(notReadonly)}>{form.moreInfoContent.buttonEdit}</AdminButton>
+                            <AdminButton >{form.moreInfoContent.buttonDelete}</AdminButton></div>
                         :
-                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'><AdminButton type="submit" click={() => setInputs(JSON.parse(readonly))}>{form.moreInfoContent.buttonSave}</AdminButton>
-                            <AdminButton click={() => setInputs(JSON.parse(readonly))}>{form.moreInfoContent.buttonCancel}</AdminButton></div>
+                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'><AdminButton type="submit">{form.moreInfoContent.buttonSave}</AdminButton>
+                            <AdminButton click={() => setInputs(readonly)}>{form.moreInfoContent.buttonCancel}</AdminButton></div>
                     }</>
                 }
 

@@ -4,22 +4,7 @@ import projects from "@/variables/projects/projects"
 import CardProject from "@/components/projects/components/CardProject"
 import { ProjectCard } from "@/types/index"
 import FadeInSection from "@/components/animation/FadeInSection"
-
-const demoProject: ProjectCard = {
-    title: "Demo Project",
-    description: "This is a demo project with tailwindcss and nextjs framework with typescript".repeat(8),
-    image: "/image/projects/project.png",
-    demoLink: "https://tailwindcss.com/docs/grid-template-rows",
-    githubLink: "https://github.com/tailwindlabs/tailwindcss",
-}
-
-const anoutherDemoProject: ProjectCard = {
-    title: "Demo Project",
-    description: "This is a demo project",
-    image: "/image/developer1.jpg",
-    demoLink: "https://tailwindcss.com/docs/grid-template-rows",
-    githubLink: "https://github.com/tailwindlabs/tailwindcss",
-}
+import { demoProject, anoutherDemoProject } from "@/variables/projects/projects"
 
 export default function ProjectSection() {
     const projectsArray: ProjectCard[] = [...Array(6)].map((_, index) => (index % 2 === 0) ? demoProject : anoutherDemoProject);

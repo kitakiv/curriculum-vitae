@@ -1,3 +1,5 @@
+import { ProjectCard } from "@/types/index";
+
 const projects = {
     id: "projects",
     heading: "Featured Projects",
@@ -9,4 +11,21 @@ const projects = {
     name: "projects"
 }
 
+const demoProject: ProjectCard = {
+    title: "Demo Project",
+    description: "This is a demo project with tailwindcss and nextjs framework with typescript".repeat(8),
+    image: "/image/projects/project.png",
+    demoLink: "https://tailwindcss.com/docs/grid-template-rows",
+    githubLink: "https://github.com/tailwindlabs/tailwindcss",
+}
+
+const anoutherDemoProject: ProjectCard = {
+    title: "Demo Project",
+    description: "This is a demo project",
+    image: "/image/developer1.jpg",
+    demoLink: "https://tailwindcss.com/docs/grid-template-rows",
+    githubLink: "https://github.com/tailwindlabs/tailwindcss",
+}
+
 export default projects;
+export {demoProject, anoutherDemoProject}

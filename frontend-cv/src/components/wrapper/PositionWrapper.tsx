@@ -8,7 +8,7 @@ import menu from "@/variables/menu/menu";
 
 export default function PositionWrapper({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
-    const sectionsIds = menu.menu.map((item) => item.id);
+    const sectionsIds = menu.mainHeader.map((item) => item.id).concat(menu.adminHeader.map((item) => item.id));
     let previousScrollPosition = window.scrollY || 0;
     const offset = 150;
 
