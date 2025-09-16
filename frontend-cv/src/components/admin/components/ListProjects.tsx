@@ -1,3 +1,4 @@
+'use client'
 import { FormType, ProjectCard } from "@/types/index";
 import MoreInfoBlock from "@/components/form/MoreInfoBlock";
 import TitleContent from "./TitleContent";
@@ -38,12 +39,15 @@ export default function ListProjects({ projects = [demoProject, anoutherDemoProj
             return (<MoreInfoBlock key={`${type}-project-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
                 titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={item.image || project.defaultImage} />}
             >
-                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
-                    <MiddleText tailwind='text-adminTx font-bold'>{form.projectForm.title}</MiddleText>
-                </FlexibleForm>
+                <div className="grid grid-cols-2 padding-elements">
                 <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
                     <Image src={item.image as string} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                 </FlexibleForm>
+                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+                    <MiddleText tailwind='text-adminTx font-bold'>{form.projectForm.title}</MiddleText>
+                </FlexibleForm>
+
+                </div>
             </MoreInfoBlock>)
         } else if (type === "add") {
             return (

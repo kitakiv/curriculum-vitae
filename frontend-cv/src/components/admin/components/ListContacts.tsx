@@ -1,3 +1,4 @@
+'use client'
 import { FollowCard, FormType } from "@/types/index";
 import MoreInfoBlock from "@/components/form/MoreInfoBlock";
 import TitleContent from "./TitleContent";
@@ -39,12 +40,14 @@ export default function ListContacts({ contacts = footer.links, type = "edit" }:
                 <MoreInfoBlock key={`${type}-contact-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
                     titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.name} image={item.svg || project.defaultImage} />}
                 >
-                    <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
-                        <MiddleText tailwind='text-adminTx font-bold'>{form.contactsForm.title}</MiddleText>
-                    </FlexibleForm>
+                    <div className="grid grid-cols-2 padding-elements">
                     <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
                         <Image src={item.svg as string} style={{ backgroundImage: `url(${projects.defaultImage})`, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center start' }} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                     </FlexibleForm>
+                    <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+                        <MiddleText tailwind='text-adminTx font-bold'>{form.contactsForm.title}</MiddleText>
+                    </FlexibleForm>
+                    </div>
                 </MoreInfoBlock>)
         } else if (type === "add") {
             return (
