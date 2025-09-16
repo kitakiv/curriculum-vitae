@@ -1,4 +1,4 @@
-
+'use client'
 import { SliderText } from "@/types/index";
 import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import MoreInfoBlock from "@/components/form/MoreInfoBlock";
@@ -10,7 +10,6 @@ import form from "@/variables/form/form";
 import project from "@/variables/projects/projects";
 import schema from "@/validation/schemaValidation";
 import AdminBorder from "@/components/border/AdminBorder";
-import { init } from "next/dist/compiled/webpack/webpack";
 
 export default function ListSliders({ images = imagesDefault, titles = imagesTitle, type }: { images?: string[], titles?: SliderText[], type: "add" | "edit" }) {
     const schemaForm = {
@@ -38,12 +37,14 @@ export default function ListSliders({ images = imagesDefault, titles = imagesTit
             return (
             <MoreInfoBlock key={`${type}-slider-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
                 titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={images[index] || project.defaultImage} />}>
-                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
-                    <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
-                </FlexibleForm>
+                <div className="grid grid-cols-2 padding-elements">
                 <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
                     <Image src={images[index]} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                 </FlexibleForm>
+                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+                    <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
+                </FlexibleForm>
+                </div>
             </MoreInfoBlock>)
         } else if (type === "add") {
             return (
