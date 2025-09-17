@@ -36,7 +36,6 @@ class MenuType {
     href: string = "";
     id: string = "";
 }
-
 type FormType = "add" | "edit" | "oneElement";
 export type {SliderText, FormType};
 export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType};

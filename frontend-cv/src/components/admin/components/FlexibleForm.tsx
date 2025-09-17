@@ -3,8 +3,9 @@ import form from "@/variables/form/form";
 import { ReactNode, useState } from "react";
 import AdminButton from "@/components/button/AdminButton";
 import FormElement from "@/components/form/Form";
+import { FormType } from "@/types/index";
 
-export default function FlexibleForm({type = "edit", tailwind, initialValues, formInputs, submitFunction, schema, children }: { type: "add" | "edit" | "oneElement", tailwind?: string, initialValues: object, formInputs: object[], submitFunction: (values: object) => void, schema: object, children: ReactNode }) {
+export default function FlexibleForm({type = "edit", tailwind, initialValues, formInputs, submitFunction, schema, children }: { type: FormType, tailwind?: string, initialValues: object, formInputs: object[], submitFunction: (values: object) => void, schema: object, children: ReactNode }) {
     const readonly = JSON.parse(JSON.stringify(formInputs.map((input) => {
         return { ...input, readonly: true }
     })))

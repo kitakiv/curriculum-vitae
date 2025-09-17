@@ -23,24 +23,25 @@ export default function ListProjects({ projects = [demoProject, anoutherDemoProj
         },
         "addImage": {
             schema: schema.project.projectEditImage,
-            inputs: form.projectForm.inputsEditImage
+            inputs: form.projectForm.inputsEditImage,
+            type: "oneElement" as FormType
         }
     }
     const imageEdit = "addImage";
-    
+
     function alertMessage(values: object) {
         alert(JSON.stringify(values));
     }
 
     const elements = projects.map((item, index) => {
-        const initialValues = type === "add"? { projectTitle: item.title, projectDescription: item.description, projectImage: null, projectGithubLink: item.githubLink, projectDemoLink: item.demoLink } 
+        const initialValues = type === "add"? { projectTitle: item.title, projectDescription: item.description, projectImage: "", projectGithubLink: item.githubLink, projectDemoLink: item.demoLink } 
         : { projectTitle: item.title, projectDescription: item.description, projectGithubLink: item.githubLink, projectDemoLink: item.demoLink };
         if (type === "edit") {
             return (<MoreInfoBlock key={`${type}-project-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
                 titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={item.image || project.defaultImage} />}
             >
                 <div className="grid grid-cols-2 padding-elements">
-                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
+                <FlexibleForm type={schemaForm[imageEdit].type || type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
                     <Image src={item.image as string} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                 </FlexibleForm>
                 <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
