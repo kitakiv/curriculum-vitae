@@ -26,7 +26,7 @@ const form = {
             { id: "phone", label: "Phone", name: "phone", placeholder: "Phone", type: "tel" },
             { id: "location", label: "Location", name: "location", placeholder: "Location", type: "text" },
         ],
-        title: "Profile Information",
+        title: "Profile settings",
         name: "Profile",
         id: "profile-admin",
     },
@@ -45,7 +45,7 @@ const form = {
         inputsEditImage: [
             { id: "sliderImage", label: "Slider Image", name: "sliderImage", placeholder: "Slider Image", type: "file" },
         ],
-        title: "Slider Information",
+        title: "Slider settings",
         name: "Slider",
         id: "slider-admin",
     },
@@ -67,7 +67,7 @@ const form = {
         inputsEditImage: [
             { id: "projectImage", label: "Image", name: "projectImage", placeholder: "Image", type: "file" },
         ],
-        title: "Project Information",
+        title: "Project settings",
         name: "Project",
         id: "project-admin",
     },
@@ -85,7 +85,7 @@ const form = {
         inputsEditImage: [
             { id: "contactSvg", label: "Contact Svg", name: "contactSvg", placeholder: "Contact Svg", type: "file" },
         ],
-        title: "Contact Information",
+        title: "Contact settings",
         name: "Contacts",
         id: "contact-admin",
     },

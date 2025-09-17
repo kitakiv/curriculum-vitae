@@ -1,6 +1,7 @@
 
 import * as Yup from "yup";
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
+const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
 
 
 const login = Yup.string().required("Login is required")
@@ -45,13 +46,6 @@ const sliderText = Yup.string().required("Slider text is required")
 .max(100, "Slider text must be at most 100 characters long")
 
 
-
-const sliderImage = Yup.mixed().required("Slider image is required")
-.test("fileSize", `File size must be less than 1MB`,
-    (value) => value && (value as File).size <= 1024 * 1024 * 100)
-.test("fileType", "Invalid file type",
-    (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
-
 const projectTitle = Yup.string().required("Project title is required")
 .min(3, "Project title must be at least 3 characters long")
 .max(60, "Project title must be at most 60 characters long")
@@ -62,18 +56,17 @@ const projectDescription = Yup.string().required("Project description is require
 
 
 
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
+// function isValidFileType(fileName: string, fileTypeKey: string) {
+//   const fileType= fileName.split('.'). pop() || '';
+//  return validFileExtensions[fileTypeKey as keyof typeof validFileExtensions].includes(fileType);
+// }
 
-function isValidFileType(fileName: string, fileTypeKey: string) {
-  const fileType= fileName.split('.'). pop() || '';
- return validFileExtensions[fileTypeKey as keyof typeof validFileExtensions].includes(fileType);
-}
+const image = Yup.mixed().required("Contact image is required")
+.test("fileSize", `File size must be less than 1MB`,
+    (value) => value && (value as File).size <= 1024 * 1024 * 1)
+.test("fileType", "Invalid file type",
+    (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
 
-const projectImage = Yup.mixed().required("Project image is required")
-.test("fileType", `Invalid file type all supported formats: ${validFileExtensions.image.join(', ')}`,
-    (value) => {
-        return isValidFileType(value as string, 'image');
-    })
 
 const projectGithubLink = Yup.string().required("Github link is required")
 .url("Invalid Github link format")
@@ -87,11 +80,11 @@ const contactName = Yup.string().required("Contact name is required")
 .min(3, "Contact name must be at least 3 characters long")
 .max(20, "Contact name must be at most 20 characters long");
 
-const contactSvg = Yup.mixed().required("Contact image is required")
-.test("fileSize", `File size must be less than 1MB`,
-    (value) => value && (value as File).size <= 1024 * 1024 * 100)
-.test("fileType", "Invalid file type",
-    (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
+// const contactSvg = Yup.mixed().required("Contact image is required")
+// .test("fileSize", `File size must be less than 1MB`,
+//     (value) => value && (value as File).size <= 1024 * 1024 * 100)
+// .test("fileType", "Invalid file type",
+//     (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
 
 const contactLink = Yup.string().required("Contact link is required")
 .url("Invalid contact link format")
@@ -110,6 +103,9 @@ const schema = {
         phone,
         location
     }),
+    mainImage: Yup.object().shape({
+        mainImage: image
+    }),
     slider: {
         sliderEdit: Yup.object().shape({
             sliderName,
@@ -118,10 +114,10 @@ const schema = {
         sliderAdd: Yup.object().shape({
             sliderName,
             sliderText,
-            sliderImage
+            sliderImage: image
         }),
         sliderImage: Yup.object().shape({
-            sliderImage
+            sliderImage: image
         }),
     },
     project: {
@@ -134,12 +130,12 @@ const schema = {
         projectAdd: Yup.object().shape({
             projectTitle,
             projectDescription,
-            projectImage,
+            projectImage: image,
             projectGithubLink,
             projectDemoLink
         }),
         projectEditImage: Yup.object().shape({
-            projectImage
+            projectImage: image
         }),
     },
     contact: {
@@ -150,10 +146,10 @@ const schema = {
         contactAdd: Yup.object().shape({
             contactName,
             contactLink,
-            contactSvg
+            contactSvg: image
         }),
         contactEditImage: Yup.object().shape({
-            contactSvg
+            contactSvg: image
         }),
     }
 }
