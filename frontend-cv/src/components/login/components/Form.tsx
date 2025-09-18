@@ -17,7 +17,7 @@ export default function FormAdmin() {
       validationSchema={schema.custom}
       inputs={form.loginForm.inputs}
       submitElement={<SubmitButton />}
-      tailwind="lg:w-1/4 md:w-2/3 sm:w-2/3 w-2/3 flex flex-col gap-3 bg-form rounded-lg padding-elements relative z-40 first:-left-full">
+      tailwind="lg:w-1/4 md:w-2/3 sm:w-2/3 w-3/4 flex flex-col gap-3 bg-form rounded-lg padding-elements relative z-40 first:-left-full">
       <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-txFirst0 to-txFirst100 flex justify-center items-center">
         <Image src={form.loginForm.svg} alt="logo" width={35} height={35}></Image>
       </div>

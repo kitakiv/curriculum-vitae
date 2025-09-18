@@ -19,11 +19,13 @@ export default async function Header() {
     return (
         <header className=" w-full h-screen gradient-box flex flex-col justify-around gap-4" id={header.id}>
             <HeaderSection>
-                <Link href='/' className="lg:w-5/12 md:w-1/2">
+                <Link href='/' className="lg:w-5/12 md:w-1/2 relative z-50">
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
+                <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
                 <BurgerMenu burgerMenu={menu.mainHeader} />
                 <ThemeIcon key={header.keyIcons} />
+                </div>
             </HeaderSection>
             <StartPage>
                 <Rounds />

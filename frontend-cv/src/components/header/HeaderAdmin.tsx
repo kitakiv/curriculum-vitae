@@ -12,8 +12,10 @@ export default async function HeaderAdmin() {
                 <Link href='/' className="lg:w-5/12 md:w-1/2">
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
+                <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4">
                 <BurgerMenu burgerMenu={menu.adminHeader} />
                 <ThemeIcon key={header.keyIcons} />
+                </div>
             </HeaderSection>
     );
 }
