@@ -13,10 +13,10 @@ const menu = {
             { href: `#${header.id}`, name: '', id: header.id },
         ],
         adminHeader: [
-            { href: `#${form.profileForm.id}`, name: form.profileForm.name, id: form.profileForm.id },
-            { href: `#${form.sliderForm.id}`, name: form.sliderForm.name, id: form.sliderForm.id },
-            { href: `#${form.projectForm.id}`, name: form.projectForm.name, id: form.projectForm.id },
-            { href: `#${form.contactsForm.id}`, name: form.contactsForm.name, id: form.contactsForm.id },
+            { href: `#${form.profileForm.id}`, name: form.profileForm.title, id: form.profileForm.id },
+            { href: `#${form.sliderForm.id}`, name: form.sliderForm.title, id: form.sliderForm.id },
+            { href: `#${form.projectForm.id}`, name: form.projectForm.title, id: form.projectForm.id },
+            { href: `#${form.contactsForm.id}`, name: form.contactsForm.title, id: form.contactsForm.id },
         ]
 }
 
