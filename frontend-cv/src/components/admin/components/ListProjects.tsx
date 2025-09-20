@@ -40,11 +40,11 @@ export default function ListProjects({ projects = [demoProject, anoutherDemoProj
             return (<MoreInfoBlock key={`${type}-project-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
                 titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={item.image || project.defaultImage} />}
             >
-                <div className="grid grid-cols-2 padding-elements">
-                <FlexibleForm type={schemaForm[imageEdit].type || type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
+                <div className="grid lg:grid-cols-2 sm:grid-cols-1 grid-cols-1 padding-elements">
+                <FlexibleForm tailwind="padding-admin flex justify-center items-center" type={schemaForm[imageEdit].type || type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
                     <Image src={item.image as string} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
                 </FlexibleForm>
-                <FlexibleForm type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+                <FlexibleForm tailwind="padding-admin" type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
                     <MiddleText tailwind='text-adminTx font-bold'>{form.projectForm.title}</MiddleText>
                 </FlexibleForm>
 
