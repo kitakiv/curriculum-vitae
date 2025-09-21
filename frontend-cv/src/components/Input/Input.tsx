@@ -1,0 +1,51 @@
+import { Field, ErrorMessage as Error } from "formik";
+import SmallText from "../text/SmallText";
+import { InputType } from "@/types/index";
+
+export default function InputElement({ inputData, setFieldValue }: { inputData: InputType, setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object> }) {
+    const { id, label, name, placeholder, type, readonly, as } = inputData;
+
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (type === "file") {
+            const file = event.target.files?.[0];
+            if (file) {
+                setFieldValue(name, file);
+            }
+        }
+    }
+    return (
+        <>
+            {readonly && type === "file" ? null
+                :
+                <>
+                    {type === "file" ?
+                        <>
+                            <label htmlFor={id}><SmallText tailwind="text-footerTx">{label}</SmallText></label>
+                            <input className="w-full transition-all duration-300 ease-in-out border-2 border-gray-300 rounded-xl px-2 py-3 bg-adminGr0 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 cursor-pointer focus:border-bg0 focus:outline-none" type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
+                            <Error name={name}>{(error: string) => (<span className="text-red-500 lg:text-md md:text-sm text-sm transition-all duration-300 ease-in-out">{error}</span>)}</Error>
+                        </>
+                        :
+
+                        <>
+                            {readonly ?
+                                <><label htmlFor={id}><SmallText tailwind="text-adminTx">{label}</SmallText></label>
+                                    <Field className="w-full focus:outline-none border-2 border-zOpacity bg-adminGr0 text-adminTx100 px-2 py-3 rounded-md" type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} as={as} /></>
+                                :
+                                <>
+                                    <label htmlFor={id}><SmallText tailwind="text-footerTx">{label}</SmallText></label>
+                                    <Field className="w-full transition-all duration-300 ease-in-out border-2 border-gray-300 rounded-xl px-2 py-3 bg-adminGr0 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 cursor-pointer focus:border-bg0 focus:outline-none" type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} as={as} />
+                                    <Error name={name}>{(error: string) => (<span className="text-red-500 lg:text-md md:text-sm text-sm transition-all duration-300 ease-in-out">{error}</span>)}</Error>
+                                </>
+                            }
+                        </>
+
+
+
+
+                    }
+                </>
+
+            }
+        </>
+    )
+}
