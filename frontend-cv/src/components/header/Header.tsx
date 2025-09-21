@@ -1,3 +1,4 @@
+
 // import { getProfile } from "@/query/query";
 import StartPage from "@/components/header/components/StartPage";
 import HeaderSection from "@/components/header/components/HeaderSection";

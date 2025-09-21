@@ -33,7 +33,7 @@ export default function PositionWrapper({ children }: { children: React.ReactNod
         }
         previousScrollPosition = window.scrollY;
 	};
-
+  
     const handleSection  = () => {
        sectionsIds.forEach((id) => {
         const element = document.getElementById(id);
