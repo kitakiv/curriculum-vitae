@@ -1,6 +1,5 @@
 import { ContactsCard } from "@/types/index";
 import Image from "next/image";
-import TextGray from "@/components/text/TextGray";
 import ButtonHeader from "@/components/button/ButtonHeader";
 import SmallText from "@/components/text/SmallText";
 import FadeInSection from "@/components/animation/FadeInSection";

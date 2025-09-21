@@ -1,7 +1,7 @@
 
 import * as Yup from "yup";
-const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
+// const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
+// const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
 
 
 const login = Yup.string().required("Login is required")
