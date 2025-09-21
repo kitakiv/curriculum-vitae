@@ -19,9 +19,9 @@ export default function PositionWrapper({ children }: { children: React.ReactNod
             window.removeEventListener("scroll", handleScroll);
             window.removeEventListener("scroll", handleSection);
         };
-    }, []);
+    });
 
-    const handleScroll = (event: Event) => {
+    const handleScroll = () => {
         if (window.scrollY < 10) {
             dispatch(changePosition(false));
         } else {
@@ -34,7 +34,7 @@ export default function PositionWrapper({ children }: { children: React.ReactNod
         previousScrollPosition = window.scrollY;
 	};
 
-    const handleSection  = (event: Event) => {
+    const handleSection  = () => {
        sectionsIds.forEach((id) => {
         const element = document.getElementById(id);
         const elementHeight = element?.offsetHeight || 0;
