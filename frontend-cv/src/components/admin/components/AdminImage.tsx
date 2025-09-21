@@ -7,7 +7,6 @@ import schema from "@/validation/schemaValidation";
 export default function AdminImage({ tailwind, path, alt }: { tailwind?: string, path: string, alt?: string }) {
     function alertMessage(values: object) {
         console.log(values);
-        console.log(values.mainImage);
         alert(JSON.stringify(values));
     }
     return (
