@@ -47,7 +47,7 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
     useEffect(() => {
         startAutoPlay();
         return () => stopAutoPlay();
-    }, []);
+    });
 
     function changeLeft() {
         changeWidth(true);

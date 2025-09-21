@@ -1,16 +1,9 @@
 'use client'
-import {Formik, Form, useFormik} from 'formik';
+import {Formik, Form} from 'formik';
 import InputElement from '@/components/Input/Input';
 import { InputType } from '@/types/index';
 export default function FormElement({initialValues, onSubmit, validationSchema, inputs, children, submitElement, tailwind}: {initialValues: object, onSubmit: (values: object) => void, validationSchema: object, inputs: InputType[], children: React.ReactNode, submitElement: React.ReactNode, tailwind?: string}) {
 
-  const formik = useFormik({
-    initialValues: initialValues,
-    onSubmit: values => {
-      onSubmit(values);
-    },
-    validationSchema: validationSchema
-  });
     return (
         <>
         <Formik initialValues={initialValues}
