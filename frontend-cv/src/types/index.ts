@@ -37,5 +37,22 @@ class MenuType {
     id: string = "";
 }
 type FormType = "add" | "edit" | "oneElement";
-export type {SliderText, FormType};
-export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType};
+
+interface CounterState {
+    sliderCount: number;
+    maxSliders: number;
+}
+
+enum CounterActionTypes {
+    NEXTSLIDER = 'INCREMENT',
+    PREVIOUSSLIDER = 'DECREMENT',
+    SETSLIDER = 'SETSLIDER',
+  }
+
+  type CounterAction =
+    | { type: CounterActionTypes.NEXTSLIDER; payload: CounterState }
+    | { type: CounterActionTypes.PREVIOUSSLIDER; payload: CounterState }
+    | { type: CounterActionTypes.SETSLIDER; payload: CounterState };
+
+export type {SliderText, FormType, CounterAction, CounterState};
+export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType, CounterActionTypes};

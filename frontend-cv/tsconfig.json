@@ -29,7 +29,8 @@
       "@/lib/*": ["lib/*"],
       "@/query/*": ["query/*"],
       "@/types/*": ["types/*"],
-      "@/validation/*": ["validation/*"]
+      "@/validation/*": ["validation/*"],
+      "@/hooks/*": ["hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
