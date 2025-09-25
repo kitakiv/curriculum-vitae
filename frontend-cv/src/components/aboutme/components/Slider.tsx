@@ -1,6 +1,5 @@
 "use client"
 import { useRef, useEffect, useState } from "react"
-import Image from "next/image"
 import { SliderText } from "@/types/index";
 import TextBlack from "@/components/text/TextBlack";
 import TextWhite from "@/components/text/TextWhite";
@@ -8,6 +7,7 @@ import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import reducer from "@/hooks/sliderCount";
 import { useReducer } from "react";
 import { CounterActionTypes } from "@/types/index";
+import Image from "next/image";
 export default function Slider({ images = imagesDefault, titles = imagesTitle }: { images?: string[], titles?: SliderText[] }) {
     const initialState = { sliderCount: 0, maxSliders: images.length };
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -82,22 +82,22 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
     }
     return (
         <>
-            <div key="slider-left" className="absolute top-1/2 left-14  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110" onClick={changeLeft}></div>
-            <div key="slider-right" className="absolute top-1/2 right-14 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
+            <div key="slider-left" className="absolute top-1/2 left-3  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110" onClick={changeLeft}></div>
+            <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
 
             <div
                 onTouchStart={startTouch}
                 onTouchEnd={endTouch}
                 onMouseEnter={stopAutoPlay}
                 onMouseLeave={startAutoPlay}
-                className={`lg:h-96 sm:h-80 h-64 lg:w-2/3 sm:w-5/6 w-full relative  overflow-hidden flex bg-gradient-to-r from-txSecond to-bg0`}>
+                className={`lg:h-96 h-96 lg:w-2/3 sm:w-5/6 w-full relative  overflow-hidden flex bg-gradient-to-r from-txSecond to-bg0`}>
 
                 <div key="sliders-images" className="transition duration-500 flex w-full h-full ease-out" style={{ transform: `translateX(-${state.sliderCount * 100}%)` }}>
                     {images.map((image, index) => {
                         return (
                             <>
                                 <div key={`image-slider-${index}`} className="flex-shrink-0 w-[100%] h-full relative">
-                                    <Image src={image} alt="developer" width={300} height={300} className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
+                                    <Image src={image} width={1000} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
                                 </div>
                             </>
                         )
