@@ -1,0 +1,35 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateSliderInput {
+  sliderImage: String!
+  sliderText: String!
+  sliderTitle: String!
+}
+
+type Mutation {
+  createSlider(createSliderInput: CreateSliderInput!): Slider!
+  removeSlider(id: String!): Slider!
+  updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
+}
+
+type Query {
+  helloWorld: String!
+  slider(id: Int!): Slider!
+  sliders: [Slider!]!
+}
+
+type Slider {
+  id: Int!
+  sliderImage: String!
+  sliderText: String!
+  sliderTitle: String!
+}
+
+input UpdateSliderInput {
+  id: Int!
+  sliderImage: String
+  sliderText: String
+  sliderTitle: String
+}
