@@ -2,34 +2,126 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateProjectImageInput {
+  imageLink: String!
+}
+
+input CreateProjectInput {
+  projectDemoLink: String!
+  projectDescription: String!
+  projectGithubLink: String!
+  projectImages: [CreateProjectImageInput!]!
+  projectTitle: String!
+  tags: [CreateTagInput!]!
+}
+
 input CreateSliderInput {
   sliderImage: String!
+  sliderName: String!
   sliderText: String!
-  sliderTitle: String!
+}
+
+input CreateTagImageInput {
+  imageLink: String!
+  tagName: String!
+}
+
+input CreateTagInput {
+  tagImage: CreateTagImageInput!
+  tagName: String!
 }
 
 type Mutation {
+  createProject(createProjectInput: CreateProjectInput!): Project!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
+  removeProject(id: Int!): Project!
   removeSlider(id: String!): Slider!
+  updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
+  updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
 }
 
+type Profile {
+  email: String!
+  location: String!
+  name: String!
+  phone: String!
+  profilePhoto: [ProfilePhoto!]!
+  surname: String!
+  typingText: String!
+}
+
+type ProfilePhoto {
+  imageLink: String!
+  profile: Profile!
+}
+
+input ProfilePhotoInput {
+  imageLink: String!
+}
+
+type Project {
+  projectDemoLink: String!
+  projectDescription: String!
+  projectGithubLink: String!
+  projectImages: [ProjectImage!]!
+  projectTitle: String!
+  tags: [ProjectTag!]!
+}
+
+type ProjectImage {
+  imageLink: String!
+  project: Project!
+}
+
+type ProjectTag {
+  tagImage: TagImage!
+  tagName: String!
+}
+
 type Query {
-  helloWorld: String!
-  slider(id: Int!): Slider!
+  find: Profile!
+  project(id: Int!): Project!
+  projects: [Project!]!
+  slider(id: String!): Slider!
   sliders: [Slider!]!
 }
 
 type Slider {
-  id: Int!
   sliderImage: String!
+  sliderName: String!
   sliderText: String!
-  sliderTitle: String!
+}
+
+type TagImage {
+  imageLink: String!
+  tagName: String!
+}
+
+input UpdateProfileInput {
+  email: String!
+  id: String!
+  location: String!
+  name: String!
+  phone: String!
+  profilePhoto: [ProfilePhotoInput!]!
+  surname: String!
+  typingText: String!
+}
+
+input UpdateProjectInput {
+  id: Int!
+  projectDemoLink: String
+  projectDescription: String
+  projectGithubLink: String
+  projectImages: [CreateProjectImageInput!]
+  projectTitle: String
+  tags: [CreateTagInput!]
 }
 
 input UpdateSliderInput {
-  id: Int!
+  id: String!
   sliderImage: String
+  sliderName: String
   sliderText: String
-  sliderTitle: String
 }

@@ -1,12 +1,23 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { AbstractEntity } from 'src/database/abstract.entity';
+import { SliderImage } from './sliderImage.entity';
+
+@ObjectType()
 @Entity()
-export class Slider {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Slider extends AbstractEntity<Slider> {
+  @Field(() => String)
   @Column()
-  sliderTitle: string;
+  sliderName: string;
+
+  @Field(() => String)
   @Column()
   sliderText: string;
-  @Column()
-  sliderImage: string;
+
+  @Field(() => String)
+  @JoinColumn()
+  @OneToOne(() => SliderImage, {
+    cascade: true,
+  })
+  sliderImage: SliderImage;
 }

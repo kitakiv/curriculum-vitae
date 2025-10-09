@@ -5,6 +5,8 @@ import { SlidersModule } from './sliders/sliders.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { ProjectsModule } from './projects/projects.module';
+import { ProfileModule } from './profile/profile.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -16,6 +18,8 @@ import { join } from 'path';
     }),
     DatabaseModule,
     SlidersModule,
+    ProjectsModule,
+    ProfileModule,
   ],
 })
 export class AppModule {}

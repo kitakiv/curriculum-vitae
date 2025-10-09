@@ -1,6 +1,6 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { SlidersService } from './sliders.service';
-import { Slider } from './responce/slider.responce';
+import { Slider } from './entities/slider.entity';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
 
@@ -15,18 +15,13 @@ export class SlidersResolver {
     return await this.slidersService.create(createSliderInput);
   }
 
-  @Query(() => String)
-  helloWorld() {
-    return `Hello World`;
-  }
-
   @Query(() => [Slider], { name: 'sliders' })
   async findAll() {
     return await this.slidersService.findAll();
   }
 
   @Query(() => Slider, { name: 'slider' })
-  async findOne(@Args('id', { type: () => Int }) id: number) {
+  async findOne(@Args('id', { type: () => String }) id: string) {
     return this.slidersService.findOne(id);
   }
 
@@ -38,7 +33,7 @@ export class SlidersResolver {
   }
 
   @Mutation(() => Slider)
-  async removeSlider(@Args('id', { type: () => String }) id: number) {
+  async removeSlider(@Args('id', { type: () => String }) id: string) {
     return this.slidersService.remove(id);
   }
 }
