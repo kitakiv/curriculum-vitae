@@ -1,5 +1,5 @@
 import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { AbstractEntity } from 'src/database/abstract.entity';
 import { SliderImage } from './sliderImage.entity';
 
@@ -14,10 +14,13 @@ export class Slider extends AbstractEntity<Slider> {
   @Column()
   sliderText: string;
 
-  @Field(() => String)
+  @Field(() => SliderImage)
   @JoinColumn()
   @OneToOne(() => SliderImage, {
     cascade: true,
   })
   sliderImage: SliderImage;
+
+  @Field(() => ID)
+  id: string;
 }

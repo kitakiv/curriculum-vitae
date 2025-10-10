@@ -11,16 +11,17 @@ export class SlidersService {
   constructor(
     @InjectRepository(Slider)
     private readonly slidersRepository: Repository<Slider>,
-    // private readonly sliderImageRepository: Repository<SliderImage>,
+    @InjectRepository(SliderImage)
+    private readonly sliderImageRepository: Repository<SliderImage>,
   ) {}
   async create(createSliderInput: CreateSliderInput) {
-    const slImage = new SliderImage({
-      imageLink: createSliderInput.sliderImage,
+    const sliderImage = new SliderImage({
+      imageLink: createSliderInput.sliderImage.imageLink,
     });
     const slider = new Slider({
       sliderName: createSliderInput.sliderName,
       sliderText: createSliderInput.sliderText,
-      sliderImage: slImage,
+      sliderImage: sliderImage,
     });
     const createdSlider = await this.slidersRepository.create(slider);
     return await this.slidersRepository.save(createdSlider);
@@ -49,15 +50,7 @@ export class SlidersService {
   async update(id: string, updateSliderInput: UpdateSliderInput) {
     const exist = await this.slidersRepository.existsBy({ id });
     if (!exist) throw new Error('Slider not found');
-    const slider = await this.slidersRepository.findOneBy({ id });
-    const slImage = new SliderImage({
-      imageLink: updateSliderInput.sliderImage || slider.sliderImage.imageLink,
-    });
-    await this.slidersRepository.update(id, {
-      sliderName: updateSliderInput.sliderName || slider.sliderName,
-      sliderText: updateSliderInput.sliderText || slider.sliderText,
-      sliderImage: slImage,
-    });
+    await this.slidersRepository.update(id, updateSliderInput);
     const updatedSlider = await this.slidersRepository.findOneBy({ id });
     return updatedSlider;
   }
@@ -67,5 +60,10 @@ export class SlidersService {
     if (!exist) throw new Error('Slider not found');
     await this.slidersRepository.delete(id);
     return `Slider ${id} deleted`;
+  }
+
+  async findOneSliderImage(id: string) {
+    const sliderImage = await this.sliderImageRepository.findOneBy({ id });
+    return sliderImage || null;
   }
 }

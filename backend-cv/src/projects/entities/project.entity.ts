@@ -1,12 +1,15 @@
 import { Entity, Column, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 import { AbstractEntity } from 'src/database/abstract.entity';
 import { ProjectImage } from './projectImage.entity';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { ProjectTag } from './projectTags.entitiy';
 
 @ObjectType()
 @Entity()
 export class Project extends AbstractEntity<Project> {
+  @Field(() => ID)
+  id: string;
+
   @Field(() => String)
   @Column()
   projectTitle: string;
@@ -23,9 +26,10 @@ export class Project extends AbstractEntity<Project> {
   @Column()
   projectDemoLink: string;
 
-  @Field(() => [ProjectImage])
+  @Field(() => [ProjectImage], { nullable: true })
   @OneToMany(() => ProjectImage, (projectImage) => projectImage.project, {
     cascade: true,
+    nullable: true,
   })
   projectImages: ProjectImage[];
 

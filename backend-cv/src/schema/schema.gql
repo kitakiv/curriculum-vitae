@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateImageInput {
+  imageLink: String
+}
+
 input CreateProjectImageInput {
   imageLink: String!
 }
@@ -16,7 +20,7 @@ input CreateProjectInput {
 }
 
 input CreateSliderInput {
-  sliderImage: String!
+  sliderImage: CreateImageInput!
   sliderName: String!
   sliderText: String!
 }
@@ -61,20 +65,23 @@ input ProfilePhotoInput {
 }
 
 type Project {
+  id: ID!
   projectDemoLink: String!
   projectDescription: String!
   projectGithubLink: String!
-  projectImages: [ProjectImage!]!
+  projectImages: [ProjectImage!]
   projectTitle: String!
   tags: [ProjectTag!]!
 }
 
 type ProjectImage {
+  id: ID!
   imageLink: String!
   project: Project!
 }
 
 type ProjectTag {
+  id: ID!
   tagImage: TagImage!
   tagName: String!
 }
@@ -88,12 +95,19 @@ type Query {
 }
 
 type Slider {
-  sliderImage: String!
+  id: ID!
+  sliderImage: SliderImage!
   sliderName: String!
   sliderText: String!
 }
 
+type SliderImage {
+  id: ID!
+  imageLink: String
+}
+
 type TagImage {
+  id: ID!
   imageLink: String!
   tagName: String!
 }
@@ -121,7 +135,7 @@ input UpdateProjectInput {
 
 input UpdateSliderInput {
   id: String!
-  sliderImage: String
+  sliderImage: CreateImageInput
   sliderName: String
   sliderText: String
 }

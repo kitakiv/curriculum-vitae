@@ -1,4 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { CreateImageInput } from './create-image.input';
 
 @InputType()
 export class CreateSliderInput {
@@ -6,6 +7,6 @@ export class CreateSliderInput {
   sliderName: string;
   @Field(() => String)
   sliderText: string;
-  @Field(() => String)
-  sliderImage: string;
+  @Field(() => CreateImageInput)
+  sliderImage: CreateImageInput;
 }

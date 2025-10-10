@@ -1,14 +1,6 @@
-import {
-  Entity,
-  Column,
-  ManyToMany,
-  JoinColumn,
-  JoinTable,
-  OneToOne,
-} from 'typeorm';
-import { Project } from './project.entity';
+import { Entity, Column, JoinColumn, OneToOne } from 'typeorm';
 import { AbstractEntity } from 'src/database/abstract.entity';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { TagImage } from './projectImage.entity';
 
 @ObjectType()
@@ -24,4 +16,7 @@ export class ProjectTag extends AbstractEntity<ProjectTag> {
     cascade: true,
   })
   tagImage: TagImage;
+
+  @Field(() => ID)
+  id: string;
 }
