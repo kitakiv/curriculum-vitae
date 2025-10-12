@@ -13,11 +13,28 @@ export class ProfileService {
   ) {}
 
   async find() {
-    return await this.profileRepository.find();
+    const profile = await this.profileRepository.findOneBy({});
+    if (!profile) {
+      return await this.createDefaultProfile();
+    }
+    return profile;
   }
 
 
-  async update(id: string, updateProfileInput: UpdateProfileInput) {
-    return await this.profileRepository.update(id, updateProfileInput);
+  async update(updateProfileInput: UpdateProfileInput) {
+    const profile = await this.profileRepository.findOneBy({});
+    if (!profile) {
+      await this.createDefaultProfile();
+    }
+    console.log(profile.id);
+    await this.profileRepository.update({ id: profile.id }, updateProfileInput);
+    return await this.profileRepository.findOneBy({ id: profile.id });
+  }
+
+  async createDefaultProfile() {
+    const profile = new Profile({});
+    const createdProfile = await this.profileRepository.create(profile);
+    await this.profileRepository.save(createdProfile);
+    return createdProfile;
   }
 }

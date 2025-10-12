@@ -1,8 +1,7 @@
-import { Entity, Column, OneToMany, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, Column, JoinTable, ManyToMany } from 'typeorm';
 import { AbstractEntity } from 'src/database/abstract.entity';
-import { ProjectImage } from './projectImage.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ProjectTag } from './projectTags.entitiy';
+import { TechStack } from 'src/techstack/entities/techstack.entity';
 
 @ObjectType()
 @Entity()
@@ -26,15 +25,12 @@ export class Project extends AbstractEntity<Project> {
   @Column()
   projectDemoLink: string;
 
-  @Field(() => [ProjectImage], { nullable: true })
-  @OneToMany(() => ProjectImage, (projectImage) => projectImage.project, {
-    cascade: true,
-    nullable: true,
-  })
-  projectImages: ProjectImage[];
+  @Field(() => [String], { nullable: true })
+  @Column('simple-array', { nullable: true })
+  projectImages?: string[];
 
-  @Field(() => [ProjectTag])
+  @Field(() => [TechStack], { nullable: true })
   @JoinTable()
-  @ManyToMany(() => ProjectTag)
-  tags: ProjectTag[];
+  @ManyToMany(() => TechStack, { cascade: true, nullable: true })
+  techStacks?: TechStack[];
 }

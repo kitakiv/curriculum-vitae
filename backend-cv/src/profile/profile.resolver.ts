@@ -7,18 +7,15 @@ import { UpdateProfileInput } from './dto/update-profile.input';
 export class ProfileResolver {
   constructor(private readonly profileService: ProfileService) {}
 
-
   @Mutation(() => Profile)
   async updateProfile(
-    @Args('updateProfileInput') updateProfileInput: UpdateProfileInput,
+    @Args('updateProfileInput', { type: () => UpdateProfileInput })
+    updateProfileInput: UpdateProfileInput,
   ) {
-    return await this.profileService.update(
-      updateProfileInput.id,
-      updateProfileInput,
-    );
+    return await this.profileService.update(updateProfileInput);
   }
 
-  @Query(() => Profile)
+  @Query(() => Profile, { name: 'profile' })
   async find() {
     return await this.profileService.find();
   }

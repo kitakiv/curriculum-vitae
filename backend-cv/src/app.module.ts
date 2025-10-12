@@ -8,6 +8,8 @@ import { join } from 'path';
 import { ProjectsModule } from './projects/projects.module';
 import { ProfileModule } from './profile/profile.module';
 import { UploadModule } from './upload/upload.module';
+import { ContactsModule } from './contacts/contacts.module';
+import { TechStackModule } from './techstack/techstack.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -22,6 +24,8 @@ import { UploadModule } from './upload/upload.module';
     ProjectsModule,
     ProfileModule,
     UploadModule,
+    ContactsModule,
+    TechStackModule,
   ],
 })
 export class AppModule {}

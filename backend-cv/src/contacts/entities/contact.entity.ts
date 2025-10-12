@@ -1,23 +1,23 @@
 import { Entity, Column } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { AbstractEntity } from 'src/database/abstract.entity';
-import { images as sliderImage } from 'src/variables/image.variables';
 
 @ObjectType()
 @Entity()
-export class Slider extends AbstractEntity<Slider> {
+export class Contact extends AbstractEntity<Contact> {
   @Field(() => String)
   @Column()
-  sliderName: string;
+  contactName: string;
 
   @Field(() => String)
   @Column()
-  sliderText: string;
+  contactLink: string;
 
   @Field(() => String, { nullable: true })
-  @Column('varchar', { length: sliderImage.length, nullable: true })
-  sliderImage?: string | null;
+  @Column('varchar', { length: 500, nullable: true })
+  contactSvg?: string | null;
 
   @Field(() => ID)
   id: string;
 }
+

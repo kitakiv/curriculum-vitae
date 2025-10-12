@@ -1,6 +1,4 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { CreateTagInput } from './create-tag.input';
-import { CreateProjectImageInput } from './create-image.input';
 
 @InputType()
 export class CreateProjectInput {
@@ -16,9 +14,9 @@ export class CreateProjectInput {
   @Field(() => String)
   projectDemoLink: string;
 
-  @Field(() => [CreateProjectImageInput])
-  projectImages: CreateProjectImageInput[];
+  @Field(() => [String], { nullable: true })
+  projectImages?: string[];
 
-  @Field(() => [CreateTagInput])
-  tags: CreateTagInput[];
+  @Field(() => [String], { nullable: true })
+  techStacks?: string[];
 }

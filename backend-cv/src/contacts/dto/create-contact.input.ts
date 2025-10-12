@@ -1,11 +1,13 @@
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreateSliderInput {
+export class CreateContactInput {
   @Field(() => String)
-  sliderName: string;
+  contactName: string;
+
   @Field(() => String)
-  sliderText: string;
+  contactLink: string;
+
   @Field(() => String, { nullable: true })
-  sliderImage: string;
+  contactSvg?: string | null;
 }

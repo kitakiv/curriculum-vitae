@@ -1,42 +1,42 @@
-import { Entity, Column, OneToMany } from 'typeorm';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Entity, Column } from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { defaultProfile } from 'src/variables/profile.variables';
 import { AbstractEntity } from 'src/database/abstract.entity';
-import { ProfilePhoto } from './profilePhoto.entity';
 
 @ObjectType()
 @Entity()
 export class Profile extends AbstractEntity<Profile> {
-  @Field(() => String, { defaultValue: 'Victoria' })
-  @Column({ default: 'Victoria' })
-  name: string;
+  @Field(() => ID)
+  id: string;
 
-  @Field(() => String)
-  @Column({ default: 'Surname' })
-  surname: string;
+  @Field(() => String, { defaultValue: defaultProfile.profileName })
+  @Column({ default: defaultProfile.profileName })
+  name: string = defaultProfile.profileName;
 
-  @Field(() => String)
-  @Column({ default: 'kit@gmail.com' })
-  email: string;
+  @Field(() => String, { defaultValue: defaultProfile.profileSurname })
+  @Column({ default: defaultProfile.profileSurname })
+  surname: string = defaultProfile.profileSurname;
 
-  @Field(() => String)
-  @Column({ default: '+380501234567' })
-  phone: string;
+  @Field(() => String, { defaultValue: defaultProfile.profileEmail })
+  @Column({ default: defaultProfile.profileEmail })
+  email: string = defaultProfile.profileEmail;
 
-  @Field(() => String)
+  @Field(() => String, { defaultValue: defaultProfile.profilePhone})
+  @Column({ default: defaultProfile.profilePhone })
+  phone: string = defaultProfile.profilePhone;
+
+  @Field(() => String, { defaultValue: defaultProfile.profileTypingText })
   @Column('varchar', {
-    default:
-      'I am a web developer and something else and something else and something long and longer',
+    default: defaultProfile.profileTypingText,
     length: 200,
   })
-  typingText: string;
+  typingText: string = defaultProfile.profileTypingText;
 
-  @Field(() => String)
-  @Column({ default: 'Europe' })
-  location: string;
+  @Field(() => String, { defaultValue: defaultProfile.profileLocation })
+  @Column({ default: defaultProfile.profileLocation })
+  location: string = defaultProfile.profileLocation;
 
-  @Field(() => [ProfilePhoto])
-  @OneToMany(() => ProfilePhoto, (profilePhoto) => profilePhoto.profile, {
-    cascade: true,
-  })
-  profilePhoto: ProfilePhoto[];
+  @Column('simple-array', { nullable: true })
+  @Field(() => [String], { nullable: true })
+  profilePhotos?: string[];
 }

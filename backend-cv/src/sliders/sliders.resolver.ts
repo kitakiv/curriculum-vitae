@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Parent, ResolveField } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { SlidersService } from './sliders.service';
 import { Slider } from './entities/slider.entity';
 import { CreateSliderInput } from './dto/create-slider.input';
@@ -38,9 +38,4 @@ export class SlidersResolver {
   async removeSlider(@Args('id', { type: () => String }) id: string) {
     return this.slidersService.remove(id);
   }
-
-  // @ResolveField()
-  // async sliderImage(@Parent() slider: Slider) {
-  //   return await this.slidersService.findOneSliderImage(slider.sliderImage.id);
-  // }
 }

@@ -1,30 +1,26 @@
-import { ProfilePhoto } from '../entities/profilePhoto.entity';
 import { InputType, Field } from '@nestjs/graphql';
-import { ProfilePhotoInput } from './profile-photo.input';
 
 @InputType()
 export class UpdateProfileInput {
-  @Field(() => String)
-  id: string;
 
-  @Field(() => String)
-  name: string;
+  @Field(() => String, { nullable: true })
+  name?: string;
 
-  @Field(() => String)
-  surname: string;
+  @Field(() => String, { nullable: true })
+  surname?: string;
 
-  @Field(() => String)
-  email: string;
+  @Field(() => String, { nullable: true })
+  email?: string;
 
-  @Field(() => String)
-  phone: string;
+  @Field(() => String, { nullable: true })
+  phone?: string;
 
-  @Field(() => String)
-  typingText: string;
+  @Field(() => String, { nullable: true })
+  typingText?: string;
 
-  @Field(() => String)
-  location: string;
+  @Field(() => String, { nullable: true })
+  location?: string;
 
-  @Field(() => [ProfilePhotoInput])
-  profilePhoto: ProfilePhotoInput[];
+  @Field(() => [String], { nullable: true })
+  profilePhoto?: string[];
 }

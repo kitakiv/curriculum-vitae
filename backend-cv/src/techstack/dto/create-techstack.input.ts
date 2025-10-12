@@ -1,7 +1,9 @@
 import { InputType, Field } from '@nestjs/graphql';
-
 @InputType()
-export class CreateImageInput {
+export class CreateTechStackInput {
+  @Field(() => String)
+  techName: string;
+
   @Field(() => String, { nullable: true })
-  imageLink: string;
+  techSvg?: string;
 }

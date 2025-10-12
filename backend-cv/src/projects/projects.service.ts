@@ -1,51 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
-import { ProjectImage, TagImage } from './entities/projectImage.entity';
-import { ProjectTag } from './entities/projectTags.entitiy';
 import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TechStack } from 'src/techstack/entities/techstack.entity';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
-    @InjectRepository(ProjectTag)
-    private readonly projectImageRepository: Repository<ProjectTag>,
+    @InjectRepository(TechStack)
+    private readonly techStackRepository: Repository<TechStack>,
   ) {}
   async create(createProjectInput: CreateProjectInput) {
-    const project = { ...createProjectInput };
-    const projectImages = project.projectImages.map((image) => {
-      const imagesProject = new ProjectImage(image);
-      return imagesProject;
-    });
-    const projectTags = project.tags.map((tag) => {
-      const tagImage = new TagImage(tag.tagImage);
-      const projectTag = new ProjectTag({
-        ...tag,
-        tagImage,
+    const techStacks = createProjectInput.techStacks.map(async (techId) => {
+      const techStack = await this.techStackRepository.findOneBy({
+        id: techId,
       });
-      return projectTag;
+      if (!techStack) throw new Error('TechStack not found');
+      return techStack;
     });
-    const createdProject = new Project({
-      ...project,
-      projectImages,
-      tags: projectTags,
+    const project = new Project({
+      ...createProjectInput,
+      techStacks: await Promise.all(techStacks),
     });
-    const savedProject = await this.projectsRepository.create(createdProject);
-    await this.projectsRepository.save(savedProject);
-    return savedProject;
+    return await this.projectsRepository.save(project);
   }
 
   async findAll() {
     return await this.projectsRepository.find({
       relations: {
-        projectImages: true,
-        tags: {
-          tagImage: true,
-        },
+        techStacks: true,
       },
     });
   }
@@ -56,10 +43,7 @@ export class ProjectsService {
     return await this.projectsRepository.find({
       where: { id },
       relations: {
-        projectImages: true,
-        tags: {
-          tagImage: true,
-        },
+        techStacks: true,
       },
     });
   }
@@ -67,27 +51,17 @@ export class ProjectsService {
   async update(id: string, updateProjectInput: UpdateProjectInput) {
     const exist = await this.projectsRepository.existsBy({ id });
     if (!exist) throw new Error('Project not found');
-    const project = { ...updateProjectInput };
-    if (project.projectImages) {
-      const projectImages = project.projectImages.map((image) => {
-        const imagesProject = new ProjectImage(image);
-        return imagesProject;
+    const techStacks = updateProjectInput.techStacks.map(async (techId) => {
+      const techStack = await this.techStackRepository.findOneBy({
+        id: techId,
       });
-      project.projectImages = projectImages;
-    }
-    if (project.tags) {
-      const projectTags = project.tags.map((tag) => {
-        const tagImage = new TagImage(tag.tagImage);
-        const projectTag = new ProjectTag({
-          ...tag,
-          tagImage,
-        });
-        return projectTag;
-      });
-      project.tags = projectTags;
-    }
-    await this.projectsRepository.update(id, project);
-    return await this.projectsRepository.findOneBy({ id });
+      if (!techStack) throw new Error('TechStack not found');
+      return techStack;
+    });
+    return await this.projectsRepository.update(id, {
+      ...updateProjectInput,
+      techStacks: await Promise.all(techStacks),
+    });
   }
 
   async remove(id: string) {
@@ -95,13 +69,5 @@ export class ProjectsService {
     if (!exist) throw new Error('Project not found');
     await this.projectsRepository.delete(id);
     return `Project ${id} deleted`;
-  }
-
-  async findAllTags() {
-    return await this.projectImageRepository.find({
-      relations: {
-        tagImage: true,
-      },
-    });
   }
 }

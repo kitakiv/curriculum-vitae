@@ -2,66 +2,64 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateImageInput {
-  imageLink: String
+type Contact {
+  contactLink: String!
+  contactName: String!
+  contactSvg: String
+  id: ID!
 }
 
-input CreateProjectImageInput {
-  imageLink: String!
+input CreateContactInput {
+  contactLink: String!
+  contactName: String!
+  contactSvg: String
 }
 
 input CreateProjectInput {
   projectDemoLink: String!
   projectDescription: String!
   projectGithubLink: String!
-  projectImages: [CreateProjectImageInput!]!
+  projectImages: [String!]
   projectTitle: String!
-  tags: [CreateTagInput!]!
+  techStacks: [String!]
 }
 
 input CreateSliderInput {
-  sliderImage: CreateImageInput!
+  sliderImage: String
   sliderName: String!
   sliderText: String!
 }
 
-input CreateTagImageInput {
-  imageLink: String!
-  tagName: String!
-}
-
-input CreateTagInput {
-  tagImage: CreateTagImageInput!
-  tagName: String!
+input CreateTechStackInput {
+  techName: String!
+  techSvg: String
 }
 
 type Mutation {
+  createContact(createContactInput: CreateContactInput!): Contact!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
-  removeProject(id: Int!): Project!
+  createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
+  removeContact(id: String!): Contact!
+  removeProject(id: ID!): Project!
   removeSlider(id: String!): Slider!
+  removeTechStack(id: ID!): TechStack!
+  updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
+  updateTechStack(UpdateTechStackInput: UpdateTechStackInput!): TechStack!
 }
 
 type Profile {
   email: String!
+  id: ID!
   location: String!
   name: String!
   phone: String!
-  profilePhoto: [ProfilePhoto!]!
+  profilePhotos: [String!]
   surname: String!
   typingText: String!
-}
-
-type ProfilePhoto {
-  imageLink: String!
-  profile: Profile!
-}
-
-input ProfilePhotoInput {
-  imageLink: String!
 }
 
 type Project {
@@ -69,73 +67,72 @@ type Project {
   projectDemoLink: String!
   projectDescription: String!
   projectGithubLink: String!
-  projectImages: [ProjectImage!]
+  projectImages: [String!]
   projectTitle: String!
-  tags: [ProjectTag!]!
-}
-
-type ProjectImage {
-  id: ID!
-  imageLink: String!
-  project: Project!
-}
-
-type ProjectTag {
-  id: ID!
-  tagImage: TagImage!
-  tagName: String!
+  techStacks: [TechStack!]
 }
 
 type Query {
-  find: Profile!
-  project(id: Int!): Project!
+  contact(id: String!): Contact!
+  contacts: [Contact!]!
+  profile: Profile!
+  project(id: ID!): Project!
   projects: [Project!]!
   slider(id: String!): Slider!
   sliders: [Slider!]!
+  techstack(id: ID!): TechStack!
+  techstacks: [TechStack!]!
 }
 
 type Slider {
   id: ID!
-  sliderImage: SliderImage!
+  sliderImage: String
   sliderName: String!
   sliderText: String!
 }
 
-type SliderImage {
+type TechStack {
   id: ID!
-  imageLink: String
+  techName: String!
+  techSvg: String
 }
 
-type TagImage {
-  id: ID!
-  imageLink: String!
-  tagName: String!
+input UpdateContactInput {
+  contactLink: String
+  contactName: String
+  contactSvg: String
+  id: String!
 }
 
 input UpdateProfileInput {
-  email: String!
-  id: String!
-  location: String!
-  name: String!
-  phone: String!
-  profilePhoto: [ProfilePhotoInput!]!
-  surname: String!
-  typingText: String!
+  email: String
+  location: String
+  name: String
+  phone: String
+  profilePhoto: [String!]
+  surname: String
+  typingText: String
 }
 
 input UpdateProjectInput {
-  id: Int!
+  id: ID!
   projectDemoLink: String
   projectDescription: String
   projectGithubLink: String
-  projectImages: [CreateProjectImageInput!]
+  projectImages: [String!]
   projectTitle: String
-  tags: [CreateTagInput!]
+  techStacks: [String!]
 }
 
 input UpdateSliderInput {
-  id: String!
-  sliderImage: CreateImageInput
+  id: ID!
+  sliderImage: String
   sliderName: String
   sliderText: String
+}
+
+input UpdateTechStackInput {
+  id: ID!
+  techName: String
+  techSvg: String
 }
