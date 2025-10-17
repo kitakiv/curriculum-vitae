@@ -15,7 +15,8 @@ export class ProjectsService {
     private readonly techStackRepository: Repository<TechStack>,
   ) {}
   async create(createProjectInput: CreateProjectInput) {
-    const techStacks = createProjectInput.techStacks.map(async (techId) => {
+    const stack = createProjectInput.techStacks || [];
+    const techStacks = stack.map(async (techId) => {
       const techStack = await this.techStackRepository.findOneBy({
         id: techId,
       });

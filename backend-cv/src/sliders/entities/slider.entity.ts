@@ -15,7 +15,7 @@ export class Slider extends AbstractEntity<Slider> {
   sliderText: string;
 
   @Field(() => String, { nullable: true })
-  @Column('varchar', { length: sliderImage.length, nullable: true })
+  @Column({ nullable: true })
   sliderImage?: string | null;
 
   @Field(() => ID)

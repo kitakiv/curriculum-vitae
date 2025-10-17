@@ -5,17 +5,20 @@ import {
   Logger,
 } from '@nestjs/common';
 import { FileErrors } from '../../errors/fileErrors';
+import { MB, FILE_EXTENSIONS, MAX_FILE_IMAGES } from '../../common/constants';
 
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
 
   private readonly logger = new Logger(FileValidationPipe.name);
   transform(value: Express.Multer.File | Express.Multer.File[]) {
-    const oneKb = 1000;
-    const oneMb = oneKb * 1000;
-    const validFileExtensions = ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'];
+    const oneMb = MB;
+    const validFileExtensions = FILE_EXTENSIONS;
 
     if (Array.isArray(value)) {
+      if (value.length > MAX_FILE_IMAGES) {
+        throw new BadRequestException('Maximum number of files exceeded');
+      }
       for (const file of value) {
         this.validateFile(file, oneMb, validFileExtensions);
       }

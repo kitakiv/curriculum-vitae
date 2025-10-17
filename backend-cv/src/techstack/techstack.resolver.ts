@@ -3,10 +3,17 @@ import { TechStackService } from './techstack.service';
 import { TechStack } from './entities/techstack.entity';
 import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
+import { S3Service } from 'src/s3/s3.service';
+import { TechStackImageService } from './tachstackImage.service';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver(() => TechStack)
 export class TechStackResolver {
-  constructor(private readonly techStackService: TechStackService) {}
+  constructor(
+    private readonly techStackService: TechStackService,
+    private readonly s3Service: S3Service,
+    private readonly techStackImageService: TechStackImageService,
+  ) {}
 
   @Mutation(() => TechStack)
   async createTechStack(
@@ -39,6 +46,14 @@ export class TechStackResolver {
 
   @Mutation(() => TechStack)
   async removeTechStack(@Args('id', { type: () => ID }) id: string) {
-    return await this.techStackService.remove(id);
+    try {
+      const key = await this.techStackImageService.getImageKey(id);
+      await this.techStackService.remove(id);
+      if (key) await this.s3Service.deleteFile(key);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
+    return `TechStack ${id} deleted`;
   }
 }

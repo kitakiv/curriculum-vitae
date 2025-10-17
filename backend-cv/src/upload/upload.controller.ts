@@ -4,59 +4,40 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  ParseUUIDPipe,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from './pipe/upload.pipe';
-import { S3Service } from 'src/s3/s3.service';
+import { UploadService } from './upload.service';
+import { MultiFilePipe } from './pipe/multifile.pipe';
+import { ServerExistPipe } from './pipe/serverexist.pipe';
+import { OneFilePipe } from './pipe/onefile.pipe';
 
 @Controller('upload')
 export class UploadController {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(private readonly uploadService: UploadService) {}
 
-  @Post('file')
+  @Post('file/:service/:id')
   @UseInterceptors(FileInterceptor('File'))
-  async uploadFileAndValidate(
+  async uploadFile(
     @UploadedFile(new FileValidationPipe())
     file: Express.Multer.File,
+    @Param('service', OneFilePipe, ServerExistPipe) service: string,
+    @Param('id', ParseUUIDPipe) id: string,
   ) {
-    try {
-      const url = await this.s3Service.uploadFile(
-        { buffer: file.buffer, mimetype: file.mimetype },
-        file.originalname,
-      );
-      console.log(url);
-      return {
-        success: true,
-        message: 'File uploaded successfully',
-        url: url,
-        filename: file.originalname,
-        size: file.size,
-        mimetype: file.mimetype,
-      };
-    } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: 'File upload failed',
-      };
-    }
+    return await this.uploadService.uploadFile({ file, service, id });
   }
 
-  @Post('files')
+  @Post('files/:service/:id')
   @UseInterceptors(FilesInterceptor('Files'))
-  uploadFile(
+  async uploadFiles(
     @UploadedFiles(new FileValidationPipe())
     files: Array<Express.Multer.File>,
+    @Param('service', MultiFilePipe, ServerExistPipe)
+    service: string,
+    @Param('id', ParseUUIDPipe) id: string,
   ) {
-    console.log(files);
-    return {
-      success: true,
-      message: 'Files uploaded successfully',
-      files: files.map((file) => ({
-        filename: file.originalname,
-        size: file.size,
-        mimetype: file.mimetype,
-      })),
-    };
+    return await this.uploadService.uploadFiles({ files, service, id });
   }
 }

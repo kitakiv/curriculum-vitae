@@ -3,10 +3,17 @@ import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
+import { S3Service } from 'src/s3/s3.service';
+import { ProjectsImageService } from './projectsImage.service';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver(() => Project)
 export class ProjectsResolver {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly s3Service: S3Service,
+    private readonly projectsImageService: ProjectsImageService,
+  ) {}
 
   @Mutation(() => Project)
   async createProject(
@@ -39,6 +46,16 @@ export class ProjectsResolver {
 
   @Mutation(() => Project)
   async removeProject(@Args('id', { type: () => ID }) id: string) {
-    return await this.projectsService.remove(id);
+    try {
+      const keys = await this.projectsImageService.getImageKeys(id);
+      await this.projectsService.remove(id);
+      if (keys) {
+        await this.s3Service.deleteFiles(keys);
+      }
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
+    return { id, projectImages: [] as string[] };
   }
 }

@@ -22,7 +22,7 @@ export class Project extends AbstractEntity<Project> {
   projectGithubLink: string;
 
   @Field(() => String)
-  @Column()
+  @Column('varchar', { length: 500 })
   projectDemoLink: string;
 
   @Field(() => [String], { nullable: true })

@@ -3,10 +3,17 @@ import { TechStackService } from './techstack.service';
 import { TechStackResolver } from './techstack.resolver';
 import { TechStack } from './entities/techstack.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TechStackImageService } from './tachstackImage.service';
+import { S3Service } from 'src/s3/s3.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TechStack])],
-  providers: [TechStackResolver, TechStackService],
+  providers: [
+    TechStackResolver,
+    TechStackService,
+    TechStackImageService,
+    S3Service,
+  ],
   exports: [TypeOrmModule.forFeature([TechStack])]
 })
 export class TechStackModule {}

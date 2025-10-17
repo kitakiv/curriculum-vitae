@@ -3,10 +3,17 @@ import { SlidersService } from './sliders.service';
 import { Slider } from './entities/slider.entity';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
+import { SliderImageService } from './sliderImage.service';
+import { S3Service } from 'src/s3/s3.service';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver(() => Slider)
 export class SlidersResolver {
-  constructor(private readonly slidersService: SlidersService) {}
+  constructor(
+    private readonly slidersService: SlidersService,
+    private readonly sliderImageService: SliderImageService,
+    private readonly s3Service: S3Service
+  ) {}
 
   @Mutation(() => Slider)
   async createSlider(
@@ -36,6 +43,14 @@ export class SlidersResolver {
 
   @Mutation(() => Slider)
   async removeSlider(@Args('id', { type: () => String }) id: string) {
-    return this.slidersService.remove(id);
+    try {
+      const key = await this.sliderImageService.getImageKey(id);
+      await this.slidersService.remove(id);
+      if (key) await this.s3Service.deleteFile(key);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
+    return `Slider ${id} deleted`;
   }
 }

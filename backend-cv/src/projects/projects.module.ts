@@ -4,8 +4,15 @@ import { ProjectsResolver } from './projects.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { TechStack } from 'src/techstack/entities/techstack.entity';
+import { ProjectsImageService } from './projectsImage.service';
+import { S3Service } from 'src/s3/s3.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Project, TechStack])],
-  providers: [ProjectsResolver, ProjectsService],
+  providers: [
+    ProjectsResolver,
+    ProjectsService,
+    ProjectsImageService,
+    S3Service,
+  ],
 })
 export class ProjectsModule {}

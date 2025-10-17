@@ -3,13 +3,20 @@ import { ContactsService } from './contacts.service';
 import { Contact } from './entities/contact.entity';
 import { CreateContactInput } from './dto/create-contact.input';
 import { UpdateContactInput } from './dto/update-contact.input';
+import { ContactsImageService } from './contactsImage.service';
+import { S3Service } from 'src/s3/s3.service';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver(() => Contact)
 export class ContactsResolver {
-  constructor(private readonly contactsService: ContactsService) {}
+  constructor(
+    private readonly contactsService: ContactsService,
+    private readonly s3Service: S3Service,
+    private readonly contactsImageService: ContactsImageService,
+  ) {}
 
   @Mutation(() => Contact)
-   async createContact(
+  async createContact(
     @Args('createContactInput', { type: () => CreateContactInput })
     createContactInput: CreateContactInput,
   ) {
@@ -39,6 +46,14 @@ export class ContactsResolver {
 
   @Mutation(() => Contact)
   async removeContact(@Args('id', { type: () => String }) id: string) {
-    return await this.contactsService.remove(id);
+    try {
+      const key = await this.contactsImageService.getImageKey(id);
+      await this.contactsService.remove(id);
+      if (key) await this.s3Service.deleteFile(key);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
+    return `Contact ${id} deleted`;
   }
 }

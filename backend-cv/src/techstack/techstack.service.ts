@@ -37,7 +37,7 @@ export class TechStackService {
   async remove(id: string) {
     const exist = await this.techStackRepository.existsBy({ id });
     if (!exist) throw new Error('TechStack not found');
-    await this.techStackRepository.delete(id)
+    await this.techStackRepository.delete(id);
     return `TechStack ${id} deleted`;
   }
 }
