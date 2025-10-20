@@ -6,6 +6,7 @@ import { UpdateProjectInput } from './dto/update-project.input';
 import { S3Service } from 'src/s3/s3.service';
 import { ProjectsImageService } from './projectsImage.service';
 import { BadRequestException } from '@nestjs/common';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver(() => Project)
 export class ProjectsResolver {
@@ -23,11 +24,13 @@ export class ProjectsResolver {
     return await this.projectsService.create(createProjectInput);
   }
 
+  @Public()
   @Query(() => [Project], { name: 'projects' })
   async findAll() {
     return await this.projectsService.findAll();
   }
 
+  @Public()
   @Query(() => Project, { name: 'project' })
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.projectsService.findOne(id);

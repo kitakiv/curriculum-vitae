@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangePasswordDto {
+  newPassword: String!
+  oldPassword: String!
+}
+
 type Contact {
   contactLink: String!
   contactName: String!
@@ -35,15 +40,24 @@ input CreateTechStackInput {
   techSvg: String
 }
 
+input LoginDto {
+  login: String!
+  password: String!
+}
+
 type Mutation {
+  changePassword(changePasswordDto: ChangePasswordDto!): User!
   createContact(createContactInput: CreateContactInput!): Contact!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
+  login(loginDto: LoginDto!): Sing!
+  refreshToken(refreshTokenDto: RefreshTokenDto!): Sing!
   removeContact(id: String!): Contact!
   removeProject(id: ID!): Project!
   removeSlider(id: String!): Slider!
   removeTechStack(id: ID!): TechStack!
+  singup(singUpDto: SingUpDto!): User!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
@@ -82,6 +96,29 @@ type Query {
   sliders: [Slider!]!
   techstack(id: ID!): TechStack!
   techstacks: [TechStack!]!
+  user(login: String!): User!
+  users: [User!]!
+}
+
+type RefreshToken {
+  expiryDate: String!
+  id: ID!
+  token: String!
+}
+
+input RefreshTokenDto {
+  refreshToken: String!
+}
+
+type Sing {
+  accessToken: String!
+  refreshToken: String!
+}
+
+input SingUpDto {
+  login: String!
+  name: String!
+  password: String!
 }
 
 type Slider {
@@ -135,4 +172,10 @@ input UpdateTechStackInput {
   id: ID!
   techName: String
   techSvg: String
+}
+
+type User {
+  login: String!
+  name: String!
+  refreshToken: RefreshToken!
 }

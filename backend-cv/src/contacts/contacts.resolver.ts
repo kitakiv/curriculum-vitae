@@ -6,6 +6,7 @@ import { UpdateContactInput } from './dto/update-contact.input';
 import { ContactsImageService } from './contactsImage.service';
 import { S3Service } from 'src/s3/s3.service';
 import { BadRequestException } from '@nestjs/common';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver(() => Contact)
 export class ContactsResolver {
@@ -23,11 +24,13 @@ export class ContactsResolver {
     return await this.contactsService.create(createContactInput);
   }
 
+  @Public()
   @Query(() => [Contact], { name: 'contacts' })
   async findAll() {
     return await this.contactsService.findAll();
   }
 
+  @Public()
   @Query(() => Contact, { name: 'contact' })
   async findOne(@Args('id', { type: () => String }) id: string) {
     return await this.contactsService.findOne(id);

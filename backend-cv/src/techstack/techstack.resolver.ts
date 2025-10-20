@@ -6,6 +6,7 @@ import { UpdateTechStackInput } from './dto/update-techstack.input';
 import { S3Service } from 'src/s3/s3.service';
 import { TechStackImageService } from './tachstackImage.service';
 import { BadRequestException } from '@nestjs/common';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver(() => TechStack)
 export class TechStackResolver {
@@ -23,11 +24,13 @@ export class TechStackResolver {
     return await this.techStackService.create(createTechStackInput);
   }
 
+  @Public()
   @Query(() => [TechStack], { name: 'techstacks' })
   async findAll() {
     return await this.techStackService.findAll();
   }
 
+  @Public()
   @Query(() => TechStack, { name: 'techstack' })
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.techStackService.findOne(id);

@@ -6,13 +6,14 @@ import { UpdateSliderInput } from './dto/update-slider.input';
 import { SliderImageService } from './sliderImage.service';
 import { S3Service } from 'src/s3/s3.service';
 import { BadRequestException } from '@nestjs/common';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver(() => Slider)
 export class SlidersResolver {
   constructor(
     private readonly slidersService: SlidersService,
     private readonly sliderImageService: SliderImageService,
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {}
 
   @Mutation(() => Slider)
@@ -23,11 +24,13 @@ export class SlidersResolver {
     return await this.slidersService.create(createSliderInput);
   }
 
+  @Public()
   @Query(() => [Slider], { name: 'sliders' })
   async findAll() {
     return await this.slidersService.findAll();
   }
 
+  @Public()
   @Query(() => Slider, { name: 'slider' })
   async findOne(@Args('id', { type: () => String }) id: string) {
     return this.slidersService.findOne(id);
