@@ -20,6 +20,11 @@ input CreateContactInput {
   contactSvg: String
 }
 
+input CreatePermissionInput {
+  actions: [String!]!
+  resource: String!
+}
+
 input CreateProjectInput {
   projectDemoLink: String!
   projectDescription: String!
@@ -27,6 +32,11 @@ input CreateProjectInput {
   projectImages: [String!]
   projectTitle: String!
   techStacks: [String!]
+}
+
+input CreateRoleInput {
+  name: String!
+  permissions: [CreatePermissionInput!]!
 }
 
 input CreateSliderInput {
@@ -49,12 +59,14 @@ type Mutation {
   changePassword(changePasswordDto: ChangePasswordDto!): User!
   createContact(createContactInput: CreateContactInput!): Contact!
   createProject(createProjectInput: CreateProjectInput!): Project!
+  createRole(createRoleInput: CreateRoleInput!): Role!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
   login(loginDto: LoginDto!): Sing!
   refreshToken(refreshTokenDto: RefreshTokenDto!): Sing!
   removeContact(id: String!): Contact!
   removeProject(id: ID!): Project!
+  removeRole(id: String!): Role!
   removeSlider(id: String!): Slider!
   removeTechStack(id: ID!): TechStack!
   singup(singUpDto: SingUpDto!): User!
@@ -63,6 +75,13 @@ type Mutation {
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
   updateTechStack(UpdateTechStackInput: UpdateTechStackInput!): TechStack!
+}
+
+type Permission {
+  actions: [String!]!
+  id: ID!
+  resource: String!
+  role: Role!
 }
 
 type Profile {
@@ -92,6 +111,8 @@ type Query {
   profile: Profile!
   project(id: ID!): Project!
   projects: [Project!]!
+  role(id: String!): Role!
+  roles: [Role!]!
   slider(id: String!): Slider!
   sliders: [Slider!]!
   techstack(id: ID!): TechStack!
@@ -108,6 +129,13 @@ type RefreshToken {
 
 input RefreshTokenDto {
   refreshToken: String!
+}
+
+type Role {
+  id: ID!
+  name: String!
+  permissions: [Permission!]!
+  users: [User!]
 }
 
 type Sing {
@@ -178,4 +206,5 @@ type User {
   login: String!
   name: String!
   refreshToken: RefreshToken!
+  role: Role
 }

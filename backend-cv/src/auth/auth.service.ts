@@ -128,4 +128,19 @@ export class AuthService {
     return await this.userRepository.findOneBy({ login });
   }
 
+  async getUserPermissions(userId: string) {
+    const user = await this.userRepository.find({
+      where: {
+        id: userId,
+      },
+      relations: {
+        role: {
+          permissions: true,
+        },
+      },
+    });
+    if (!user[0]) throw new UnauthorizedException('User not found');
+    return user[0].role.permissions;
+  }
+
 }

@@ -24,7 +24,9 @@ export class User extends AbstractEntity<User> {
   })
   refreshToken: RefreshToken;
 
-  @Field(() => Role)
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
+  @Field(() => Role, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.users, {
+    nullable: true,
+  })
+  role?: Role;
 }

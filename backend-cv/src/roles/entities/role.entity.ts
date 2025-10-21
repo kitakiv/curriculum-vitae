@@ -13,11 +13,13 @@ export class Role extends AbstractEntity<Role> {
   @Column()
   name: string;
 
-  @Field(() => [Permission])
-  @Column('simple-array')
-  permissions: Permission[];
+  @Field(() => [User], { nullable: true })
+  @OneToMany(() => User, (user) => user.role, { nullable: true, cascade: true })
+  users?: User[];
 
-  @Field(() => [User])
-  @OneToMany(() => User, (user) => user.role)
-  users: User[];
+  @Field(() => [Permission])
+  @OneToMany(() => Permission, (permission) => permission.role, {
+    cascade: true,
+  })
+  permissions: Permission[];
 }

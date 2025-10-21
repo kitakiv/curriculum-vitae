@@ -1,6 +1,12 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { ArrayUnique, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayUnique,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Action } from 'src/roles/enums/action.enum';
 import { Resource } from 'src/roles/enums/resource.enum';
 
@@ -12,20 +18,20 @@ export class CreateRoleInput {
   name: string;
 
   @ValidateNested()
-  @Type(() => Permission)
-  @Field(() => Permission)
-  permissions: Permission
+  @Type(() => CreatePermissionInput)
+  @Field(() => [CreatePermissionInput])
+  permissions: CreatePermissionInput[]
 }
 
 @InputType()
-export class Permission {
+export class CreatePermissionInput {
   @IsEnum(Resource)
-  @Field(() => Resource)
-  resource: Resource;
+  @Field(() => String)
+  resource: string;
 
 
-  @Field(() => [Action])
+  @Field(() => [String])
   @IsEnum(Action, { each: true })
   @ArrayUnique()
-  actions: Action[];
+  actions: string[];
 }

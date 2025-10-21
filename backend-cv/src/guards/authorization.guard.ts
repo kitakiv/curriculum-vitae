@@ -1,19 +1,31 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Logger } from '@nestjs/common';
-import { IS_PERMISSION_KEY } from 'src/decorators/permissoin.decorator';
+import { IS_PERMISSION_KEY } from 'src/decorators/permission.decorator';
 import { Reflector } from '@nestjs/core';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
   private readonly logger = new Logger(AuthorizationGuard.name);
-  constructor(private reflector: Reflector) {}
-  canActivate(context: ExecutionContext): boolean {
+  constructor(
+    private reflector: Reflector,
+    private readonly authService: AuthService,
+  ) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredRoutePermissions = this.reflector.getAllAndOverride(
+      IS_PERMISSION_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (!requiredRoutePermissions) {
+      return true;
+    }
     const ctxType = context.getType<'graphql' | 'http'>();
     let request: Request;
     if (ctxType === 'graphql') {
@@ -26,17 +38,26 @@ export class AuthorizationGuard implements CanActivate {
     if (!request['userId']) {
       throw new UnauthorizedException('User ID not found');
     }
+    try {
+      const userPermission = await this.authService.getUserPermissions(
+        request['userId'],
+      );
+      for (const routePermission of requiredRoutePermissions) {
+        const userHasPermission = userPermission.find(
+          (permission) => routePermission.resource === permission.resource,
+        );
+        if (!userHasPermission) throw new ForbiddenException();
 
-    const requiredRoutePermissions = this.reflector.getAllAndOverride<boolean>(
-      IS_PERMISSION_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+        const allActionsAvailable = routePermission.actions.every((action) => {
+          return userHasPermission.actions.includes(action);
+        });
 
-    return true;
-  }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+        if (!allActionsAvailable) throw new ForbiddenException();
+      }
+      return true;
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new ForbiddenException();
+    }
   }
 }

@@ -37,7 +37,7 @@ export class AuthResolver {
     return await this.authService.refreshToken(refreshTokenDto.refreshToken);
   }
 
-  @Mutation()
+  @Mutation(() => User)
   async changePassword(
     @Args('changePasswordDto', { type: () => ChangePasswordDto })
     changePasswordDto: ChangePasswordDto,
