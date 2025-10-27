@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 @InputType()
-export class ChangePasswordDto {
+export class ChangePasswordInput {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()

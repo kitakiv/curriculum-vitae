@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common';
+import {
+  Logger,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { SlidersModule } from './sliders/sliders.module';
@@ -16,6 +22,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesModule } from './roles/roles.module';
+import { LoggerMiddleware } from './middleware/custorm.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -51,10 +58,21 @@ import { RolesModule } from './roles/roles.module';
     RolesModule,
   ],
   providers: [
+    Logger,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+
+  constructor(private readonly logger: Logger) {
+    this.logger.log(`AppModule initialized`);
+  }
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'graphql', method: RequestMethod.POST });
+  }
+}

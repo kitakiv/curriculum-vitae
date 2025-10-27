@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from 'src/variables/upload.variables';
+import { errors } from 'src/errors/errors.config';
 
 @Injectable()
 export class ContactsImageService {
@@ -15,14 +16,23 @@ export class ContactsImageService {
   }
   async uploadImage({ id, image }: { id: string; image: string }) {
     const exist = await this.contactsRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Contact not found');
-    await this.contactsRepository.update(id, { contactSvg: image });
-    return { id, contactSvg: image };
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
+    try {
+      const contact = await this.contactsRepository.update(id, {
+        contactSvg: image,
+      });
+      return contact;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Contact'), {
+        cause: error,
+      });
+    }
   }
 
   async getImageKey(id: string) {
     const exist = await this.contactsRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Contact not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
     const contact = await this.contactsRepository.findOneBy({ id });
     if (contact.contactSvg) {
       return decodeURIComponent(contact.contactSvg.split(`/`).at(-1));

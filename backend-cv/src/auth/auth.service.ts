@@ -1,50 +1,90 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SingUpDto } from './dto/sing-up.input';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { SingUpInput } from './dto/singUp.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dto/login.input';
+import { LoginInput } from './dto/login.input';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshToken } from './entities/refresh-token.entity';
+import { RefreshToken } from './entities/refreshToken.entity';
 import { v4 as uuid } from 'uuid';
-import { ChangePasswordDto } from './dto/change-password.input';
+import { ChangePasswordInput } from './dto/changePassword.input';
+import { Role } from 'src/roles/entities/role.entity';
+import { AttachRoleInput } from './dto/attachRole.input';
+import { UpdateUserInput } from './dto/updateAuth.input';
+import { ConfigService } from '@nestjs/config';
+import { Action } from 'src/roles/enums/action.enum';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Permission } from 'src/roles/entities/permission.entity';
+import { errors } from 'src/errors/errors.config';
+import { expiryDate } from 'src/common/constants';
 
 @Injectable()
-export class AuthService {
-
+export class AuthService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly jwtService: JwtService,
     @InjectRepository(RefreshToken)
     private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly logger: Logger,
   ) {}
-  async singUp(createAuthInput: SingUpDto) {
-    const { login, password, name } = createAuthInput;
+  async singUp(createAuthInput: SingUpInput) {
     const emailInUse = await this.userRepository.findOneBy({
       login: createAuthInput.login,
     });
     if (emailInUse) {
-      throw new Error('Email already in use');
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: errors.EMAIL_EXISTS,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
-    const hashPassword = await this.createHashPassword(password);
-    await this.userRepository.create({
-      login,
-      password: hashPassword,
-      name
-    })
-    const user = await this.userRepository.save({
-      login,
-      password: hashPassword,
-      name
-    });
+    const user = await this.createUser(createAuthInput);
     if (!user) {
-      throw new Error('User not created');
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: errors.NOT_CREATED('User'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
-    return {
-      login: user.login,
-      name: user.name
+    return await this.generateToken(user);
+  }
+
+  private async createUser(createAuthInput: SingUpInput) {
+    const { login, password, name } = createAuthInput;
+    const hashPassword = await this.createHashPassword(password);
+    try {
+      await this.userRepository.create({
+        login,
+        password: hashPassword,
+        name,
+      });
+      const user = await this.userRepository.save({
+        login,
+        password: hashPassword,
+        name,
+      });
+      return user;
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 
@@ -53,41 +93,52 @@ export class AuthService {
     return await bcrypt.hash(password, saltOrRound);
   }
 
-  async login(loginDto: LoginDto) {
-    const { login, password } = loginDto;
+  async login(loginInput: LoginInput) {
+    const { login, password } = loginInput;
     const user = await this.userRepository.findOneBy({ login });
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException(errors.NOT_FOUND('User'));
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password'));
     }
     return await this.generateToken(user);
   }
 
-  async generateToken(user: User) {
+  private async generateToken(user: User) {
     const accessToken = this.jwtService.sign({ userId: user.id });
     const refreshToken = uuid();
-    await this.storeRefreshToken(user, refreshToken);
+    try {
+      await this.storeRefreshToken(user, refreshToken);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_CREATED('Refresh token'), {
+        cause: error,
+      });
+    }
     return { accessToken, refreshToken };
   }
 
-  async storeRefreshToken(user: User, token: string) {
+  private async storeRefreshToken(user: User, token: string) {
     const refreshToken = await this.refreshTokenRepository.findOneBy({ user });
     if (refreshToken) {
       await this.refreshTokenRepository.update(refreshToken.id, {
         token,
-        expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        expiryDate: expiryDate(3),
       });
       return;
     }
-    const createdToken = this.refreshTokenRepository.create({
+    const createRefreshToken = this.refreshTokenRepository.create({
       user,
       token,
-      expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-    })
-    await this.refreshTokenRepository.save(createdToken);
+      expiryDate: expiryDate(3),
+    });
+    const savedRefreshToken =
+      await this.refreshTokenRepository.save(createRefreshToken);
+    if (!savedRefreshToken) {
+      throw new BadRequestException(errors.NOT_CREATED('Refresh token'));
+    }
     return;
   }
 
@@ -98,38 +149,109 @@ export class AuthService {
         expiryDate: MoreThanOrEqual(new Date()),
       },
       relations: {
-        user: true
+        user: true,
       },
-    })
+    });
     if (!refreshToken[0]) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException(
+        errors.INVALID_CREDENTIALS('Refresh token'),
+      );
     }
     return await this.generateToken(refreshToken[0].user);
   }
 
-  async changePassword(changePasswordDto: ChangePasswordDto, userId: string) {
+  async changePassword(
+    changePasswordInput: ChangePasswordInput,
+    userId: string,
+  ) {
     const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     const isPasswordValid = await bcrypt.compare(
-      changePasswordDto.oldPassword,
+      changePasswordInput.oldPassword,
       user.password,
     );
-    if (!isPasswordValid) throw new UnauthorizedException('Wrong password');
+    if (!isPasswordValid)
+      throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password'));
     const hashPassword = await this.createHashPassword(
-      changePasswordDto.newPassword,
+      changePasswordInput.newPassword,
     );
     await this.userRepository.update(user.id, { password: hashPassword });
   }
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: {
+        role: {
+          permissions: true,
+        },
+      },
+    });
   }
 
   async findOne(login: string) {
-    return await this.userRepository.findOneBy({ login });
+    const user = await this.userRepository.find({
+      where: {
+        login,
+      },
+      relations: {
+        role: {
+          permissions: true,
+        },
+      },
+    })[0];
+    if (!user) throw new NotFoundException(errors.NOT_FOUND('User'));
+    return user;
   }
 
   async getUserPermissions(userId: string) {
-    const user = await this.userRepository.find({
+    const user = (
+      await this.userRepository.find({
+        where: {
+          id: userId,
+        },
+        relations: {
+          role: {
+            permissions: true,
+          },
+        },
+      })
+    )[0];
+    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return user.role.permissions;
+  }
+
+  async attachRole(attachRoleInput: AttachRoleInput) {
+    const { userId, roleId } = attachRoleInput;
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException(errors.NOT_FOUND('User'));
+    const role = await this.roleRepository.findOneBy({ id: roleId });
+    if (!role) throw new NotFoundException(errors.NOT_FOUND('Role'));
+    try {
+      await this.userRepository.update(user.id, { role });
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_UPDATED('User'), {
+        cause: error,
+      });
+    }
+    return (
+      await this.userRepository.find({
+        where: {
+          id: userId,
+        },
+        relations: {
+          role: {
+            permissions: true,
+          },
+        },
+      })
+    )[0];
+  }
+
+  async updateUser(updateUserInput: UpdateUserInput, userId: string) {
+    const { name } = updateUserInput;
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    await this.userRepository.update(user.id, { name });
+    return await this.userRepository.find({
       where: {
         id: userId,
       },
@@ -138,9 +260,45 @@ export class AuthService {
           permissions: true,
         },
       },
-    });
-    if (!user[0]) throw new UnauthorizedException('User not found');
-    return user[0].role.permissions;
+    })[0];
   }
 
+  private async createAdminRole() {
+    const actions = Object.values(Action);
+    const permissions = Object.values(Resource).map((resource) => ({
+      resource,
+      actions,
+    }));
+    const name = 'admin';
+    const roleExist = await this.roleRepository.findOneBy({ name });
+    if (roleExist) await this.roleRepository.delete(roleExist.id);
+    const permission = permissions.map(
+      (permission) => new Permission(permission),
+    );
+    const role = await this.roleRepository.create(
+      new Role({ name, permissions: permission }),
+    );
+    return await this.roleRepository.save(role);
+  }
+
+  async onModuleInit() {
+    const adminLogin = this.configService.get('ADMIN_LOGIN');
+    const adminPassword = this.configService.get('ADMIN_PASSWORD');
+    if (!adminLogin || !adminPassword) return;
+    const admin = await this.userRepository.findOneBy({
+      login: adminLogin,
+    });
+    if (!admin) {
+      const adminUser = await this.createUser({
+        login: adminLogin,
+        password: adminPassword,
+        name: 'Admin',
+      });
+      if (!adminUser) return;
+      const adminRole = await this.createAdminRole();
+      if (!adminRole) return;
+      await this.attachRole({ userId: adminUser.id, roleId: adminRole.id });
+      this.logger.log('Admin created');
+    }
+  }
 }

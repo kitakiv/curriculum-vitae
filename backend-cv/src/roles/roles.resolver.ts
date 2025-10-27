@@ -1,34 +1,55 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
+import { UpdateRoleInput } from './dto/update-role.input';
+import { UseGuards } from '@nestjs/common';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { PermissionGuard } from 'src/decorators/permission.decorator';
+import { Resource } from './enums/resource.enum';
+import { Action } from './enums/action.enum';
 
+
+@UseGuards(AuthorizationGuard)
 @Resolver(() => Role)
 export class RolesResolver {
   constructor(private readonly rolesService: RolesService) {}
 
+
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.CREATE] }])
   @Mutation(() => Role)
-  async createRole(@Args('createRoleInput') createRoleInput: CreateRoleInput) {
+  async createRole(
+    @Args('createRoleInput', { type: () => CreateRoleInput })
+    createRoleInput: CreateRoleInput,
+  ) {
     return await this.rolesService.create(createRoleInput);
   }
 
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
   @Query(() => [Role], { name: 'roles' })
   async findAll() {
     return await this.rolesService.findAll();
   }
 
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
   @Query(() => Role, { name: 'role' })
-  async findOne(@Args('id', { type: () => String }) id: string) {
+  async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.findOne(id);
   }
 
-  // @Mutation(() => Role)
-  // updateRole(@Args('updateRoleInput') updateRoleInput: UpdateRoleInput) {
-  //   return this.rolesService.update(updateRoleInput.id, updateRoleInput);
-  // }
-
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.UPDATE] }])
   @Mutation(() => Role)
-  async removeRole(@Args('id', { type: () => String }) id: string) {
+  async updateRole(
+    @Args('updateRoleInput', { type: () => UpdateRoleInput })
+    updateRoleInput: UpdateRoleInput,
+  ) {
+    return this.rolesService.update(updateRoleInput.id, updateRoleInput);
+  }
+
+  
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.DELETE] }])
+  @Mutation(() => Role)
+  async removeRole(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.remove(id);
   }
 }

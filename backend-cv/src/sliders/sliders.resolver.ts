@@ -1,13 +1,20 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { SlidersService } from './sliders.service';
 import { Slider } from './entities/slider.entity';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
 import { SliderImageService } from './sliderImage.service';
 import { S3Service } from 'src/s3/s3.service';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { PermissionGuard } from 'src/decorators/permission.decorator';
+import { Action } from 'src/roles/enums/action.enum';
 import { Public } from 'src/decorators/public.decorator';
+import { errors } from 'src/errors/errors.config';
 
+
+@UseGuards(AuthorizationGuard)
 @Resolver(() => Slider)
 export class SlidersResolver {
   constructor(
@@ -16,6 +23,8 @@ export class SlidersResolver {
     private readonly s3Service: S3Service,
   ) {}
 
+
+  @PermissionGuard([{ resource: Resource.SLIDER, actions: [Action.CREATE] }])
   @Mutation(() => Slider)
   async createSlider(
     @Args('createSliderInput', { type: () => CreateSliderInput })
@@ -32,10 +41,12 @@ export class SlidersResolver {
 
   @Public()
   @Query(() => Slider, { name: 'slider' })
-  async findOne(@Args('id', { type: () => String }) id: string) {
+  async findOne(@Args('id', { type: () => ID }) id: string) {
     return this.slidersService.findOne(id);
   }
 
+
+  @PermissionGuard([{ resource: Resource.SLIDER, actions: [Action.UPDATE] }])
   @Mutation(() => Slider)
   async updateSlider(
     @Args('updateSliderInput', { type: () => UpdateSliderInput })
@@ -44,16 +55,21 @@ export class SlidersResolver {
     return this.slidersService.update(updateSliderInput.id, updateSliderInput);
   }
 
-  @Mutation(() => Slider)
-  async removeSlider(@Args('id', { type: () => String }) id: string) {
+  @PermissionGuard([{ resource: Resource.SLIDER, actions: [Action.DELETE] }])
+  @Mutation(() => ID)
+  async removeSlider(@Args('id', { type: () => ID }) id: string) {
     try {
       const key = await this.sliderImageService.getImageKey(id);
       await this.slidersService.remove(id);
       if (key) await this.s3Service.deleteFile(key);
     } catch (error) {
       console.log(error);
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(errors.NOT_DELETED('Slider'), {
+        cause: error,
+      });
     }
-    return `Slider ${id} deleted`;
+    return {
+      id,
+    };
   }
 }

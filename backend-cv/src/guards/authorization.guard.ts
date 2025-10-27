@@ -42,22 +42,24 @@ export class AuthorizationGuard implements CanActivate {
       const userPermission = await this.authService.getUserPermissions(
         request['userId'],
       );
+      console.log(requiredRoutePermissions);
       for (const routePermission of requiredRoutePermissions) {
         const userHasPermission = userPermission.find(
           (permission) => routePermission.resource === permission.resource,
         );
+        console.log(userHasPermission);
         if (!userHasPermission) throw new ForbiddenException();
 
         const allActionsAvailable = routePermission.actions.every((action) => {
           return userHasPermission.actions.includes(action);
         });
-
+        console.log(allActionsAvailable);
         if (!allActionsAvailable) throw new ForbiddenException();
       }
       return true;
     } catch (error) {
       this.logger.error(error.message);
-      throw new ForbiddenException();
+      throw new ForbiddenException(error.message);
     }
   }
 }

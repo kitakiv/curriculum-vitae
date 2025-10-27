@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRoleInput } from './dto/create-role.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
+import { UpdateRoleInput } from './dto/update-role.input';
+import { errors } from 'src/errors/errors.config';
 
 @Injectable()
 export class RolesService {
@@ -18,29 +24,60 @@ export class RolesService {
     const permission = permissions.map(
       (permission) => new Permission(permission),
     );
-    const role = await this.roleRepository.create(
-      new Role({ name, permissions: permission }),
-    );
-    return await this.roleRepository.save(role);
+    try {
+      const role = await this.roleRepository.create(
+        new Role({ name, permissions: permission }),
+      );
+      return await this.roleRepository.save(role);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_CREATED('Role'), {
+        cause: error,
+      });
+    }
   }
 
   async findAll() {
-    return await this.roleRepository.find();
+    return await this.roleRepository.find({
+      relations: {
+        permissions: true,
+      },
+    });
   }
 
   async findOne(id: string) {
-    const exist = await this.roleRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Role not found');
-    return await this.roleRepository.findOneBy({ id });
+    const role = await this.roleRepository.findOne({
+      where: { id },
+      relations: {
+        permissions: true,
+      },
+    });
+    if (!role) throw new NotFoundException(errors.NOT_FOUND('Role'));
+    return role;
   }
 
-  // update(id: number, updateRoleInput: UpdateRoleInput) {
-  //   return `This action updates a #${id} role`;
-  // }
+  async update(id: string, updateRoleInput: UpdateRoleInput) {
+    const exist = await this.roleRepository.existsBy({ id });
+    if (!exist) throw new NotFoundException('Role not found');
+    if (updateRoleInput.permissions) {
+      const permissions = updateRoleInput.permissions.map(
+        (permission) => new Permission(permission),
+      );
+      updateRoleInput.permissions = permissions;
+    }
+    try {
+      await this.roleRepository.update(id, updateRoleInput);
+      return await this.findOne(id);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_UPDATED('Role'), {
+        cause: error,
+      });
+    }
+  }
 
   async remove(id: string) {
     const exist = await this.roleRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Role not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Role'));
     return await this.roleRepository.delete(id);
   }
 }

@@ -13,10 +13,12 @@ import { ProjectsImageService } from 'src/projects/projectsImage.service';
 import { Project } from 'src/projects/entities/project.entity';
 import { Profile } from 'src/profile/entities/profile.entity';
 import { ProfileImageService } from 'src/profile/profileImage.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Contact, Slider, TechStack, Project, Profile]),
+    AuthModule
   ],
   controllers: [UploadController],
   providers: [

@@ -2,7 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input ChangePasswordDto {
+input AttachRoleInput {
+  roleId: String!
+  userId: String!
+}
+
+input ChangePasswordInput {
   newPassword: String!
   oldPassword: String!
 }
@@ -50,29 +55,31 @@ input CreateTechStackInput {
   techSvg: String
 }
 
-input LoginDto {
+input LoginInput {
   login: String!
   password: String!
 }
 
 type Mutation {
-  changePassword(changePasswordDto: ChangePasswordDto!): User!
+  attachRole(attachRoleInput: AttachRoleInput!): User!
+  changePassword(changePasswordInput: ChangePasswordInput!): User!
   createContact(createContactInput: CreateContactInput!): Contact!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createRole(createRoleInput: CreateRoleInput!): Role!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
-  login(loginDto: LoginDto!): Sing!
-  refreshToken(refreshTokenDto: RefreshTokenDto!): Sing!
-  removeContact(id: String!): Contact!
-  removeProject(id: ID!): Project!
-  removeRole(id: String!): Role!
-  removeSlider(id: String!): Slider!
-  removeTechStack(id: ID!): TechStack!
-  singup(singUpDto: SingUpDto!): User!
+  login(loginInput: LoginInput!): Sing!
+  refreshToken(refreshTokenInput: RefreshTokenInput!): Sing!
+  removeContact(id: ID!): ID!
+  removeProject(id: ID!): ID!
+  removeRole(id: ID!): Role!
+  removeSlider(id: ID!): ID!
+  removeTechStack(id: ID!): ID!
+  singup(singUpInput: SingUpInput!): Sing!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
   updateTechStack(UpdateTechStackInput: UpdateTechStackInput!): TechStack!
 }
@@ -106,14 +113,14 @@ type Project {
 }
 
 type Query {
-  contact(id: String!): Contact!
+  contact(id: ID!): Contact!
   contacts: [Contact!]!
   profile: Profile!
   project(id: ID!): Project!
   projects: [Project!]!
-  role(id: String!): Role!
+  role(id: ID!): Role!
   roles: [Role!]!
-  slider(id: String!): Slider!
+  slider(id: ID!): Slider!
   sliders: [Slider!]!
   techstack(id: ID!): TechStack!
   techstacks: [TechStack!]!
@@ -127,7 +134,7 @@ type RefreshToken {
   token: String!
 }
 
-input RefreshTokenDto {
+input RefreshTokenInput {
   refreshToken: String!
 }
 
@@ -143,7 +150,7 @@ type Sing {
   refreshToken: String!
 }
 
-input SingUpDto {
+input SingUpInput {
   login: String!
   name: String!
   password: String!
@@ -166,7 +173,7 @@ input UpdateContactInput {
   contactLink: String
   contactName: String
   contactSvg: String
-  id: String!
+  id: ID!
 }
 
 input UpdateProfileInput {
@@ -189,6 +196,12 @@ input UpdateProjectInput {
   techStacks: [String!]
 }
 
+input UpdateRoleInput {
+  id: ID!
+  name: String
+  permissions: [CreatePermissionInput!]
+}
+
 input UpdateSliderInput {
   id: ID!
   sliderImage: String
@@ -203,6 +216,7 @@ input UpdateTechStackInput {
 }
 
 type User {
+  id: ID!
   login: String!
   name: String!
   refreshToken: RefreshToken!

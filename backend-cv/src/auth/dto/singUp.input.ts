@@ -8,7 +8,7 @@ import {
   Matches,
 } from 'class-validator';
 @InputType()
-export class SingUpDto {
+export class SingUpInput {
   @Field(() => String)
   @IsEmail()
   @IsNotEmpty()
@@ -18,6 +18,7 @@ export class SingUpDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
+  @Matches(/^[a-zA-Z]*$/)
   name: string;
 
   @Field(() => String)
@@ -38,5 +39,4 @@ export class SingUpDto {
     message: 'Password must contain at least one special character',
   })
   password: string;
-
 }

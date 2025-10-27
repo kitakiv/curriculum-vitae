@@ -5,9 +5,10 @@ import { TechStack } from './entities/techstack.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TechStackImageService } from './tachstackImage.service';
 import { S3Service } from 'src/s3/s3.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TechStack])],
+  imports: [TypeOrmModule.forFeature([TechStack]), AuthModule],
   providers: [
     TechStackResolver,
     TechStackService,

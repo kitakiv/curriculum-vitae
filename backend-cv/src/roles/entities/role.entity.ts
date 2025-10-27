@@ -10,7 +10,7 @@ export class Role extends AbstractEntity<Role> {
   id: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Field(() => [User], { nullable: true })

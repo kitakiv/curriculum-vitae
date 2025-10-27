@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { TechStack } from 'src/techstack/entities/techstack.entity';
+import { errors } from 'src/errors/errors.config';
 
 @Injectable()
 export class ProjectsService {
@@ -20,14 +21,22 @@ export class ProjectsService {
       const techStack = await this.techStackRepository.findOneBy({
         id: techId,
       });
-      if (!techStack) throw new Error('TechStack not found');
+      if (!techStack)
+        throw new NotFoundException(errors.NOT_FOUND('TechStack'));
       return techStack;
     });
-    const project = new Project({
-      ...createProjectInput,
-      techStacks: await Promise.all(techStacks),
-    });
-    return await this.projectsRepository.save(project);
+    try {
+      const project = this.projectsRepository.create({
+        ...createProjectInput,
+        techStacks: await Promise.all(techStacks),
+      });
+      return await this.projectsRepository.save(project);
+    } catch (error) {
+      console.log(error);
+      throw new NotFoundException(errors.NOT_CREATED('Project'), {
+        cause: error,
+      });
+    }
   }
 
   async findAll() {
@@ -39,24 +48,40 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const exits = await this.projectsRepository.existsBy({ id });
-    if (!exits) throw new Error('Project not found');
-    return await this.projectsRepository.find({
+    const project = await this.projectsRepository.find({
       where: { id },
       relations: {
         techStacks: true,
       },
     });
+    if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
+    return project[0];
   }
 
   async update(id: string, updateProjectInput: UpdateProjectInput) {
-    const exist = await this.projectsRepository.existsBy({ id });
-    if (!exist) throw new Error('Project not found');
+    const project = await this.projectsRepository.findOneBy({ id });
+    if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
+    // if techStacks is null
+    if (!updateProjectInput.techStacks) {
+      try {
+        await this.projectsRepository.update(id, {
+          ...updateProjectInput,
+          techStacks: project.techStacks,
+        });
+      } catch (error) {
+        console.log(error);
+        throw new NotFoundException(errors.NOT_UPDATED('Project'), {
+          cause: error,
+        });
+      }
+      return await this.projectsRepository.findOneBy({ id });
+    }
     const techStacks = updateProjectInput.techStacks.map(async (techId) => {
       const techStack = await this.techStackRepository.findOneBy({
         id: techId,
       });
-      if (!techStack) throw new Error('TechStack not found');
+      if (!techStack)
+        throw new NotFoundException(errors.NOT_FOUND('TechStack'));
       return techStack;
     });
     return await this.projectsRepository.update(id, {
@@ -67,8 +92,8 @@ export class ProjectsService {
 
   async remove(id: string) {
     const exist = await this.projectsRepository.existsBy({ id });
-    if (!exist) throw new Error('Project not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
     await this.projectsRepository.delete(id);
-    return `Project ${id} deleted`;
+    return { id };
   }
 }

@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from './entities/profile.entity';
 import { Repository } from 'typeorm';
+import { errors } from 'src/errors/errors.config';
 
 @Injectable()
 export class ProfileService {
-
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
@@ -20,15 +20,23 @@ export class ProfileService {
     return profile;
   }
 
-
   async update(updateProfileInput: UpdateProfileInput) {
-    const profile = await this.profileRepository.findOneBy({});
-    if (!profile) {
-      await this.createDefaultProfile();
+    try {
+      let profile = await this.profileRepository.findOneBy({});
+      if (!profile) {
+        profile = await this.createDefaultProfile(); // Assign the created profile
+      }
+      await this.profileRepository.update(profile.id, {
+        name: profile.name,
+        ...updateProfileInput,
+      });
+      return await this.profileRepository.findOneBy({ id: profile.id });
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Profile'), {
+        cause: error,
+      });
     }
-    console.log(profile.id);
-    await this.profileRepository.update({ id: profile.id }, updateProfileInput);
-    return await this.profileRepository.findOneBy({ id: profile.id });
   }
 
   async createDefaultProfile() {

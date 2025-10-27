@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsString,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 import { Action } from 'src/roles/enums/action.enum';
@@ -15,6 +16,7 @@ export class CreateRoleInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
+  @MinLength(3)
   name: string;
 
   @ValidateNested()

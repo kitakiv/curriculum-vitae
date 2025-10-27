@@ -31,20 +31,25 @@ export class UploadService {
     id,
     file,
     service,
+    index,
   }: {
     id: string;
     file: Express.Multer.File;
     service: string;
+    index?: number;
   }) {
+    let keyOfImage: string = id;
+    if (index) keyOfImage = `${id}-${index}`;
     const serviceInstance = this.services[service];
     if (!serviceInstance) throw new BadRequestException('Service not found');
-    const exist = await serviceInstance.getImageKey(id);
+    const exist = await serviceInstance.getImageKey(keyOfImage);
     if (exist) await this.s3Service.deleteFile(exist);
     const url = await this.s3Service.uploadFile(
       file,
-      `${id}.${file.mimetype.split('/')[1]}`,
+      `${keyOfImage}.${file.mimetype.split('/')[1]}`,
     );
     if (!url) throw new BadRequestException('Upload failed');
+    if (index) return await serviceInstance.uploadImages({ id, images: [url]}); // todo dont delete all keys
     return await serviceInstance.uploadImage({ id, image: url });
   }
 

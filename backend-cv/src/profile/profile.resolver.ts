@@ -14,7 +14,7 @@ import { Action } from 'src/roles/enums/action.enum';
 export class ProfileResolver {
   constructor(private readonly profileService: ProfileService) {}
 
-  @PermissionGuard({ resource: Resource.PROFILE, actions: [Action.UPDATE] })
+  @PermissionGuard([{ resource: Resource.PROFILE, actions: [Action.UPDATE] }])
   @Mutation(() => Profile)
   async updateProfile(
     @Args('updateProfileInput', { type: () => UpdateProfileInput })

@@ -6,8 +6,9 @@ import { Project } from './entities/project.entity';
 import { TechStack } from 'src/techstack/entities/techstack.entity';
 import { ProjectsImageService } from './projectsImage.service';
 import { S3Service } from 'src/s3/s3.service';
+import { AuthModule } from 'src/auth/auth.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([Project, TechStack])],
+  imports: [TypeOrmModule.forFeature([Project, TechStack]), AuthModule],
   providers: [
     ProjectsResolver,
     ProjectsService,

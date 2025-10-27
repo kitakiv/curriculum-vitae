@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
+import { errors } from 'src/errors/errors.config';
+import { NotFound } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class TechStackService {
@@ -12,11 +14,18 @@ export class TechStackService {
     private readonly techStackRepository: Repository<TechStack>,
   ) {}
   async create(createTechStackInput: CreateTechStackInput) {
-    const techStack = await this.techStackRepository.create(
-      new TechStack(createTechStackInput),
-    );
-    await this.techStackRepository.save(techStack);
-    return techStack;
+    try {
+      const techStack = await this.techStackRepository.create(
+        new TechStack(createTechStackInput),
+      );
+      await this.techStackRepository.save(techStack);
+      return techStack;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_CREATED('TechStack'), {
+        cause: error,
+      });
+    }
   }
 
   async findAll() {
@@ -25,19 +34,27 @@ export class TechStackService {
 
   async findOne(id: string) {
     const exist = await this.techStackRepository.existsBy({ id });
-    if (!exist) throw new Error('TechStack not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     return await this.techStackRepository.findOneBy({ id });
   }
 
   async update(id: string, updateTechStackInput: UpdateTechStackInput) {
     const exist = await this.techStackRepository.existsBy({ id });
-    if (!exist) throw new Error('TechStack not found');
-    return await this.techStackRepository.update(id, updateTechStackInput);
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
+    try {
+      await this.techStackRepository.update(id, updateTechStackInput);
+      return await this.findOne(id);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_UPDATED('TechStack'), {
+        cause: error,
+      });
+    }
   }
   async remove(id: string) {
     const exist = await this.techStackRepository.existsBy({ id });
-    if (!exist) throw new Error('TechStack not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     await this.techStackRepository.delete(id);
-    return `TechStack ${id} deleted`;
+    return id;
   }
 }

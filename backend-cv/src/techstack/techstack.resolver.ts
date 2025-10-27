@@ -5,9 +5,16 @@ import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
 import { S3Service } from 'src/s3/s3.service';
 import { TechStackImageService } from './tachstackImage.service';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Public } from 'src/decorators/public.decorator';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Action } from 'src/roles/enums/action.enum';
+import { PermissionGuard } from 'src/decorators/permission.decorator';
+import { errors } from 'src/errors/errors.config';
 
+
+@UseGuards(AuthorizationGuard)
 @Resolver(() => TechStack)
 export class TechStackResolver {
   constructor(
@@ -16,6 +23,8 @@ export class TechStackResolver {
     private readonly techStackImageService: TechStackImageService,
   ) {}
 
+
+  @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.CREATE] }])
   @Mutation(() => TechStack)
   async createTechStack(
     @Args('CreateTechStackInput', { type: () => CreateTechStackInput })
@@ -36,6 +45,7 @@ export class TechStackResolver {
     return await this.techStackService.findOne(id);
   }
 
+  @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.UPDATE] }])
   @Mutation(() => TechStack)
   async updateTechStack(
     @Args('UpdateTechStackInput', { type: () => UpdateTechStackInput })
@@ -47,7 +57,9 @@ export class TechStackResolver {
     );
   }
 
-  @Mutation(() => TechStack)
+
+  @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.DELETE] }])
+  @Mutation(() => ID)
   async removeTechStack(@Args('id', { type: () => ID }) id: string) {
     try {
       const key = await this.techStackImageService.getImageKey(id);
@@ -55,8 +67,10 @@ export class TechStackResolver {
       if (key) await this.s3Service.deleteFile(key);
     } catch (error) {
       console.log(error);
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(errors.NOT_DELETED('TechStack'), {
+        cause: error,
+      });
     }
-    return `TechStack ${id} deleted`;
+    return { id };
   }
 }

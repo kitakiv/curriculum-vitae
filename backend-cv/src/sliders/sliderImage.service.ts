@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from 'src/variables/upload.variables';
-
+import { errors } from 'src/errors/errors.config';
 @Injectable()
 export class SliderImageService {
   public name: string;
@@ -15,14 +19,21 @@ export class SliderImageService {
   }
   async uploadImage({ id, image }: { id: string; image: string }) {
     const exist = await this.slidersRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Slider not found');
-    await this.slidersRepository.update(id, { sliderImage: image });
-    return { id, sliderImage: image };
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Slider'));
+    try {
+      await this.slidersRepository.update(id, { sliderImage: image });
+      return { id, sliderImage: image };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Slider'), {
+        cause: error,
+      });
+    }
   }
 
   async getImageKey(id: string) {
     const exist = await this.slidersRepository.existsBy({ id });
-    if (!exist) throw new BadRequestException('Slider not found');
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('Slider'));
     const slider = await this.slidersRepository.findOneBy({ id });
     if (slider.sliderImage) {
       return decodeURIComponent(slider.sliderImage.split(`/`).at(-1));
@@ -30,4 +41,3 @@ export class SliderImageService {
     return null;
   }
 }
-

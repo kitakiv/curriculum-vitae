@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Slider } from './entities/slider.entity';
 import { SliderImageService } from './sliderImage.service';
 import { S3Service } from 'src/s3/s3.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Slider])],
+  imports: [TypeOrmModule.forFeature([Slider]), AuthModule],
   providers: [SlidersResolver, SlidersService, SliderImageService, S3Service],
 })
 export class SlidersModule {}

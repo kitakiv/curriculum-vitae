@@ -8,7 +8,7 @@ import {
   Matches,
 } from 'class-validator';
 @InputType()
-export class LoginDto {
+export class LoginInput {
   @Field(() => String)
   @IsEmail()
   @IsNotEmpty()

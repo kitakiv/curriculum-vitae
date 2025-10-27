@@ -1,7 +1,6 @@
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { AbstractEntity } from 'src/database/abstract.entity';
-import { Action } from 'src/roles/enums/action.enum';
 import { Resource } from 'src/roles/enums/resource.enum';
 import { Role } from './role.entity';
 @ObjectType()
@@ -19,6 +18,9 @@ export class Permission extends AbstractEntity<Permission> {
   actions: string[];
 
   @Field(() => Role)
-  @ManyToOne(() => Role, (role) => role.permissions)
+  @ManyToOne(() => Role, (role) => role.permissions, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   role: Role;
 }

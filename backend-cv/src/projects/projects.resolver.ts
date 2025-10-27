@@ -5,9 +5,15 @@ import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { S3Service } from 'src/s3/s3.service';
 import { ProjectsImageService } from './projectsImage.service';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Public } from 'src/decorators/public.decorator';
+import { AuthorizationGuard } from 'src/guards/authorization.guard';
+import { PermissionGuard } from 'src/decorators/permission.decorator';
+import { Resource } from 'src/roles/enums/resource.enum';
+import { Action } from 'src/roles/enums/action.enum';
+import { errors } from 'src/errors/errors.config';
 
+@UseGuards(AuthorizationGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
   constructor(
@@ -16,6 +22,8 @@ export class ProjectsResolver {
     private readonly projectsImageService: ProjectsImageService,
   ) {}
 
+
+  @PermissionGuard([{ resource: Resource.PROJECT, actions: [Action.CREATE] }])
   @Mutation(() => Project)
   async createProject(
     @Args('createProjectInput', { type: () => CreateProjectInput })
@@ -36,6 +44,8 @@ export class ProjectsResolver {
     return await this.projectsService.findOne(id);
   }
 
+
+  @PermissionGuard([{ resource: Resource.PROJECT, actions: [Action.UPDATE] }])
   @Mutation(() => Project)
   async updateProject(
     @Args('updateProjectInput', { type: () => UpdateProjectInput })
@@ -47,7 +57,9 @@ export class ProjectsResolver {
     );
   }
 
-  @Mutation(() => Project)
+
+  @PermissionGuard([{ resource: Resource.PROJECT, actions: [Action.DELETE] }])
+  @Mutation(() => ID)
   async removeProject(@Args('id', { type: () => ID }) id: string) {
     try {
       const keys = await this.projectsImageService.getImageKeys(id);
@@ -57,8 +69,10 @@ export class ProjectsResolver {
       }
     } catch (error) {
       console.log(error);
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(errors.NOT_DELETED('Project'), {
+        cause: error,
+      });
     }
-    return { id, projectImages: [] as string[] };
+    return { id };
   }
 }
