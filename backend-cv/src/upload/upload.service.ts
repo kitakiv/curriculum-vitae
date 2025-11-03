@@ -49,10 +49,10 @@ export class UploadService {
       `${keyOfImage}.${file.mimetype.split('/')[1]}`,
     );
     if (!url) throw new BadRequestException('Upload failed');
-    if (index) return await serviceInstance.uploadImages({ id, images: [url]}); // todo dont delete all keys
+    if (index)
+      return await serviceInstance.uploadImageIndex({ id, index, url });
     return await serviceInstance.uploadImage({ id, image: url });
   }
-
   async uploadFiles({
     files,
     service,
@@ -65,7 +65,6 @@ export class UploadService {
     const serviceInstance = this.services[service];
     if (!serviceInstance) throw new BadRequestException('Service not found');
     const keys = await serviceInstance.getImageKeys(id);
-    console.log(keys);
     if (keys) await this.s3Service.deleteFiles(keys);
     const urls = await this.s3Service.uploadFiles(files, id);
     return await serviceInstance.uploadImages({ id, images: urls });

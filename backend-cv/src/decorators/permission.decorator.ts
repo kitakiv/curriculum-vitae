@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { CreatePermissionInput } from 'src/roles/dto/create-role.input';
+import { CreatePermissionInput } from '../roles/dto/create-role.input';
 
 
 export const IS_PERMISSION_KEY = 'permissions';

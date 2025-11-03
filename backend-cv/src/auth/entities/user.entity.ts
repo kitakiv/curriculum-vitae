@@ -1,8 +1,8 @@
 import { Entity, Column, OneToOne, ManyToOne } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { AbstractEntity } from 'src/database/abstract.entity';
+import { AbstractEntity } from '../../database/abstract.entity';
 import { RefreshToken } from './refreshToken.entity';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 @ObjectType()
 @Entity()

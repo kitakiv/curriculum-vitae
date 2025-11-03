@@ -18,15 +18,15 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './entities/refreshToken.entity';
 import { v4 as uuid } from 'uuid';
 import { ChangePasswordInput } from './dto/changePassword.input';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from '../roles/entities/role.entity';
 import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { ConfigService } from '@nestjs/config';
-import { Action } from 'src/roles/enums/action.enum';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { Permission } from 'src/roles/entities/permission.entity';
-import { errors } from 'src/errors/errors.config';
-import { expiryDate } from 'src/common/constants';
+import { Action } from '../roles/enums/action.enum';
+import { Resource } from '../roles/enums/resource.enum';
+import { Permission } from '../roles/entities/permission.entity';
+import { errors } from '../errors/errors.config';
+import { expiryDate } from '../common/constants';
 
 @Injectable()
 export class AuthService implements OnModuleInit {

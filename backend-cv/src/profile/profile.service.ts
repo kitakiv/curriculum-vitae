@@ -3,7 +3,7 @@ import { UpdateProfileInput } from './dto/update-profile.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from './entities/profile.entity';
 import { Repository } from 'typeorm';
-import { errors } from 'src/errors/errors.config';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class ProfileService {

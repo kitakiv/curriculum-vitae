@@ -23,6 +23,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesModule } from './roles/roles.module';
 import { LoggerMiddleware } from './middleware/custorm.middleware';
+import { days, ThrottlerModule } from '@nestjs/throttler';
+import { GqlThrottlerGuard } from './guards/rate.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -47,6 +49,14 @@ import { LoggerMiddleware } from './middleware/custorm.middleware';
       sortSchema: true,
       playground: true,
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: days(1),
+          limit: 1000,
+        },
+      ],
+    }),
     DatabaseModule,
     SlidersModule,
     ProjectsModule,
@@ -61,8 +71,12 @@ import { LoggerMiddleware } from './middleware/custorm.middleware';
     Logger,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useExisting: AuthGuard,
     },
+    {
+      provide: APP_GUARD,
+      useExisting: GqlThrottlerGuard,
+    }
   ],
 })
 export class AppModule implements NestModule {

@@ -6,8 +6,8 @@ import {
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import uploadVariables from 'src/variables/upload.variables';
-import { errors } from 'src/errors/errors.config';
+import uploadVariables from '../variables/upload.variables';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class ProfileImageService {
@@ -24,6 +24,32 @@ export class ProfileImageService {
     try {
       await this.profileRepository.update(id, { profilePhotos: images });
       return { id, profilePhotos: images };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Profile'), {
+        cause: error,
+      });
+    }
+  }
+
+  async uploadImageIndex({
+    id,
+    index,
+    url,
+  }: {
+    id: string;
+    index: number;
+    url: string;
+  }) {
+    const profile = await this.profileRepository.findOneBy({ id });
+    if (!profile) throw new NotFoundException(errors.NOT_FOUND('Profile'));
+    const images = profile.profilePhotos || [];
+    const filterImages = images.filter((image) => {
+      return !image.includes(`${id}-${index}`);
+    });
+    filterImages.push(url);
+    try {
+      await this.profileRepository.update(id, { profilePhotos: filterImages });
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('Profile'), {

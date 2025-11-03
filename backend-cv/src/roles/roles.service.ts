@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { UpdateRoleInput } from './dto/update-role.input';
-import { errors } from 'src/errors/errors.config';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class RolesService {

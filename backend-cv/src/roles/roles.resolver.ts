@@ -4,8 +4,8 @@ import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { UseGuards } from '@nestjs/common';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from './enums/resource.enum';
 import { Action } from './enums/action.enum';
 

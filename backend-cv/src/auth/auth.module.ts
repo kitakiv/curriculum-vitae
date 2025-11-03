@@ -4,7 +4,7 @@ import { AuthResolver } from './auth.resolver';
 import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refreshToken.entity';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from '../roles/entities/role.entity';
 import { Logger } from '@nestjs/common';
 
 @Module({

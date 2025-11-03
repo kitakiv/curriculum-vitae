@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Logger } from '@nestjs/common';
-import { IS_PERMISSION_KEY } from 'src/decorators/permission.decorator';
+import { IS_PERMISSION_KEY } from '../decorators/permission.decorator';
 import { Reflector } from '@nestjs/core';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {

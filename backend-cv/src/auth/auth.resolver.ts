@@ -9,10 +9,10 @@ import { Public } from '../decorators/public.decorator';
 import { ExecutionContext, UseGuards } from '@nestjs/common';
 import { ChangePasswordInput } from './dto/changePassword.input';
 import { AttachRoleInput } from './dto/attachRole.input';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { Action } from 'src/roles/enums/action.enum';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { PermissionGuard } from '../decorators/permission.decorator';
+import { Resource } from '../roles/enums/resource.enum';
+import { Action } from '../roles/enums/action.enum';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
