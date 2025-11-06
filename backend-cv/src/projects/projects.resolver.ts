@@ -3,15 +3,15 @@ import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from '../s3/s3.service';
 import { ProjectsImageService } from './projectsImage.service';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { Public } from 'src/decorators/public.decorator';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { Action } from 'src/roles/enums/action.enum';
-import { errors } from 'src/errors/errors.config';
+import { Public } from '../decorators/public.decorator';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { PermissionGuard } from '../decorators/permission.decorator';
+import { Resource } from '../roles/enums/resource.enum';
+import { Action } from '../roles/enums/action.enum';
+import { errors } from '../errors/errors.config';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Project)

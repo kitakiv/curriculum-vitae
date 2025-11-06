@@ -7,7 +7,6 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 
-
 @Injectable()
 export class S3Service {
   private s3Client: S3Client;

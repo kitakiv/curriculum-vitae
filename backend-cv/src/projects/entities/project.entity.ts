@@ -1,7 +1,7 @@
 import { Entity, Column, JoinTable, ManyToMany } from 'typeorm';
-import { AbstractEntity } from 'src/database/abstract.entity';
+import { AbstractEntity } from '../../database/abstract.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { TechStack } from 'src/techstack/entities/techstack.entity';
+import { TechStack } from '../../techstack/entities/techstack.entity';
 
 @ObjectType()
 @Entity()

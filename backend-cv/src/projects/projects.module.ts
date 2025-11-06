@@ -3,10 +3,10 @@ import { ProjectsService } from './projects.service';
 import { ProjectsResolver } from './projects.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { TechStack } from 'src/techstack/entities/techstack.entity';
+import { TechStack } from '../techstack/entities/techstack.entity';
 import { ProjectsImageService } from './projectsImage.service';
-import { S3Service } from 'src/s3/s3.service';
-import { AuthModule } from 'src/auth/auth.module';
+import { S3Service } from '../s3/s3.service';
+import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Project, TechStack]), AuthModule],
   providers: [

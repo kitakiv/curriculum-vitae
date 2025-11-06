@@ -3,9 +3,9 @@ import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
-import { TechStack } from 'src/techstack/entities/techstack.entity';
-import { errors } from 'src/errors/errors.config';
+import { Repository } from 'typeorm';
+import { TechStack } from '../techstack/entities/techstack.entity';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class ProjectsService {

@@ -279,5 +279,30 @@ describe('ProfileResolver', () => {
         }),
       ).rejects.toThrow(BadRequestException);
     });
+
+    it('should throw BadRequestException for invalid phone number', async () => {
+      const invalidInput = new UpdateProfileInput();
+      invalidInput.name = 'Valid Name';
+      invalidInput.phone = 'invalid-phone'; // Invalid phone number format
+
+      // Create validation pipe instance
+      const validationPipe = new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      });
+
+      // Manually validate the input
+      await expect(
+        validationPipe.transform(invalidInput, {
+          type: 'body',
+          metatype: UpdateProfileInput,
+        }),
+      )
+        .rejects.toThrow(BadRequestException)
+        .catch((error) => {
+          expect(error.message).toBe('phone must be a phone number string');
+        });
+    });
   });
 });

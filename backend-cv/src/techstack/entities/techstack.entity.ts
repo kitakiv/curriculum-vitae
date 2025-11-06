@@ -1,7 +1,7 @@
 import { Entity, Column } from 'typeorm';
-import { AbstractEntity } from 'src/database/abstract.entity';
+import { AbstractEntity } from '../../database/abstract.entity';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { images as techVariables } from 'src/variables/image.variables';
+import { images as techVariables } from '../../variables/image.variables';
 
 @ObjectType()
 @Entity()
