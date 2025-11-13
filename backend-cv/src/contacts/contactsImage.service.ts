@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import uploadVariables from 'src/variables/upload.variables';
-import { errors } from 'src/errors/errors.config';
+import uploadVariables from '../variables/upload.variables';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class ContactsImageService {

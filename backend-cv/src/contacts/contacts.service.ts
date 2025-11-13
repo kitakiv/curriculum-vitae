@@ -8,7 +8,7 @@ import { UpdateContactInput } from './dto/update-contact.input';
 import { Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { errors } from 'src/errors/errors.config';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class ContactsService {

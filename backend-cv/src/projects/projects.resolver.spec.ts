@@ -20,7 +20,7 @@ import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { errors } from '../errors/errors.config';
 import { UUID } from 'typeorm/driver/mongodb/bson.typings';
-import { mock } from 'node:test';
+import * as uuid from 'uuid';
 
 const mockTechStack: TechStack = new TechStack({
   techName: 'test TechStack',
@@ -105,7 +105,6 @@ const mockAuthService = {
 describe('ProjectsResolver', () => {
   let resolver: ProjectsResolver;
   let service: ProjectsService;
-  // let authorizationGuard: AuthorizationGuard;
   let projectImageService: ProjectsImageService;
   let s3Service: S3Service;
   let authGuard: AuthGuard;
@@ -148,7 +147,6 @@ describe('ProjectsResolver', () => {
 
     resolver = module.get<ProjectsResolver>(ProjectsResolver);
     service = module.get<ProjectsService>(ProjectsService);
-    // authorizationGuard = module.get<AuthorizationGuard>(AuthorizationGuard);
     projectImageService =
       module.get<ProjectsImageService>(ProjectsImageService);
     s3Service = module.get<S3Service>(S3Service);
@@ -345,11 +343,13 @@ describe('ProjectsResolver', () => {
       expect(result).toEqual({ id });
       expect(service.remove).toHaveBeenCalledWith(id);
       expect(service.remove).toHaveBeenCalledTimes(1);
+      expect(projectImageService.getImageKeys).toHaveBeenCalledTimes(1);
 
       mockProjectImage.getImageKeys.mockResolvedValue(['key1', 'key2']);
       mockS3Service.deleteFiles.mockResolvedValue(true);
       await resolver.removeProject(id);
       expect(service.remove).toHaveBeenCalledTimes(2);
+      expect(projectImageService.getImageKeys).toHaveBeenCalledWith(id);
       expect(s3Service.deleteFiles).toHaveBeenCalledWith(['key1', 'key2']);
     });
 
@@ -391,7 +391,7 @@ describe('ProjectsResolver', () => {
       expect(result).toEqual(validInput);
 
       const validUpdateInput: UpdateProjectInput = {
-        id: mockProject.id,
+        id: uuid.v4(),
         projectTitle: 'updated title',
       };
 
