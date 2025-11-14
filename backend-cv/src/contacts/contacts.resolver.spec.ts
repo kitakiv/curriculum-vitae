@@ -11,12 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
 import { Action } from '../roles/enums/action.enum';
 import { Resource } from '../roles/enums/resource.enum';
-import {
-  BadRequestException,
-  ExecutionContext,
-  ValidationPipe,
-} from '@nestjs/common';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { CreateContactInput } from './dto/create-contact.input';
 import { UpdateContactInput } from './dto/update-contact.input';
 import { errors } from '../errors/errors.config';
