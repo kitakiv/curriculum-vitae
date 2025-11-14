@@ -1,7 +1,6 @@
 import { Entity, Column } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { AbstractEntity } from 'src/database/abstract.entity';
-import { images as sliderImage } from 'src/variables/image.variables';
+import { AbstractEntity } from '../../database/abstract.entity';
 
 @ObjectType()
 @Entity()

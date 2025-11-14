@@ -1,11 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
-import { errors } from 'src/errors/errors.config';
-import { NotFound } from '@aws-sdk/client-s3';
+import { errors } from '../errors/errors.config';
 
 @Injectable()
 export class TechStackService {
@@ -55,6 +58,6 @@ export class TechStackService {
     const exist = await this.techStackRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     await this.techStackRepository.delete(id);
-    return id;
+    return { id };
   }
 }

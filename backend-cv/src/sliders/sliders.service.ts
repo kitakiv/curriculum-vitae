@@ -8,7 +8,7 @@ import { UpdateSliderInput } from './dto/update-slider.input';
 import { Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { errors } from 'src/errors/errors.config';
+import { errors } from '../errors/errors.config';
 @Injectable()
 export class SlidersService {
   constructor(

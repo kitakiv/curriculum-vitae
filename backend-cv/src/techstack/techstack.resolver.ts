@@ -3,15 +3,15 @@ import { TechStackService } from './techstack.service';
 import { TechStack } from './entities/techstack.entity';
 import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from '../s3/s3.service';
 import { TechStackImageService } from './tachstackImage.service';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { Public } from 'src/decorators/public.decorator';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { Action } from 'src/roles/enums/action.enum';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
-import { errors } from 'src/errors/errors.config';
+import { Public } from '../decorators/public.decorator';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { Resource } from '../roles/enums/resource.enum';
+import { Action } from '../roles/enums/action.enum';
+import { PermissionGuard } from '../decorators/permission.decorator';
+import { errors } from '../errors/errors.config';
 
 
 @UseGuards(AuthorizationGuard)

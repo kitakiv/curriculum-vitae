@@ -4,14 +4,14 @@ import { Slider } from './entities/slider.entity';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
 import { SliderImageService } from './sliderImage.service';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from '../s3/s3.service';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
-import { Action } from 'src/roles/enums/action.enum';
-import { Public } from 'src/decorators/public.decorator';
-import { errors } from 'src/errors/errors.config';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { Resource } from '../roles/enums/resource.enum';
+import { PermissionGuard } from '../decorators/permission.decorator';
+import { Action } from '../roles/enums/action.enum';
+import { Public } from '../decorators/public.decorator';
+import { errors } from '../errors/errors.config';
 
 
 @UseGuards(AuthorizationGuard)
