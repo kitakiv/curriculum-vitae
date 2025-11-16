@@ -8,8 +8,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { Action } from 'src/roles/enums/action.enum';
-import { Resource } from 'src/roles/enums/resource.enum';
+import { Action } from '../enums/action.enum';
+import { Resource } from '../enums/resource.enum';
 
 @InputType()
 export class CreateRoleInput {
