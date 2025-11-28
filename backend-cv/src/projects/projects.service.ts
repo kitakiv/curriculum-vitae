@@ -48,14 +48,14 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const project = await this.projectsRepository.find({
+    const project = await this.projectsRepository.findOne({
       where: { id },
       relations: {
         techStacks: true,
       },
     });
     if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
-    return project[0];
+    return project;
   }
 
   async update(id: string, updateProjectInput: UpdateProjectInput) {
