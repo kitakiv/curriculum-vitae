@@ -44,12 +44,13 @@ export class ProfileImageService {
     const profile = await this.profileRepository.findOneBy({ id });
     if (!profile) throw new NotFoundException(errors.NOT_FOUND('Profile'));
     const images = profile.profilePhotos || [];
-    const filterImages = images.filter((image) => {
-      return !image.includes(`${id}-${index}`);
-    });
+    const filterImages = images.filter(
+      (image) => !image.includes(`${id}-${index}`),
+    );
     filterImages.push(url);
     try {
       await this.profileRepository.update(id, { profilePhotos: filterImages });
+      return { id, profilePhotos: filterImages };
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('Profile'), {
@@ -64,11 +65,12 @@ export class ProfileImageService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Profile'));
     const profile = await this.profileRepository.findOneBy({ id: profileId });
     if (profile.profilePhotos) {
-      profile.profilePhotos.forEach((image) => {
-        if (image.includes(id)) {
-          return decodeURIComponent(image.split(`/`).at(-1));
-        }
-      });
+      const foundImage = profile.profilePhotos.find((image) =>
+        image.includes(id),
+      );
+      if (foundImage) {
+        return decodeURIComponent(foundImage.split(`/`).at(-1));
+      }
     }
     return null;
   }

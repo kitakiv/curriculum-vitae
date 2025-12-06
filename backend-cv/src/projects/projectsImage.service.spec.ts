@@ -161,10 +161,7 @@ describe('ProjectsImageService', () => {
   describe('getImageKey', () => {
     it('should return key of image', async () => {
       mockProjectsRepository.existsBy.mockResolvedValue(true);
-      mockProjectsRepository.findOneBy.mockResolvedValue({
-        ...mockProject,
-        projectImages: [`https://image/${mockUuid}-1.jpg`],
-      });
+      mockProjectsRepository.findOneBy.mockResolvedValue(mockProject);
       const id = `${mockUuid}-1`;
       const expectedResult = mockProject.projectImages[0].split('/').at(-1);
       const result = await serviceImage.getImageKey(id);

@@ -22,10 +22,10 @@ export class ContactsImageService {
     const exist = await this.contactsRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
     try {
-      const contact = await this.contactsRepository.update(id, {
+      await this.contactsRepository.update(id, {
         contactSvg: image,
       });
-      return contact;
+      return { contactSvg: image, id };
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('Contact'), {
@@ -44,4 +44,3 @@ export class ContactsImageService {
     return null;
   }
 }
-

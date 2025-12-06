@@ -23,13 +23,13 @@ export class ProjectsImageService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
     try {
       await this.projectsRepository.update(id, { projectImages: images });
+      return { id, projectImages: images };
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('Project'), {
         cause: error,
       });
     }
-    return { id, projectImages: images };
   }
 
   async uploadImageIndex({
@@ -50,6 +50,7 @@ export class ProjectsImageService {
     filterImages.push(url);
     try {
       await this.projectsRepository.update(id, { projectImages: filterImages });
+      return { id, projectImages: filterImages };
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('Project'), {
@@ -64,11 +65,12 @@ export class ProjectsImageService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
     const project = await this.projectsRepository.findOneBy({ id: projectId });
     if (project.projectImages) {
-      project.projectImages.forEach((image) => {
-        if (image.includes(id)) {
-          return decodeURIComponent(image.split(`/`).at(-1));
-        }
-      });
+      const foundImage = project.projectImages.find((image) =>
+        image.includes(id),
+      );
+      if (foundImage) {
+        return decodeURIComponent(foundImage.split(`/`).at(-1));
+      }
     }
     return null;
   }
@@ -85,4 +87,3 @@ export class ProjectsImageService {
     return null;
   }
 }
-
