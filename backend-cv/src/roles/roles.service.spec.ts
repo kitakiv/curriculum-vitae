@@ -8,7 +8,6 @@ import { UpdateRoleInput } from './dto/update-role.input';
 import * as uuid from 'uuid';
 import { Resource } from './enums/resource.enum';
 import { Action } from './enums/action.enum';
-import { identity } from 'rxjs';
 
 const mockRoleRepository = {
   create: jest.fn(),

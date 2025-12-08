@@ -246,12 +246,12 @@ export class AuthService implements OnModuleInit {
     )[0];
   }
 
-  async updateUser(updateUserInput: UpdateUserInput, userId: string) {
+  async update(updateUserInput: UpdateUserInput, userId: string) {
     const { name } = updateUserInput;
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     await this.userRepository.update(user.id, { name });
-    return await this.userRepository.find({
+    return await this.userRepository.findOne({
       where: {
         id: userId,
       },
@@ -260,7 +260,7 @@ export class AuthService implements OnModuleInit {
           permissions: true,
         },
       },
-    })[0];
+    });
   }
 
   private async createAdminRole() {

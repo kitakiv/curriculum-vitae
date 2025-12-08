@@ -115,7 +115,7 @@ describe('ProfileImageService', () => {
       expect(mockProfileRepository.update).toHaveBeenCalled();
       expect(mockProfileRepository.update).toHaveBeenCalledWith(mockUuid, {
         profilePhotos: [mockImagesInput.profilePhotos[1], url],
-      })
+      });
       expect(result).toEqual({
         id: mockUuid,
         profilePhotos: [mockImagesInput.profilePhotos[1], url],
@@ -175,7 +175,7 @@ describe('ProfileImageService', () => {
     const resolvedValue = {
       ...mockProfile,
       profilePhotos: mockImagesInput.profilePhotos,
-    }
+    };
     it('should return key of image', async () => {
       mockProfileRepository.existsBy.mockResolvedValue(true);
       mockProfileRepository.findOneBy.mockResolvedValue(resolvedValue);
@@ -217,7 +217,7 @@ describe('ProfileImageService', () => {
         ...mockProfile,
         profilePhotos: [
           `https://example/${encodeURIComponent(`${mockUuid}-1.svg$#`)}`,
-        ]
+        ],
       });
       const id = `${mockUuid}-1`;
       const expectedResult = decodeURIComponent(
@@ -227,7 +227,7 @@ describe('ProfileImageService', () => {
         .at(-1);
       const result = await serviceImage.getImageKey(id);
       expect(result).toEqual(expectedResult);
-    })
+    });
   });
 
   describe('getImageKeys', () => {
@@ -276,6 +276,31 @@ describe('ProfileImageService', () => {
       await expect(serviceImage.getImageKeys(mockUuid)).rejects.toThrow(
         NotFoundException,
       );
+    });
+
+    it('should return decodeURIComponent of image', async () => {
+      mockProfileRepository.existsBy.mockResolvedValue(true);
+      mockProfileRepository.findOneBy.mockResolvedValue({
+        ...mockProfile,
+        profilePhotos: [
+          `https://example/${encodeURIComponent(`${mockUuid}-1.svg$#`)}`,
+          `https://example/${encodeURIComponent(`${mockUuid}-2.svg$/`)}`,
+        ],
+      });
+      const result = await serviceImage.getImageKeys(mockUuid);
+      const expectedResult = [
+        decodeURIComponent(
+          `https://example/${encodeURIComponent(`${mockUuid}-1.svg$#`)}`
+            .split('/')
+            .at(-1),
+        ),
+        decodeURIComponent(
+          `https://example/${encodeURIComponent(`${mockUuid}-2.svg$/`)}`
+            .split('/')
+            .at(-1),
+        ),
+      ];
+      expect(result).toEqual(expectedResult);
     });
   });
 });

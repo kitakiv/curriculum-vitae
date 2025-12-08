@@ -19,7 +19,7 @@ const mockContactsRepository = {
 const mockUuid = uuid.v4();
 
 const mockContact = new Contact({
-  contactSvg: `https://image/${mockUuid}-1.svg`,
+  contactSvg: `https://image/${mockUuid}.svg`,
   contactLink: 'https://google.com',
   contactName: 'title 1',
 });

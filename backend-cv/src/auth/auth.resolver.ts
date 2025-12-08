@@ -6,13 +6,19 @@ import { LoginInput } from './dto/login.input';
 import { Sing } from './entities/sing.type';
 import { RefreshTokenInput } from './dto/refreshToken.input';
 import { Public } from '../decorators/public.decorator';
-import { ExecutionContext, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  ExecutionContext,
+  UseGuards,
+} from '@nestjs/common';
 import { ChangePasswordInput } from './dto/changePassword.input';
 import { AttachRoleInput } from './dto/attachRole.input';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
+import { errors } from '../errors/errors.config';
+import { UpdateUserInput } from './dto/updateAuth.input';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
@@ -51,10 +57,22 @@ export class AuthResolver {
     @Context() context: ExecutionContext,
   ) {
     const req = context.getArgs()[2].req;
+    if (!req.userId) throw new BadRequestException(errors.NOT_FOUND('User'));
     return await this.authService.changePassword(
       changePasswordInput,
       req.userId,
     );
+  }
+
+  @Mutation(() => User)
+  async update(
+    @Args('updateUserInput', { type: () => UpdateUserInput })
+    updateUserInput: UpdateUserInput,
+    @Context() context: ExecutionContext,
+  ) {
+    const req = context.getArgs()[2].req;
+    if (!req.userId) throw new BadRequestException(errors.NOT_FOUND('User'));
+    return await this.authService.update(updateUserInput, req.userId);
   }
 
   @PermissionGuard([
