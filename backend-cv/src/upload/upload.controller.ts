@@ -14,12 +14,12 @@ import { UploadService } from './upload.service';
 import { MultiFilePipe } from './pipe/multifile.pipe';
 import { ServerExistPipe } from './pipe/serverexist.pipe';
 import { OneFilePipe } from './pipe/onefile.pipe';
-import { AuthorizationGuard } from 'src/guards/authorization.guard';
-import { Resource } from 'src/roles/enums/resource.enum';
-import { Action } from 'src/roles/enums/action.enum';
-import { PermissionGuard } from 'src/decorators/permission.decorator';
-import { MaxIndexPipe } from 'src/upload/pipe/maxindex.pipe';
-import { Public } from 'src/decorators/public.decorator';
+import { AuthorizationGuard } from '../guards/authorization.guard';
+import { Resource } from '../roles/enums/resource.enum';
+import { Action } from '../roles/enums/action.enum';
+import { PermissionGuard } from '../decorators/permission.decorator';
+import { MaxIndexPipe } from '../upload/pipe/maxindex.pipe';
+import { Public } from '../decorators/public.decorator';
 
 @UseGuards(AuthorizationGuard)
 @Controller('upload')
@@ -63,13 +63,12 @@ export class UploadController {
   }
 
   // todo add permission guard
-  // @PermissionGuard([
-  //   {
-  //     resource: Resource.IMAGE,
-  //     actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
-  //   },
-  // ])
-  @Public()
+  @PermissionGuard([
+    {
+      resource: Resource.IMAGE,
+      actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
+    },
+  ])
   @Post('file/:service/:id/:index')
   @UseInterceptors(FileInterceptor('File'))
   async updateFile(

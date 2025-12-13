@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ContactsImageService } from 'src/contacts/contactsImage.service';
-import { S3Service } from 'src/s3/s3.service';
-import uploadVariables from 'src/variables/upload.variables';
-import { SliderImageService } from 'src/sliders/sliderImage.service';
-import { TechStackImageService } from 'src/techstack/tachstackImage.service';
-import { ProjectsImageService } from 'src/projects/projectsImage.service';
-import { ProfileImageService } from 'src/profile/profileImage.service';
+import { ContactsImageService } from '../contacts/contactsImage.service';
+import { S3Service } from '../s3/s3.service';
+import uploadVariables from '../variables/upload.variables';
+import { SliderImageService } from '../sliders/sliderImage.service';
+import { TechStackImageService } from '../techstack/tachstackImage.service';
+import { ProjectsImageService } from '../projects/projectsImage.service';
+import { ProfileImageService } from '../profile/profileImage.service';
 
 @Injectable()
 export class UploadService {
@@ -39,7 +39,7 @@ export class UploadService {
     index?: number;
   }) {
     let keyOfImage: string = id;
-    if (index) keyOfImage = `${id}-${index}`;
+    if (index || index === 0) keyOfImage = `${id}-${index}`;
     const serviceInstance = this.services[service];
     if (!serviceInstance) throw new BadRequestException('Service not found');
     const exist = await serviceInstance.getImageKey(keyOfImage);
@@ -49,7 +49,7 @@ export class UploadService {
       `${keyOfImage}.${file.mimetype.split('/')[1]}`,
     );
     if (!url) throw new BadRequestException('Upload failed');
-    if (index)
+    if (index || index === 0)
       return await serviceInstance.uploadImageIndex({ id, index, url });
     return await serviceInstance.uploadImage({ id, image: url });
   }

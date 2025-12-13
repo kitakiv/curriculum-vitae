@@ -1,6 +1,6 @@
 export const errors = {
   NOT_FOUND: (resource: string) => `${resource} not found`,
-  EMAIL_EXISTS: 'Email already in use',
+  EMAIL_EXISTS: 'User with this email already exists',
   INVALID_CREDENTIALS: (resource: string) => `Invalid ${resource} credentials`,
   NOT_CREATED: (resource: string) => `${resource} not created`,
   NOT_UPDATED: (resource: string) => `${resource} not updated`,

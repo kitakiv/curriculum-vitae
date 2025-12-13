@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -46,44 +44,31 @@ export class AuthService implements OnModuleInit {
       login: createAuthInput.login,
     });
     if (emailInUse) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: errors.EMAIL_EXISTS,
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new BadRequestException(errors.EMAIL_EXISTS);
     }
     const user = await this.createUser(createAuthInput);
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: errors.NOT_CREATED('User'),
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new BadRequestException(errors.NOT_CREATED('User'));
     }
     return await this.generateToken(user);
   }
 
   private async createUser(createAuthInput: SingUpInput) {
-    const { login, password, name } = createAuthInput;
-    const hashPassword = await this.createHashPassword(password);
+    const hashPassword = await this.createHashPassword(
+      createAuthInput.password,
+    );
     try {
       await this.userRepository.create({
-        login,
+        ...createAuthInput,
         password: hashPassword,
-        name,
       });
       const user = await this.userRepository.save({
-        login,
+        ...createAuthInput,
         password: hashPassword,
-        name,
       });
       return user;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return null;
     }
   }
@@ -109,34 +94,33 @@ export class AuthService implements OnModuleInit {
   private async generateToken(user: User) {
     const accessToken = this.jwtService.sign({ userId: user.id });
     const refreshToken = uuid();
-    try {
-      await this.storeRefreshToken(user, refreshToken);
-    } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_CREATED('Refresh token'), {
-        cause: error,
-      });
-    }
+    await this.storeRefreshToken(user, refreshToken);
     return { accessToken, refreshToken };
   }
 
   private async storeRefreshToken(user: User, token: string) {
     const refreshToken = await this.refreshTokenRepository.findOneBy({ user });
     if (refreshToken) {
-      await this.refreshTokenRepository.update(refreshToken.id, {
+      try {
+        await this.refreshTokenRepository.update(refreshToken.id, {
+          token,
+          expiryDate: expiryDate(3),
+        });
+        return;
+      } catch (error) {
+        this.logger.error(error);
+        throw new BadRequestException(errors.NOT_UPDATED('Refresh token'));
+      }
+    }
+    try {
+      const createRefreshToken = this.refreshTokenRepository.create({
+        user,
         token,
         expiryDate: expiryDate(3),
       });
-      return;
-    }
-    const createRefreshToken = this.refreshTokenRepository.create({
-      user,
-      token,
-      expiryDate: expiryDate(3),
-    });
-    const savedRefreshToken =
       await this.refreshTokenRepository.save(createRefreshToken);
-    if (!savedRefreshToken) {
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Refresh token'));
     }
     return;
@@ -175,7 +159,13 @@ export class AuthService implements OnModuleInit {
     const hashPassword = await this.createHashPassword(
       changePasswordInput.newPassword,
     );
-    await this.userRepository.update(user.id, { password: hashPassword });
+    try {
+      await this.userRepository.update(user.id, { password: hashPassword });
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_UPDATED('User'), {
+        cause: error,
+      });
+    }
   }
   async findAll() {
     return await this.userRepository.find({
@@ -188,7 +178,7 @@ export class AuthService implements OnModuleInit {
   }
 
   async findOne(login: string) {
-    const user = await this.userRepository.find({
+    const user = await this.userRepository.findOne({
       where: {
         login,
       },
@@ -197,24 +187,22 @@ export class AuthService implements OnModuleInit {
           permissions: true,
         },
       },
-    })[0];
+    });
     if (!user) throw new NotFoundException(errors.NOT_FOUND('User'));
     return user;
   }
 
   async getUserPermissions(userId: string) {
-    const user = (
-      await this.userRepository.find({
-        where: {
-          id: userId,
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        role: {
+          permissions: true,
         },
-        relations: {
-          role: {
-            permissions: true,
-          },
-        },
-      })
-    )[0];
+      },
+    });
     if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     return user.role.permissions;
   }
@@ -228,29 +216,9 @@ export class AuthService implements OnModuleInit {
     try {
       await this.userRepository.update(user.id, { role });
     } catch (error) {
-      throw new BadRequestException(errors.NOT_UPDATED('User'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('User'));
     }
-    return (
-      await this.userRepository.find({
-        where: {
-          id: userId,
-        },
-        relations: {
-          role: {
-            permissions: true,
-          },
-        },
-      })
-    )[0];
-  }
-
-  async update(updateUserInput: UpdateUserInput, userId: string) {
-    const { name } = updateUserInput;
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
-    await this.userRepository.update(user.id, { name });
     return await this.userRepository.findOne({
       where: {
         id: userId,
@@ -261,6 +229,38 @@ export class AuthService implements OnModuleInit {
         },
       },
     });
+  }
+
+  async update(updateUserInput: UpdateUserInput, userId: string) {
+    const { name } = updateUserInput;
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    try {
+      await this.userRepository.update(user.id, { name });
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('User'));
+    }
+    return await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        role: {
+          permissions: true,
+        },
+      },
+    });
+  }
+
+  async getUser(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return user;
   }
 
   private async createAdminRole() {

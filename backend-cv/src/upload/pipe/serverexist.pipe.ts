@@ -4,7 +4,7 @@ import {
   ArgumentMetadata,
   BadRequestException,
 } from '@nestjs/common';
-import uploadVariables from 'src/variables/upload.variables';
+import uploadVariables from '../../variables/upload.variables';
 
 @Injectable()
 export class ServerExistPipe implements PipeTransform {

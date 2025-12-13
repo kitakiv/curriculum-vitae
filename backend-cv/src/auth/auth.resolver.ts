@@ -9,6 +9,7 @@ import { Public } from '../decorators/public.decorator';
 import {
   BadRequestException,
   ExecutionContext,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ChangePasswordInput } from './dto/changePassword.input';
@@ -71,8 +72,15 @@ export class AuthResolver {
     @Context() context: ExecutionContext,
   ) {
     const req = context.getArgs()[2].req;
-    if (!req.userId) throw new BadRequestException(errors.NOT_FOUND('User'));
+    if (!req.userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     return await this.authService.update(updateUserInput, req.userId);
+  }
+
+  @Mutation(() => User)
+  async getUser(@Context() context: ExecutionContext) {
+    const req = context.getArgs()[2].req;
+    if (!req.userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return await this.authService.getUser(req.userId);
   }
 
   @PermissionGuard([

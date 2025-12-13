@@ -332,7 +332,6 @@ describe('ContactsResolver', () => {
         });
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
-        console.log(error);
       }
 
       const invalidUpdateInput: UpdateContactInput = {

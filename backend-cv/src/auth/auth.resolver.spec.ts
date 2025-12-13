@@ -16,12 +16,14 @@ import { ChangePasswordInput } from './dto/changePassword.input';
 import {
   BadRequestException,
   ExecutionContext,
+  UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
 import { RefreshToken } from './entities/refreshToken.entity';
 import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { errors } from '../errors/errors.config';
+import { get } from 'http';
 
 jest.mock('../decorators/public.decorator', () => ({
   Public: jest.fn(
@@ -60,6 +62,7 @@ const mockAuthService = {
   singUp: jest.fn(),
   getUserPermissions: jest.fn(),
   update: jest.fn(),
+  getUser: jest.fn(),
 };
 
 const mockJwtService = {
@@ -480,6 +483,56 @@ describe('AuthResolver', () => {
       );
     });
   });
+
+  describe('getUser', () => {
+    it('should get user successfully', async () => {
+      const mockContext = {
+        getArgs: jest.fn().mockReturnValue([
+          {},
+          {},
+          { req: { userId: 'user123' } }, // context
+        ]),
+      } as unknown as ExecutionContext;
+      const mockUser = {
+        id: 'user123',
+        login: 'testuser',
+        name: 'Test User',
+        role: { id: 'role456', name: 'admin' },
+      };
+
+      mockAuthService.getUser.mockResolvedValue(mockUser);
+      const result = await resolver.getUser(mockContext);
+    });
+
+    it('should pass unauthorized exception if user is not found', async () => {
+      const mockContext = {
+        getArgs: jest.fn().mockReturnValue([
+          {},
+          {},
+          { req: {} }, // context
+        ]),
+      } as unknown as ExecutionContext;
+      mockAuthService.getUser.mockResolvedValue(mockUser);
+      await expect(resolver.getUser(mockContext)).rejects.toThrow(
+        new UnauthorizedException(errors.NOT_FOUND('User')),
+      );
+    });
+
+    it('should return error if smth happen in server', async () => {
+      const mockContext = {
+        getArgs: jest.fn().mockReturnValue([
+          {},
+          {},
+          { req: { userId: 'user123' } }, // context
+        ]),
+      } as unknown as ExecutionContext;
+      const errorMessage = 'Failed to get user';
+      mockAuthService.getUser.mockRejectedValue(new Error(errorMessage));
+      await expect(resolver.getUser(mockContext)).rejects.toThrow(
+        errorMessage,
+      );
+    })
+  })
 
   describe('Validation Pipes', () => {
     let validationPipe: ValidationPipe;

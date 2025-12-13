@@ -24,7 +24,6 @@ export class TechStackService {
       await this.techStackRepository.save(techStack);
       return techStack;
     } catch (error) {
-      console.log(error);
       throw new BadRequestException(errors.NOT_CREATED('TechStack'), {
         cause: error,
       });
@@ -48,7 +47,6 @@ export class TechStackService {
       await this.techStackRepository.update(id, updateTechStackInput);
       return await this.findOne(id);
     } catch (error) {
-      console.log(error);
       throw new BadRequestException(errors.NOT_UPDATED('TechStack'), {
         cause: error,
       });
