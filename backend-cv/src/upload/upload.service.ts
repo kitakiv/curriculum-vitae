@@ -66,7 +66,11 @@ export class UploadService {
     if (!serviceInstance) throw new BadRequestException('Service not found');
     const keys = await serviceInstance.getImageKeys(id);
     if (keys) await this.s3Service.deleteFiles(keys);
-    const urls = await this.s3Service.uploadFiles(files, id);
-    return await serviceInstance.uploadImages({ id, images: urls });
+    try {
+      const urls = await this.s3Service.uploadFiles(files, id);
+      return await serviceInstance.uploadImages({ id, images: urls });
+    } catch (error) {
+      throw new BadRequestException('Upload failed');
+    }
   }
 }

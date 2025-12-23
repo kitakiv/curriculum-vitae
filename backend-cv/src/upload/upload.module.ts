@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { UploadController } from './upload.controller';
 import { S3Service } from '../s3/s3.service';
 import { UploadService } from './upload.service';
@@ -29,6 +29,7 @@ import { AuthModule } from '../auth/auth.module';
     TechStackImageService,
     ProjectsImageService,
     ProfileImageService,
+    Logger
   ],
 })
 export class UploadModule {}

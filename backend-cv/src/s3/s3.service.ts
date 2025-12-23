@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -12,7 +12,10 @@ export class S3Service {
   private s3Client: S3Client;
   private bucketName: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    public logger: Logger,
+  ) {
     this.s3Client = new S3Client({
       region: this.configService.get('AWS_REGION'),
       credentials: {
@@ -36,8 +39,8 @@ export class S3Service {
       await this.s3Client.send(command);
       return this.createUrl(key);
     } catch (error) {
-      console.log(error);
-      return error.message;
+      this.logger.error(error);
+      throw new BadRequestException('Upload failed');
     }
   }
 
@@ -45,18 +48,26 @@ export class S3Service {
     files: { buffer: Buffer<ArrayBufferLike>; mimetype: string }[],
     key: string,
   ): Promise<string[]> {
-    const urls = await Promise.all(
-      files.map(async (file, index) => {
-        const url = await this.uploadFile(
-          file,
-          `${key}-${index}.${file.mimetype.split('/')[1]}`,
-        );
-        if (!url) throw new Error('Upload failed');
-        return url;
-      }),
-    );
-    return urls;
+    const uploadedKeys: string[] = [];
+    const urls: string[] = [];
+    try {
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        const fileKey = `${key}-${index}.${file.mimetype.split('/')[1]}`;
+        const url = await this.uploadFile(file, fileKey);
+        uploadedKeys.push(fileKey);
+        urls.push(url);
+      }
+      return urls;
+    } catch (error) {
+      if (uploadedKeys.length > 0) {
+        await this.deleteFiles(uploadedKeys);
+      }
+      this.logger.error(error);
+      throw new BadRequestException('Upload failed');
+    }
   }
+
 
   async deleteFiles(keys: string[]) {
     await Promise.all(
@@ -86,7 +97,7 @@ export class S3Service {
         message: 'File deleted successfully',
       };
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error.message;
     }
   }
@@ -100,7 +111,7 @@ export class S3Service {
       await this.s3Client.send(command);
       return true;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return false;
     }
   }

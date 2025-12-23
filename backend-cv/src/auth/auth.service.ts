@@ -14,7 +14,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginInput } from './dto/login.input';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './entities/refreshToken.entity';
-import { v4 as uuid } from 'uuid';
+import * as uuid from 'uuid';
 import { ChangePasswordInput } from './dto/changePassword.input';
 import { Role } from '../roles/entities/role.entity';
 import { AttachRoleInput } from './dto/attachRole.input';
@@ -93,9 +93,14 @@ export class AuthService implements OnModuleInit {
 
   private async generateToken(user: User) {
     const accessToken = this.jwtService.sign({ userId: user.id });
-    const refreshToken = uuid();
-    await this.storeRefreshToken(user, refreshToken);
-    return { accessToken, refreshToken };
+    const refreshToken = uuid.v4();
+    try {
+      await this.storeRefreshToken(user, refreshToken);
+      return { accessToken, refreshToken };
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_CREATED('Refresh token'));
+    }
   }
 
   private async storeRefreshToken(user: User, token: string) {
@@ -284,7 +289,12 @@ export class AuthService implements OnModuleInit {
   async onModuleInit() {
     const adminLogin = this.configService.get('ADMIN_LOGIN');
     const adminPassword = this.configService.get('ADMIN_PASSWORD');
-    if (!adminLogin || !adminPassword) return;
+    if (!adminLogin || !adminPassword) {
+      this.logger.warn(
+        'Admin credentials not configured - skipping admin creation',
+      );
+      return;
+    }
     const admin = await this.userRepository.findOneBy({
       login: adminLogin,
     });

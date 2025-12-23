@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { RolesResolver } from './roles.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,6 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Role, Permission]), AuthModule],
-  providers: [RolesResolver, RolesService],
+  providers: [RolesResolver, RolesService, Logger],
 })
 export class RolesModule {}

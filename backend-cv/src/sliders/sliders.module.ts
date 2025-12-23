@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { SlidersService } from './sliders.service';
 import { SlidersResolver } from './sliders.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,12 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Slider]), AuthModule],
-  providers: [SlidersResolver, SlidersService, SliderImageService, S3Service],
+  providers: [
+    SlidersResolver,
+    SlidersService,
+    SliderImageService,
+    S3Service,
+    Logger,
+  ],
 })
 export class SlidersModule {}

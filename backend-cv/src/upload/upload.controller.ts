@@ -19,7 +19,6 @@ import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { MaxIndexPipe } from '../upload/pipe/maxindex.pipe';
-import { Public } from '../decorators/public.decorator';
 
 @UseGuards(AuthorizationGuard)
 @Controller('upload')

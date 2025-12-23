@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { ContactsResolver } from './contacts.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,6 +13,7 @@ import { AuthModule } from '../auth/auth.module';
     ContactsService,
     ContactsImageService,
     S3Service,
+    Logger
   ],
 })
 export class ContactsModule {}

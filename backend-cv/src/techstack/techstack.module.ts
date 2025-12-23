@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TechStackService } from './techstack.service';
 import { TechStackResolver } from './techstack.resolver';
 import { TechStack } from './entities/techstack.entity';
@@ -14,6 +14,7 @@ import { AuthModule } from '../auth/auth.module';
     TechStackService,
     TechStackImageService,
     S3Service,
+    Logger
   ],
   exports: [TypeOrmModule.forFeature([TechStack])]
 })

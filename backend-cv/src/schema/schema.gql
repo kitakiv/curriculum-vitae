@@ -68,14 +68,16 @@ type Mutation {
   createRole(createRoleInput: CreateRoleInput!): Role!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
+  getUser: User!
   login(loginInput: LoginInput!): Sing!
   refreshToken(refreshTokenInput: RefreshTokenInput!): Sing!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
-  removeRole(id: ID!): Role!
+  removeRole(id: ID!): ID!
   removeSlider(id: ID!): ID!
   removeTechStack(id: ID!): ID!
   singup(singUpInput: SingUpInput!): Sing!
+  update(updateUserInput: UpdateUserInput!): User!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
@@ -213,6 +215,10 @@ input UpdateTechStackInput {
   id: ID!
   techName: String
   techSvg: String
+}
+
+input UpdateUserInput {
+  name: String!
 }
 
 type User {

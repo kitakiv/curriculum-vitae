@@ -20,11 +20,13 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from './guards/auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RolesModule } from './roles/roles.module';
-import { LoggerMiddleware } from './middleware/custorm.middleware';
+import { GraphQLLoggerPlugin } from './middleware/custorm.middleware';
 import { days, ThrottlerModule } from '@nestjs/throttler';
 import { GqlThrottlerGuard } from './guards/rate.guard';
+import { HttpLoggerMiddleware } from './middleware/upload.middleware';
+import { LoggingInterceptor } from './interceptor/cutom.interceptor';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -48,12 +50,25 @@ import { GqlThrottlerGuard } from './guards/rate.guard';
       autoSchemaFile: join(process.cwd(), 'src/schema/schema.gql'),
       sortSchema: true,
       playground: true,
+      plugins: [new GraphQLLoggerPlugin(new Logger())],
+      context: ({ req, res }) => ({ req, res }),
+      formatError: (error) => {
+        if (process.env.NODE_ENV === 'production') {
+          return {
+            message: error.message,
+            code: error.extensions?.code,
+          };
+        }
+        return error;
+      },
     }),
-    ThrottlerModule.forRoot({
-      throttlers: [
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
         {
-          ttl: days(1),
-          limit: 1000,
+          ttl: Number(config.get('THROTTLE_TTL')),
+          limit: Number(config.get('THROTTLE_LIMIT')),
         },
       ],
     }),
@@ -71,11 +86,15 @@ import { GqlThrottlerGuard } from './guards/rate.guard';
     Logger,
     {
       provide: APP_GUARD,
-      useExisting: AuthGuard,
+      useClass: AuthGuard,
     },
     {
       provide: APP_GUARD,
-      useExisting: GqlThrottlerGuard,
+      useClass: GqlThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     }
   ],
 })
@@ -86,7 +105,7 @@ export class AppModule implements NestModule {
   }
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: 'graphql', method: RequestMethod.POST });
+      .apply(HttpLoggerMiddleware)
+      .forRoutes({ path: 'upload/*', method: RequestMethod.ALL });
   }
 }
