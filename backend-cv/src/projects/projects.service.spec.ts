@@ -7,6 +7,9 @@ import { NotFoundException } from '@nestjs/common';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import * as uuid from 'uuid';
+import { Logger } from '@nestjs/common';
+import uploadVariables from '../variables/upload.variables';
+import { RedisCacheService } from '../cache/cache.service';
 
 const mockProjectRepository = {
   create: jest.fn(),
@@ -17,6 +20,18 @@ const mockProjectRepository = {
   update: jest.fn(),
   delete: jest.fn(),
   findOne: jest.fn(),
+};
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
+};
+
+const mockRedisCacheService = {
+  set: jest.fn(),
+  get: jest.fn(),
+  getMany: jest.fn(),
 };
 
 const mockTechStackRepository = {
@@ -60,6 +75,14 @@ describe('ProjectsService', () => {
           provide: getRepositoryToken(TechStack),
           useValue: mockTechStackRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger
+        },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService
+        }
       ],
     }).compile();
 
@@ -179,6 +202,46 @@ describe('ProjectsService', () => {
         },
       });
       expect(result).toEqual(expect.arrayContaining(expectProject));
+    });
+
+    it('should set cache if not exist', async () => {
+      const expectProject = [
+        {
+          id: mockUuid,
+          ...createProjectInput,
+        },
+      ];
+      mockProjectRepository.find.mockResolvedValue(expectProject);
+      mockRedisCacheService.get.mockResolvedValue(null);
+
+      const result = await service.findAll();
+      expect(mockRedisCacheService.set).toHaveBeenCalled();
+      expect(mockRedisCacheService.set).toHaveBeenCalledWith(
+        uploadVariables.projects.cacheKey,
+        JSON.stringify(expectProject),
+        uploadVariables.projects.cacheTime,
+      );
+      expect(result).toEqual(expectProject);
+    });
+
+    it('should return cache if exist', async () => {
+      const expectProject = [
+        {
+          id: mockUuid,
+          ...createProjectInput,
+        },
+      ];
+      mockProjectRepository.find.mockResolvedValue(expectProject);
+      mockRedisCacheService.get.mockResolvedValue(
+        JSON.stringify(expectProject),
+      );
+      await service.findAll();
+      expect(mockRedisCacheService.get).toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.projects.cacheKey,
+      );
+      expect(mockProjectRepository.find).not.toHaveBeenCalled();
+      expect(mockRedisCacheService.set).not.toHaveBeenCalled();
     });
   });
 

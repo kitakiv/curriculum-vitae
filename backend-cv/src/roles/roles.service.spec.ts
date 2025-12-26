@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RolesService } from './roles.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import * as uuid from 'uuid';
@@ -20,6 +20,12 @@ const mockRoleRepository = {
   findOne: jest.fn(),
 };
 
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
+}
+
 const mockUuid = uuid.v4();
 
 describe('RolesService', () => {
@@ -33,6 +39,10 @@ describe('RolesService', () => {
           provide: getRepositoryToken(Role),
           useValue: mockRoleRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 

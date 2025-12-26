@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsImageService } from './projectsImage.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import * as uuid from 'uuid';
 
 const mockProjectsRepository = {
@@ -14,6 +14,12 @@ const mockProjectsRepository = {
   update: jest.fn(),
   delete: jest.fn(),
   findOne: jest.fn(),
+};
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -46,6 +52,10 @@ describe('ProjectsImageService', () => {
           provide: getRepositoryToken(Project),
           useValue: mockProjectsRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 

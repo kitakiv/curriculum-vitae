@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
@@ -14,6 +15,7 @@ export class SliderImageService {
   constructor(
     @InjectRepository(Slider)
     private readonly slidersRepository: Repository<Slider>,
+    private readonly logger: Logger = new Logger(SliderImageService.name),
   ) {
     this.name = uploadVariables.sliders.name;
   }
@@ -24,10 +26,8 @@ export class SliderImageService {
       await this.slidersRepository.update(id, { sliderImage: image });
       return { id, sliderImage: image };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Slider'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Slider'));
     }
   }
 

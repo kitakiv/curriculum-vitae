@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
@@ -15,6 +16,7 @@ export class TechStackImageService {
   constructor(
     @InjectRepository(TechStack)
     private readonly techStackRepository: Repository<TechStack>,
+    private readonly logger: Logger = new Logger(TechStackImageService.name),
   ) {
     this.name = uploadVariables.techstack.name;
   }
@@ -25,10 +27,8 @@ export class TechStackImageService {
       await this.techStackRepository.update(id, { techSvg: image });
       return { id, techSvg: image };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('TechStack'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
     }
   }
 

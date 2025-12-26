@@ -8,6 +8,7 @@ import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class ContactsImageService {
@@ -15,6 +16,7 @@ export class ContactsImageService {
   constructor(
     @InjectRepository(Contact)
     private readonly contactsRepository: Repository<Contact>,
+    private readonly logger: Logger = new Logger(ContactsImageService.name),
   ) {
     this.name = uploadVariables.contacts.name;
   }
@@ -27,10 +29,8 @@ export class ContactsImageService {
       });
       return { contactSvg: image, id };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Contact'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Contact'));
     }
   }
 

@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SlidersService } from './sliders.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Slider } from './entities/slider.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
 import * as uuid from 'uuid';
+import { RedisCacheService } from '../cache/cache.service';
+import uploadVariables from '../variables/upload.variables';
 
 const mockSliderRepository = {
   create: jest.fn(),
@@ -15,6 +17,18 @@ const mockSliderRepository = {
   existsBy: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+};
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
+};
+
+const mockRedisCacheService = {
+  set: jest.fn(),
+  get: jest.fn(),
+  getMany: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -29,6 +43,14 @@ describe('SlidersService', () => {
         {
           provide: getRepositoryToken(Slider),
           useValue: mockSliderRepository,
+        },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService,
         },
       ],
     }).compile();
@@ -86,6 +108,53 @@ describe('SlidersService', () => {
       const result = await service.findAll();
       expect(mockSliderRepository.find).toHaveBeenCalled();
       expect(result).toEqual(expectedSliders);
+    });
+
+    it('should set the cache if no cache exists', async () => {
+      const expectedSliders = [
+        {
+          id: '1',
+          sliderName: 'sliderName',
+          sliderText: 'sliderText',
+          sliderImage: 'sliderImage.svg',
+        }
+      ];
+      mockSliderRepository.find.mockResolvedValue(expectedSliders);
+      mockRedisCacheService.get.mockResolvedValue(null);
+
+      await service.findAll();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.sliders.cacheKey,
+      );
+      expect(mockRedisCacheService.set).toHaveBeenCalled();
+      expect(mockRedisCacheService.set).toHaveBeenCalledWith(
+        uploadVariables.sliders.cacheKey,
+        JSON.stringify(expectedSliders),
+        uploadVariables.sliders.cacheTime,
+      );
+    });
+
+    it('should return cache if exist', async () => {
+      const expectedSliders = [
+        {
+          id: '1',
+          sliderName: 'sliderName',
+          sliderText: 'sliderText',
+          sliderImage: 'sliderImage.svg',
+        }
+      ];
+      mockSliderRepository.find.mockResolvedValue(expectedSliders);
+      mockRedisCacheService.get.mockResolvedValue(
+        JSON.stringify(expectedSliders),
+      );
+
+      await service.findAll();
+      expect(mockRedisCacheService.get).toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.sliders.cacheKey,
+      );
+      expect(mockSliderRepository.find).not.toHaveBeenCalled();
+      expect(mockRedisCacheService.set).not.toHaveBeenCalled();
     });
   });
 

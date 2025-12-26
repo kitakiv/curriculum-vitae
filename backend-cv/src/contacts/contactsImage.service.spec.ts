@@ -4,6 +4,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { ContactsImageService } from './contactsImage.service';
 import { Contact } from './entities/contact.entity';
+import { Logger } from '@nestjs/common';
 
 const mockContactsRepository = {
   create: jest.fn(),
@@ -14,6 +15,12 @@ const mockContactsRepository = {
   update: jest.fn(),
   delete: jest.fn(),
   findOne: jest.fn(),
+};
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -35,6 +42,10 @@ describe('ContactsImageService', () => {
           provide: getRepositoryToken(Contact),
           useValue: mockContactsRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 

@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ContactsService } from './contacts.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Contact } from './entities/contact.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateContactInput } from './dto/create-contact.input';
 import { UpdateContactInput } from './dto/update-contact.input';
 import * as uuid from 'uuid';
+import { RedisCacheService } from '../cache/cache.service';
+import uploadVariables from '../variables/upload.variables';
 
 const mockContactRepository = {
   create: jest.fn(),
@@ -15,6 +17,18 @@ const mockContactRepository = {
   existsBy: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+};
+
+const mockRedisCacheService = {
+  set: jest.fn(),
+  get: jest.fn(),
+  getMany: jest.fn(),
+}
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -30,6 +44,14 @@ describe('ContactsService', () => {
           provide: getRepositoryToken(Contact),
           useValue: mockContactRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService,
+        }
       ],
     }).compile();
 
@@ -84,6 +106,56 @@ describe('ContactsService', () => {
 
       expect(mockContactRepository.find).toHaveBeenCalled();
       expect(result).toEqual(expectedContacts);
+    });
+
+    it('should set the cache if no cache exists', async () => {
+      const expectedContacts = [
+        { id: '1', contactName: 'GitHub', contactLink: 'https://github.com' },
+        {
+          id: '2',
+          contactName: 'LinkedIn',
+          contactLink: 'https://linkedin.com',
+        },
+      ];
+      mockContactRepository.find.mockResolvedValue(expectedContacts);
+      mockRedisCacheService.get.mockResolvedValue(null);
+
+      const result = await service.findAll();
+
+      expect(mockContactRepository.find).toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.contacts.cacheKey
+      );
+      expect(mockRedisCacheService.set).toHaveBeenCalledWith(
+        uploadVariables.contacts.cacheKey,
+        JSON.stringify(expectedContacts),
+        uploadVariables.contacts.cacheTime
+      );
+      expect(result).toEqual(expectedContacts);
+    });
+    
+    it('should get the cache if it exists', async () => {
+      const expectedContacts = [
+        { id: '1', contactName: 'GitHub', contactLink: 'https://github.com' },
+        {
+          id: '2',
+          contactName: 'LinkedIn',
+          contactLink: 'https://linkedin.com',
+        },
+      ];
+      mockContactRepository.find.mockResolvedValue(expectedContacts);
+      mockRedisCacheService.get.mockResolvedValue(
+        JSON.stringify(expectedContacts),
+      );
+
+      await service.findAll();
+
+      expect(mockContactRepository.find).not.toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.contacts.cacheKey
+      );
+      expect(mockRedisCacheService.set).not.toHaveBeenCalled();
+
     });
   });
 

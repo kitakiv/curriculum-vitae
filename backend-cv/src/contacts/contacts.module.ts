@@ -6,8 +6,9 @@ import { Contact } from './entities/contact.entity';
 import { ContactsImageService } from './contactsImage.service';
 import { S3Service } from '../s3/s3.service';
 import { AuthModule } from '../auth/auth.module';
+import { RedisCacheModule } from '../cache/cache.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([Contact]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Contact]), AuthModule, RedisCacheModule],
   providers: [
     ContactsResolver,
     ContactsService,

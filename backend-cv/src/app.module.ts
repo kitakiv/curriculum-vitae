@@ -23,10 +23,13 @@ import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RolesModule } from './roles/roles.module';
 import { GraphQLLoggerPlugin } from './middleware/custorm.middleware';
-import { days, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { GqlThrottlerGuard } from './guards/rate.guard';
 import { HttpLoggerMiddleware } from './middleware/upload.middleware';
 import { LoggingInterceptor } from './interceptor/cutom.interceptor';
+// import { RedisOptions } from './config/cache.config';
+import { throttlerOptions } from './config/throttler.config';
+import { RedisCacheModule } from './cache/cache.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -62,17 +65,9 @@ import { LoggingInterceptor } from './interceptor/cutom.interceptor';
         return error;
       },
     }),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => [
-        {
-          ttl: Number(config.get('THROTTLE_TTL')),
-          limit: Number(config.get('THROTTLE_LIMIT')),
-        },
-      ],
-    }),
+    ThrottlerModule.forRootAsync(throttlerOptions),
     DatabaseModule,
+    RedisCacheModule,
     SlidersModule,
     ProjectsModule,
     ProfileModule,

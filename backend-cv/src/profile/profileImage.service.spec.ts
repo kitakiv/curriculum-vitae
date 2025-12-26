@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Profile } from './entities/profile.entity';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import * as uuid from 'uuid';
+import { Logger } from '@nestjs/common';
 
 const mockProfileRepository = {
   create: jest.fn(),
@@ -17,7 +18,11 @@ const mockProfileRepository = {
 };
 
 const mockUuid = uuid.v4();
-
+const mockLogger = {
+  log: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+}
 const mockProfile = new Profile({});
 
 const mockImagesInput = {
@@ -39,6 +44,10 @@ describe('ProfileImageService', () => {
           provide: getRepositoryToken(Profile),
           useValue: mockProfileRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 

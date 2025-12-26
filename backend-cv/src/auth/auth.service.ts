@@ -167,6 +167,7 @@ export class AuthService implements OnModuleInit {
     try {
       await this.userRepository.update(user.id, { password: hashPassword });
     } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('User'), {
         cause: error,
       });

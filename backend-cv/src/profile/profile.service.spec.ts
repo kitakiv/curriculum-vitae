@@ -6,13 +6,20 @@ import { BadRequestException } from '@nestjs/common';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { Logger } from '@nestjs/common';
 import * as uuid from 'uuid';
-import { mock } from 'node:test';
+import { RedisCacheService } from '../cache/cache.service';
+import uploadVariables from '../variables/upload.variables';
 
 const mockProfileRepository = {
   findOneBy: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
   save: jest.fn(),
+};
+
+const mockRedisCacheService = {
+  set: jest.fn(),
+  get: jest.fn(),
+  getMany: jest.fn(),
 };
 
 const mockLogger = {
@@ -36,6 +43,10 @@ describe('ProfileService', () => {
           provide: Logger,
           useValue: mockLogger,
         },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService
+        }
       ],
     }).compile();
 
@@ -68,6 +79,40 @@ describe('ProfileService', () => {
       expect(mockProfileRepository.findOneBy).toHaveBeenCalledWith({});
       expect(result).toEqual(profile);
     });
+
+    it('should throw BadRequestException if find was wrong', async () => {
+      mockProfileRepository.findOneBy.mockRejectedValue(new Error('Db error'));
+      await expect(service.find()).rejects.toThrow('Db error');
+    });
+
+    it('should set cache if it not exists', async () => {
+      const profile = new Profile({});
+      mockProfileRepository.findOneBy.mockResolvedValue(profile);
+      mockRedisCacheService.get.mockResolvedValue(null);
+      await service.find();
+
+      expect(mockRedisCacheService.set).toHaveBeenCalledWith(
+        uploadVariables.profile.cacheKey,
+        profile,
+        uploadVariables.profile.cacheTime
+      );
+      expect(mockProfileRepository.findOneBy).toHaveBeenCalledWith({});
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.profile.cacheKey
+      );
+    });
+
+    it('should get cache if it exists', async () => {
+      const profile = new Profile({});
+      mockProfileRepository.findOneBy.mockResolvedValue(profile);
+      mockRedisCacheService.get.mockResolvedValue(profile);
+      const result = await service.find();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.profile.cacheKey
+      );
+      expect(mockProfileRepository.findOneBy).not.toHaveBeenCalled();
+      expect(result).toEqual(profile);
+    })
   });
 
   describe('update', () => {

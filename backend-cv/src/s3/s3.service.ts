@@ -14,7 +14,7 @@ export class S3Service {
 
   constructor(
     private configService: ConfigService,
-    public logger: Logger,
+    public logger: Logger = new Logger(S3Service.name),
   ) {
     this.s3Client = new S3Client({
       region: this.configService.get('AWS_REGION'),

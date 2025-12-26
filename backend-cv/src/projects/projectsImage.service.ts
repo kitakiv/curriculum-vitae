@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity';
@@ -15,6 +16,7 @@ export class ProjectsImageService {
   constructor(
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
+    private readonly logger: Logger = new Logger(ProjectsImageService.name),
   ) {
     this.name = uploadVariables.projects.name;
   }
@@ -25,10 +27,8 @@ export class ProjectsImageService {
       await this.projectsRepository.update(id, { projectImages: images });
       return { id, projectImages: images };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Project'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Project'));
     }
   }
 
@@ -52,10 +52,8 @@ export class ProjectsImageService {
       await this.projectsRepository.update(id, { projectImages: filterImages });
       return { id, projectImages: filterImages };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Project'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Project'));
     }
   }
 

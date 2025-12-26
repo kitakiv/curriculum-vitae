@@ -149,7 +149,7 @@ type Role {
 
 type Sing {
   accessToken: String!
-  refreshToken: String!
+  refreshToken: String
 }
 
 input SingUpInput {

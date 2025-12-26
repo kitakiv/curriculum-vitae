@@ -6,6 +6,6 @@ export class Sing {
   @Field(() => String)
   accessToken: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   refreshToken: string;
 }

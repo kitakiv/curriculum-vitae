@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger
 } from '@nestjs/common';
 import { CreateRoleInput } from './dto/create-role.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,11 +12,13 @@ import { Permission } from './entities/permission.entity';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { errors } from '../errors/errors.config';
 
+
 @Injectable()
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
+    private readonly roleRepository: Repository<Role>,
+    private readonly logger: Logger = new Logger(RolesService.name),
   ) {}
   async create(createRoleInput: CreateRoleInput) {
     const { name, permissions } = createRoleInput;
@@ -30,10 +33,8 @@ export class RolesService {
       );
       return await this.roleRepository.save(role);
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_CREATED('Role'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_CREATED('Role'));
     }
   }
 
@@ -69,9 +70,8 @@ export class RolesService {
       await this.roleRepository.update(id, updateRoleInput);
       return await this.findOne(id);
     } catch (error) {
-      throw new BadRequestException(errors.NOT_UPDATED('Role'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Role'));
     }
   }
 

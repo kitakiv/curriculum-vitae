@@ -8,8 +8,13 @@ import { ProjectsImageService } from './projectsImage.service';
 import { S3Service } from '../s3/s3.service';
 import { AuthModule } from '../auth/auth.module';
 import { Logger } from '@nestjs/common';
+import { RedisCacheModule } from '../cache/cache.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([Project, TechStack]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Project, TechStack]),
+    AuthModule,
+    RedisCacheModule,
+  ],
   providers: [
     ProjectsResolver,
     ProjectsService,

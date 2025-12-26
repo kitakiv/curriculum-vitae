@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { TechStack } from './entities/techstack.entity';
 import { TechStackImageService } from './tachstackImage.service';
@@ -13,6 +13,12 @@ const mockTechStackRepository = {
   update: jest.fn(),
   delete: jest.fn(),
   findOne: jest.fn(),
+};
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -31,6 +37,10 @@ describe('TechStackImageService', () => {
         {
           provide: getRepositoryToken(TechStack),
           useValue: mockTechStackRepository,
+        },
+        {
+          provide: Logger,
+          useValue: mockLogger,
         },
       ],
     }).compile();

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ContactsImageService } from '../contacts/contactsImage.service';
 import { S3Service } from '../s3/s3.service';
 import uploadVariables from '../variables/upload.variables';
@@ -6,6 +6,7 @@ import { SliderImageService } from '../sliders/sliderImage.service';
 import { TechStackImageService } from '../techstack/tachstackImage.service';
 import { ProjectsImageService } from '../projects/projectsImage.service';
 import { ProfileImageService } from '../profile/profileImage.service';
+
 
 @Injectable()
 export class UploadService {
@@ -17,6 +18,7 @@ export class UploadService {
     private readonly techStackImageService: TechStackImageService,
     private readonly projectsImageService: ProjectsImageService,
     private readonly profileImageService: ProfileImageService,
+    private readonly logger: Logger = new Logger(UploadService.name),
   ) {
     this.services = {
       [uploadVariables.contacts.name]: this.contactsImageService,
@@ -70,6 +72,7 @@ export class UploadService {
       const urls = await this.s3Service.uploadFiles(files, id);
       return await serviceInstance.uploadImages({ id, images: urls });
     } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException('Upload failed');
     }
   }

@@ -6,9 +6,10 @@ import { Slider } from './entities/slider.entity';
 import { SliderImageService } from './sliderImage.service';
 import { S3Service } from '../s3/s3.service';
 import { AuthModule } from '../auth/auth.module';
+import { RedisCacheModule } from '../cache/cache.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Slider]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Slider]), AuthModule, RedisCacheModule],
   providers: [
     SlidersResolver,
     SlidersService,

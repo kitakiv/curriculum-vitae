@@ -5,20 +5,39 @@ import { Profile } from './entities/profile.entity';
 import { Repository } from 'typeorm';
 import { errors } from '../errors/errors.config';
 import { Logger } from '@nestjs/common';
+import uploadVariables from '../variables/upload.variables';
+import { RedisCacheService } from '../cache/cache.service';
 
 @Injectable()
 export class ProfileService {
+  private readonly PROFILE_CACHE_KEY = uploadVariables.profile.cacheKey;
+  private readonly PROFILE_CACHE_TIME = uploadVariables.profile.cacheTime;
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    private readonly logger: Logger,
+    private readonly logger: Logger = new Logger(ProfileService.name),
+    private readonly cacheManager: RedisCacheService,
   ) {}
 
   async find() {
-    const profile = await this.profileRepository.findOneBy({});
-    if (!profile) {
-      return await this.createDefaultProfile();
+    const cache = await this.cacheManager.get(this.PROFILE_CACHE_KEY);
+    if (cache) {
+      return cache;
     }
+    let profile = await this.profileRepository.findOneBy({});
+    if (!profile) {
+      try {
+        profile = await this.createDefaultProfile();
+      } catch (error) {
+        this.logger.error(error);
+        throw new BadRequestException(error.message);
+      }
+    }
+    await this.cacheManager.set(
+      this.PROFILE_CACHE_KEY,
+      profile,
+      this.PROFILE_CACHE_TIME,
+    );
     return profile;
   }
 
@@ -33,9 +52,13 @@ export class ProfileService {
         name: profile.name,
         ...updateProfileInput,
       });
-      return await this.profileRepository.findOneBy({ id: profile.id });
+      const updatedProfile = await this.profileRepository.findOneBy({
+        id: profile.id,
+      });
+      await this.cacheManager.set(this.PROFILE_CACHE_KEY, updatedProfile);
+      return updatedProfile;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('Profile'));
     }
   }

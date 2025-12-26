@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TechStackService } from './techstack.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TechStack } from './entities/techstack.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { CreateTechStackInput } from './dto/create-techstack.input';
 import { UpdateTechStackInput } from './dto/update-techstack.input';
 import * as uuid from 'uuid';
+import { RedisCacheService } from '../cache/cache.service';
+import uploadVariables from '../variables/upload.variables';
 
 const mockTechStackRepository = {
   create: jest.fn(),
@@ -15,6 +17,18 @@ const mockTechStackRepository = {
   existsBy: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+};
+
+const mockRedisCacheService = {
+  set: jest.fn(),
+  get: jest.fn(),
+  getMany: jest.fn(),
+}
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
 };
 
 const mockUuid = uuid.v4();
@@ -30,6 +44,14 @@ describe('TechStackService', () => {
           provide: getRepositoryToken(TechStack),
           useValue: mockTechStackRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService
+        }
       ],
     }).compile();
 
@@ -84,6 +106,49 @@ describe('TechStackService', () => {
       expect(mockTechStackRepository.find).toHaveBeenCalled();
       expect(result).toEqual(expectedTechStack);
     });
+
+    it('should set the cache if no cache exists', async () => {
+      const expectedTechStack = [
+        {
+          id: '1',
+          techName: 'techName',
+          techSvg: 'techSvg.svg',
+        }
+      ];
+      mockTechStackRepository.find.mockResolvedValue(expectedTechStack);
+      mockRedisCacheService.get.mockResolvedValue(null);
+
+      await service.findAll();
+      expect(mockRedisCacheService.set).toHaveBeenCalledWith(
+        uploadVariables.techstack.cacheKey,
+        JSON.stringify(expectedTechStack),
+        uploadVariables.techstack.cacheTime
+      );
+      expect(mockTechStackRepository.find).toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalled();
+    });
+
+    it('should return cache if exist', async () => {
+      const expectedTechStack = [
+        {
+          id: '1',
+          techName: 'techName',
+          techSvg: 'techSvg.svg',
+        }
+      ];
+      mockTechStackRepository.find.mockResolvedValue(expectedTechStack);
+      mockRedisCacheService.get.mockResolvedValue(
+        JSON.stringify(expectedTechStack),
+      );
+
+      await service.findAll();
+      expect(mockRedisCacheService.get).toHaveBeenCalled();
+      expect(mockRedisCacheService.get).toHaveBeenCalledWith(
+        uploadVariables.techstack.cacheKey,
+      );
+      expect(mockTechStackRepository.find).not.toHaveBeenCalled();
+      expect(mockRedisCacheService.set).not.toHaveBeenCalled();
+    })
   });
 
   describe('findOne', () => {

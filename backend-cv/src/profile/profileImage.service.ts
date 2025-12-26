@@ -8,6 +8,7 @@ import { Profile } from './entities/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class ProfileImageService {
@@ -15,6 +16,7 @@ export class ProfileImageService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    private readonly logger: Logger = new Logger(ProfileImageService.name),
   ) {
     this.name = uploadVariables.profile.name;
   }
@@ -25,10 +27,8 @@ export class ProfileImageService {
       await this.profileRepository.update(id, { profilePhotos: images });
       return { id, profilePhotos: images };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Profile'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Profile'));
     }
   }
 
@@ -52,10 +52,8 @@ export class ProfileImageService {
       await this.profileRepository.update(id, { profilePhotos: filterImages });
       return { id, profilePhotos: filterImages };
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Profile'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('Profile'));
     }
   }
 

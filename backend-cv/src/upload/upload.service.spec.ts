@@ -8,8 +8,7 @@ import { TechStackImageService } from '../techstack/tachstackImage.service';
 import { ProjectsImageService } from '../projects/projectsImage.service';
 import { ProfileImageService } from '../profile/profileImage.service';
 import uploadVariables from '../variables/upload.variables';
-import { BadRequestException } from '@nestjs/common';
-import { mock } from 'node:test';
+import { BadRequestException, Logger } from '@nestjs/common';
 
 const mockUploadController = {
   uploadFile: jest.fn(),
@@ -23,6 +22,12 @@ const mockS3Service = {
   deleteFile: jest.fn(),
   deleteFiles: jest.fn(),
 };
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
+}
 
 const mockContactImageService = {
   getImageKey: jest.fn(),
@@ -103,6 +108,10 @@ describe('UploadService', () => {
           provide: ProfileImageService,
           useValue: mockProfileImageService,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 

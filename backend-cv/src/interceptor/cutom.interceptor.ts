@@ -28,7 +28,6 @@ export class LoggingInterceptor implements NestInterceptor {
     if (data && typeof data === 'object') {
       const filtered = { ...data };
       delete filtered.password;
-      delete filtered.refreshToken;
       delete filtered.secretKey;
       return filtered;
     }

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { Project } from './entities/project.entity';
@@ -6,14 +11,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TechStack } from '../techstack/entities/techstack.entity';
 import { errors } from '../errors/errors.config';
-
+import { RedisCacheService } from '../cache/cache.service';
+import uploadVariables from '../variables/upload.variables';
 @Injectable()
 export class ProjectsService {
+  private readonly PROJECT_CACHE_KEY = uploadVariables.projects.cacheKey;
+  private readonly PROJECT_CACHE_TIME = uploadVariables.projects.cacheTime;
   constructor(
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
     @InjectRepository(TechStack)
     private readonly techStackRepository: Repository<TechStack>,
+    private readonly logger: Logger = new Logger(ProjectsService.name),
+    private readonly redisCacheService: RedisCacheService,
   ) {}
   async create(createProjectInput: CreateProjectInput) {
     const stack = createProjectInput.techStacks || [];
@@ -32,19 +42,29 @@ export class ProjectsService {
       });
       return await this.projectsRepository.save(project);
     } catch (error) {
-      console.log(error);
-      throw new NotFoundException(errors.NOT_CREATED('Project'), {
-        cause: error,
-      });
+      this.logger.error(error);
+      throw new NotFoundException(errors.NOT_CREATED('Project'));
     }
   }
 
   async findAll() {
-    return await this.projectsRepository.find({
+    const cachedProjects = await this.redisCacheService.get(
+      this.PROJECT_CACHE_KEY,
+    );
+    if (cachedProjects) {
+      return JSON.parse(cachedProjects);
+    }
+    const projects = await this.projectsRepository.find({
       relations: {
         techStacks: true,
       },
     });
+    await this.redisCacheService.set(
+      this.PROJECT_CACHE_KEY,
+      JSON.stringify(projects),
+      this.PROJECT_CACHE_TIME,
+    );
+    return projects;
   }
 
   async findOne(id: string) {
@@ -69,10 +89,8 @@ export class ProjectsService {
           techStacks: project.techStacks,
         });
       } catch (error) {
-        console.log(error);
-        throw new NotFoundException(errors.NOT_UPDATED('Project'), {
-          cause: error,
-        });
+        this.logger.error(error);
+        throw new BadGatewayException(errors.NOT_UPDATED('Project'));
       }
       return await this.projectsRepository.findOneBy({ id });
     }
@@ -81,18 +99,30 @@ export class ProjectsService {
         id: techId,
       });
       if (!techStack)
-        throw new NotFoundException(errors.NOT_FOUND('TechStack'));
+        throw new NotFoundException(errors.NOT_FOUND(`TechStack ${techId}`));
       return techStack;
     });
-    return await this.projectsRepository.update(id, {
-      ...updateProjectInput,
-      techStacks: await Promise.all(techStacks),
-    });
+    try {
+      await this.projectsRepository.update(id, {
+        ...updateProjectInput,
+        techStacks: await Promise.all(techStacks),
+      });
+      return await this.projectsRepository.findOneBy({ id });
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadGatewayException(errors.NOT_UPDATED('Project'));
+    }
   }
 
   async remove(id: string) {
     const exist = await this.projectsRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
+    try {
+      await this.projectsRepository.delete(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new NotFoundException(errors.NOT_DELETED('Project'));
+    }
     await this.projectsRepository.delete(id);
     return { id };
   }

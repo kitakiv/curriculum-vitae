@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { Slider } from './entities/slider.entity';
 import { SliderImageService } from './sliderImage.service';
@@ -15,6 +15,12 @@ const mockSlidersRepository = {
   delete: jest.fn(),
   findOne: jest.fn(),
 };
+
+const mockLogger = {
+  error: jest.fn(),
+  log: jest.fn(),
+  warn: jest.fn(),
+}
 
 const mockUuid = uuid.v4();
 
@@ -34,6 +40,10 @@ describe('SliderImageService', () => {
           provide: getRepositoryToken(Slider),
           useValue: mockSlidersRepository,
         },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        }
       ],
     }).compile();
 
