@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
@@ -8,16 +9,18 @@ import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { TechStack } from '../techstack/entities/techstack.entity';
 import { errors } from '../errors/errors.config';
 import { RedisCacheService } from '../cache/cache.service';
 import uploadVariables from '../variables/upload.variables';
+
 @Injectable()
 export class ProjectsService {
   private readonly PROJECT_CACHE_KEY = uploadVariables.projects.cacheKey;
   private readonly PROJECT_CACHE_TIME = uploadVariables.projects.cacheTime;
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
     @InjectRepository(TechStack)
@@ -114,16 +117,29 @@ export class ProjectsService {
     }
   }
 
-  async remove(id: string) {
+  async remove(
+    id: string,
+  ): Promise<void | NotFoundException | BadGatewayException> {
     const exist = await this.projectsRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
     try {
-      await this.projectsRepository.delete(id);
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('project_tech_stacks_tech_stack')
+          .where('projectId = :id', { id })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('project')
+          .where('id = :id', { id })
+          .execute();
+      });
     } catch (error) {
       this.logger.error(error);
-      throw new NotFoundException(errors.NOT_DELETED('Project'));
+      throw new BadRequestException(errors.NOT_DELETED('Project'));
     }
-    await this.projectsRepository.delete(id);
-    return { id };
   }
 }

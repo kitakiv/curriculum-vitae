@@ -7,10 +7,11 @@ import { TechStackImageService } from './tachstackImage.service';
 import { S3Service } from '../s3/s3.service';
 import { AuthModule } from '../auth/auth.module';
 import { RedisCacheModule } from '../cache/cache.module';
+import { Project } from '../projects/entities/project.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TechStack]),
+    TypeOrmModule.forFeature([TechStack, Project]),
     AuthModule,
     RedisCacheModule,
   ],

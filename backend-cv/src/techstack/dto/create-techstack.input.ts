@@ -1,5 +1,11 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, MinLength, IsUrl } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  MinLength,
+  IsUrl,
+  IsArray,
+} from 'class-validator';
 @InputType()
 export class CreateTechStackInput {
   @IsString()
@@ -11,4 +17,10 @@ export class CreateTechStackInput {
   @IsUrl()
   @Field(() => String, { nullable: true })
   techSvg?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  projects?: string[];
 }

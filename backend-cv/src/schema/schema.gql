@@ -51,6 +51,7 @@ input CreateSliderInput {
 }
 
 input CreateTechStackInput {
+  projects: [String!]
   techName: String!
   techSvg: String
 }
@@ -134,6 +135,7 @@ type RefreshToken {
   expiryDate: String!
   id: ID!
   token: String!
+  user: User!
 }
 
 input RefreshTokenInput {
@@ -167,6 +169,7 @@ type Slider {
 
 type TechStack {
   id: ID!
+  projects: [Project!]!
   techName: String!
   techSvg: String
 }
@@ -213,6 +216,7 @@ input UpdateSliderInput {
 
 input UpdateTechStackInput {
   id: ID!
+  projects: [String!]
   techName: String
   techSvg: String
 }
@@ -225,6 +229,7 @@ type User {
   id: ID!
   login: String!
   name: String!
+  password: String!
   refreshToken: RefreshToken!
   role: Role
 }

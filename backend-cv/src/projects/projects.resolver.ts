@@ -73,6 +73,6 @@ export class ProjectsResolver {
         cause: error,
       });
     }
-    return { id };
+    return id;
   }
 }

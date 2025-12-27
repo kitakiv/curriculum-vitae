@@ -71,6 +71,6 @@ export class TechStackResolver {
         cause: error,
       });
     }
-    return { id };
+    return id;
   }
 }

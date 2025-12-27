@@ -30,7 +30,10 @@ export class Project extends AbstractEntity<Project> {
   projectImages?: string[];
 
   @Field(() => [TechStack], { nullable: true })
+  @ManyToMany(() => TechStack, (techStack) => techStack.projects, {
+    cascade: true,
+    nullable: true,
+  })
   @JoinTable()
-  @ManyToMany(() => TechStack, { cascade: true, nullable: true })
   techStacks?: TechStack[];
 }
