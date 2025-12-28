@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { CreateProjectInput } from './create-project.input';
 import { InputType, Field, ID, PartialType } from '@nestjs/graphql';
+import { OmitType } from '@nestjs/mapped-types';
 
 @InputType()
 export class UpdateProjectInput extends PartialType(CreateProjectInput) {
@@ -10,3 +11,7 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field(() => ID)
   id: string;
 }
+
+export class UpdateProjectInputDto extends OmitType(UpdateProjectInput, [
+  'techStacks',
+] as const) {}

@@ -5,9 +5,12 @@ import {
   Logger,
 } from '@nestjs/common';
 import { CreateTechStackInput } from './dto/create-techstack.input';
-import { UpdateTechStackInput } from './dto/update-techstack.input';
+import {
+  UpdateTechStackInput,
+  UpdateTechStackInputDto,
+} from './dto/update-techstack.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
 import { errors } from '../errors/errors.config';
 import uploadVariables from '../variables/upload.variables';
@@ -29,18 +32,26 @@ export class TechStackService {
     private readonly redisCacheService: RedisCacheService,
   ) {}
   async create(createTechStackInput: CreateTechStackInput) {
-    const projects = createTechStackInput.projects || [];
-    const projectsInstances = projects.map(async (id) => {
-      const project = await this.projectRepository.findOneBy({ id });
-      if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
-      return project;
-    });
+    const { projects, notFoundProjects } = await this.getProjects(
+      createTechStackInput.projects,
+    );
+    if (notFoundProjects.length > 0) {
+      throw new NotFoundException(
+        errors.NOT_FOUND(`Projects (${notFoundProjects.join(', ')})`),
+      );
+    }
     try {
-      const techStack = this.techStackRepository.create({
-        ...createTechStackInput,
-        projects: await Promise.all(projectsInstances),
-      });
-      return await this.techStackRepository.save(techStack);
+      const createdTechStack = await this.dataSource.transaction(
+        async (manager) => {
+          const techStack = this.techStackRepository.create({
+            ...createTechStackInput,
+            projects,
+          });
+          await manager.save(TechStack, techStack);
+          return techStack;
+        }
+      )
+      return createdTechStack
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('TechStack'));
@@ -80,40 +91,55 @@ export class TechStackService {
     id: string,
     updateTechStackInput: UpdateTechStackInput,
   ): Promise<TechStack | NotFoundException | BadRequestException> {
-    const techStack = await this.techStackRepository.findOne({
-      where: { id },
-      relations: {
-        projects: true,
-      }
-    });
+    const techStack = await this.findOne(id);
     if (!techStack) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     if (!updateTechStackInput.projects) {
       try {
-        await this.techStackRepository.update(id, {
+        delete updateTechStackInput.projects;
+        const updatedInput = {
           ...updateTechStackInput,
-          projects: techStack.projects,
-        });
+        } as UpdateTechStackInputDto;
+        await this.techStackRepository.update(id, updatedInput);
         return await this.findOne(id);
       } catch (error) {
         this.logger.error(error);
         throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
       }
     }
-    const projects = updateTechStackInput.projects.map(async (id) => {
-      const project = await this.projectRepository.findOneBy({ id });
-      if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
-      return project;
-    })
+    const { projects, notFoundProjects } = await this.getProjects(
+      updateTechStackInput.projects,
+    );
+    if (notFoundProjects.length > 0) {
+      throw new NotFoundException(
+        errors.NOT_FOUND(`Projects (${notFoundProjects.join(', ')})`),
+      );
+    }
     try {
-      await this.techStackRepository.update(id, {
+      await this.techStackRepository.save({
+        ...techStack,
         ...updateTechStackInput,
-        projects: await Promise.all(projects),
+        projects,
       });
       return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
     }
+  }
+
+  private async getProjects(projectsIds: string[]): Promise<{
+    projects: Project[];
+    notFoundProjects: string[];
+  }> {
+    const projects = await this.projectRepository.find({
+      where: {
+        id: In(projectsIds),
+      },
+    });
+    const notFoundProjects = projectsIds.filter(
+      (projectId) => !projects.find((project) => project.id === projectId),
+    );
+    return { projects, notFoundProjects };
   }
   async remove(
     id: string,
