@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateContactInput } from './dto/create-contact.input';
 import { UpdateContactInput } from './dto/update-contact.input';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { errors } from '../errors/errors.config';
@@ -22,13 +22,16 @@ export class ContactsService {
     private readonly contactsRepository: Repository<Contact>,
     private readonly logger: Logger = new Logger(ContactsService.name),
     private readonly redisCacheService: RedisCacheService,
+    private readonly dataSource: DataSource,
   ) {}
   async create(createContactInput: CreateContactInput) {
     const contact = new Contact(createContactInput);
     try {
-      await this.contactsRepository.create(contact);
-      await this.contactsRepository.save(contact);
-      return contact;
+      return await this.dataSource.transaction(async (manager) => {
+        const createdContact = await manager.create(Contact, contact);
+        await manager.save(Contact, createdContact);
+        return createdContact;
+      });
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Contact'));

@@ -70,14 +70,15 @@ type Mutation {
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
   getUser: User!
-  login(loginInput: LoginInput!): Sing!
-  refreshToken(refreshTokenInput: RefreshTokenInput!): Sing!
+  login(loginInput: LoginInput!): UserData!
+  refreshToken(refreshTokenInput: RefreshTokenInput!): UserData!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
   removeRole(id: ID!): ID!
   removeSlider(id: ID!): ID!
   removeTechStack(id: ID!): ID!
-  singup(singUpInput: SingUpInput!): Sing!
+  removeUser(id: ID!): ID!
+  signup(signUpInput: SignUpInput!): UserData!
   update(updateUserInput: UpdateUserInput!): User!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
@@ -149,12 +150,12 @@ type Role {
   users: [User!]
 }
 
-type Sing {
+type Sign {
   accessToken: String!
   refreshToken: String
 }
 
-input SingUpInput {
+input SignUpInput {
   login: String!
   name: String!
   password: String!
@@ -232,4 +233,9 @@ type User {
   password: String!
   refreshToken: RefreshToken!
   role: Role
+}
+
+type UserData {
+  tokens: Sign!
+  user: User!
 }

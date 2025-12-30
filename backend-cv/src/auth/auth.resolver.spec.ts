@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthorizationGuard } from '../guards/authorization.guard';
-import { SingUpInput } from './dto/singUp.input';
+import { SignUpInput } from './dto/signUp.input';
 import { LoginInput } from './dto/login.input';
 import { RefreshTokenInput } from './dto/refreshToken.input';
 import { User } from './entities/user.entity';
@@ -23,7 +23,6 @@ import { RefreshToken } from './entities/refreshToken.entity';
 import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { errors } from '../errors/errors.config';
-import { get } from 'http';
 
 jest.mock('../decorators/public.decorator', () => ({
   Public: jest.fn(
@@ -59,7 +58,7 @@ const mockAuthService = {
   login: jest.fn(),
   changePassword: jest.fn(),
   refreshToken: jest.fn(),
-  singUp: jest.fn(),
+  signUp: jest.fn(),
   getUserPermissions: jest.fn(),
   update: jest.fn(),
   getUser: jest.fn(),
@@ -119,7 +118,7 @@ describe('AuthResolver', () => {
   });
 
   describe('Public routes', () => {
-    const inputSignUser: SingUpInput = {
+    const inputSignUser: SignUpInput = {
       name: 'Name',
       login: 'email@gmail.com',
       password: '12345@Vika',
@@ -134,7 +133,7 @@ describe('AuthResolver', () => {
     it('should be marked as public route', () => {
       const publicMethods = [
         resolver.refreshToken,
-        resolver.singup,
+        resolver.signup,
         resolver.login,
       ];
       publicMethods.forEach((method) => {
@@ -148,17 +147,17 @@ describe('AuthResolver', () => {
     });
 
     it('should call signUp method', async () => {
-      mockAuthService.singUp.mockResolvedValue({
+      mockAuthService.signUp.mockResolvedValue({
         access_token: 'token',
         refresh_token: 'token',
       });
-      const result = await resolver.singup(inputSignUser);
+      const result = await resolver.signup(inputSignUser);
       expect(result).toEqual({
         access_token: 'token',
         refresh_token: 'token',
       });
-      expect(service.singUp).toHaveBeenCalledWith(inputSignUser);
-      expect(service.singUp).toHaveBeenCalledTimes(1);
+      expect(service.signUp).toHaveBeenCalledWith(inputSignUser);
+      expect(service.signUp).toHaveBeenCalledTimes(1);
     });
 
     it('should call login method', async () => {
@@ -298,7 +297,7 @@ describe('AuthResolver', () => {
       expect(mockAuthService.changePassword).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error when userId is missing from context', async () => {
+    it('should throw error when userId is missign from context', async () => {
       const changePasswordInput: ChangePasswordInput = {
         oldPassword: 'oldPassword123',
         newPassword: 'newPassword456',
@@ -545,19 +544,19 @@ describe('AuthResolver', () => {
     });
 
     it('valid signup input', async () => {
-      const validInput: SingUpInput = {
+      const validInput: SignUpInput = {
         name: 'Victoria',
         login: 'testuser@gmail.com',
         password: '123Password#',
       };
       const result = await validationPipe.transform(validInput, {
         type: 'body',
-        metatype: SingUpInput,
+        metatype: SignUpInput,
       });
       expect(result).toEqual(validInput);
     });
     it('invalid signup input', async () => {
-      const invalidInput: SingUpInput = {
+      const invalidInput: SignUpInput = {
         name: '',
         login: '',
         password: '',
@@ -565,7 +564,7 @@ describe('AuthResolver', () => {
       try {
         await validationPipe.transform(invalidInput, {
           type: 'body',
-          metatype: SingUpInput,
+          metatype: SignUpInput,
         });
       } catch (error) {
         const messages = error.response.message;

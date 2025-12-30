@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { RolesResolver } from './roles.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';

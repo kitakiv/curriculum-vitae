@@ -43,10 +43,10 @@ export class TechStackService {
     try {
       const createdTechStack = await this.dataSource.transaction(
         async (manager) => {
-          const techStack = this.techStackRepository.create({
+          const techStack = await manager.create(TechStack, {
             ...createTechStackInput,
             projects,
-          });
+          })
           await manager.save(TechStack, techStack);
           return techStack;
         }
@@ -91,8 +91,9 @@ export class TechStackService {
     id: string,
     updateTechStackInput: UpdateTechStackInput,
   ): Promise<TechStack | NotFoundException | BadRequestException> {
-    const techStack = await this.findOne(id);
-    if (!techStack) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
+    const techStack = await this.techStackRepository.findOneBy({ id });
+    if (!techStack)
+      throw new NotFoundException(errors.NOT_FOUND(`TechStack ${id}`));
     if (!updateTechStackInput.projects) {
       try {
         delete updateTechStackInput.projects;
@@ -131,9 +132,10 @@ export class TechStackService {
     projects: Project[];
     notFoundProjects: string[];
   }> {
+    const uniqueIds = [...new Set(projectsIds)];
     const projects = await this.projectRepository.find({
       where: {
-        id: In(projectsIds),
+        id: In(uniqueIds),
       },
     });
     const notFoundProjects = projectsIds.filter(

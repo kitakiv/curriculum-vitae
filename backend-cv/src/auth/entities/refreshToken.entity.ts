@@ -17,9 +17,10 @@ export class RefreshToken extends AbstractEntity<RefreshToken> {
   @Column()
   expiryDate: Date;
 
-  @JoinColumn()
   @OneToOne(() => User, (user) => user.refreshToken, {
+    cascade: true,
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   user: User;
 }

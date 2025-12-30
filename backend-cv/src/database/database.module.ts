@@ -6,13 +6,13 @@ import { ConfigService } from '@nestjs/config';
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.getOrThrow('MYSQL_HOST'),
-        port: configService.getOrThrow('MYSQL_PORT'),
-        username: configService.getOrThrow('MYSQL_ROOT_USERNAME'),
-        password: configService.getOrThrow('MYSQL_ROOT_PASSWORD'),
-        database: configService.getOrThrow('MYSQL_DATABASE'),
-        synchronize: JSON.parse(configService.getOrThrow('MYSQL_SYNCHRONIZE')),
+        type: 'postgres',
+        host: configService.getOrThrow<string>('POSTGRES_HOST'),
+        port: configService.getOrThrow<number>('POSTGRES_PORT'),
+        username: configService.getOrThrow<string>('POSTGRES_USER'),
+        password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
+        database: configService.getOrThrow<string>('POSTGRES_DB'),
+        synchronize: true, // configService.getOrThrow<boolean>('POSTGRES_SYNCHRONIZE'),
         autoLoadEntities: true,
       }),
       inject: [ConfigService],

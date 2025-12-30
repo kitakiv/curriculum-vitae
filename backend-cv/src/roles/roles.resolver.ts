@@ -47,7 +47,10 @@ export class RolesResolver {
   }
 
 
-  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.DELETE] }])
+  @PermissionGuard([
+    { resource: Resource.ROLE, actions: [Action.DELETE] },
+    { resource: Resource.USER, actions: [Action.UPDATE] },
+  ])
   @Mutation(() => ID)
   async removeRole(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.remove(id);

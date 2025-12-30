@@ -1,9 +1,8 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
-import { SingUpInput } from './dto/singUp.input';
+import { SignUpInput } from './dto/signUp.input';
 import { LoginInput } from './dto/login.input';
-import { Sing } from './entities/sing.type';
 import { RefreshTokenInput } from './dto/refreshToken.input';
 import { Public } from '../decorators/public.decorator';
 import {
@@ -20,6 +19,7 @@ import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import { errors } from '../errors/errors.config';
 import { UpdateUserInput } from './dto/updateAuth.input';
+import { UserData } from './entities/userData.type';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
@@ -27,15 +27,15 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Mutation(() => Sing)
-  async singup(
-    @Args('singUpInput', { type: () => SingUpInput }) singUpInput: SingUpInput,
+  @Mutation(() => UserData)
+  async signup(
+    @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
   ) {
-    return await this.authService.singUp(singUpInput);
+    return await this.authService.signUp(signUpInput);
   }
 
   @Public()
-  @Mutation(() => Sing)
+  @Mutation(() => UserData)
   async login(
     @Args('loginInput', { type: () => LoginInput }) loginInput: LoginInput,
   ) {
@@ -43,7 +43,7 @@ export class AuthResolver {
   }
 
   @Public()
-  @Mutation(() => Sing)
+  @Mutation(() => UserData)
   async refreshToken(
     @Args('refreshTokenInput', { type: () => RefreshTokenInput })
     refreshTokenInput: RefreshTokenInput,
@@ -81,6 +81,15 @@ export class AuthResolver {
     const req = context.getArgs()[2].req;
     if (!req.userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     return await this.authService.getUser(req.userId);
+  }
+
+  @PermissionGuard([
+    { resource: Resource.USER, actions: [Action.DELETE] },
+    { resource: Resource.REFRESH, actions: [Action.DELETE] }
+  ])
+  @Mutation(() => ID)
+  async removeUser(@Args('id', { type: () => ID }) id: string) {
+    return await this.authService.remove(id);
   }
 
   @PermissionGuard([

@@ -8,7 +8,13 @@ export class GraphQLLoggerPlugin implements ApolloServerPlugin {
   private filterSensitiveData(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
     const filtered = { ...obj };
-    const sensitiveFields = ['password', 'refreshToken', 'secretKey', 'token'];
+    const sensitiveFields = [
+      'password',
+      'refreshToken',
+      'secretKey',
+      'token',
+      'accessToken',
+    ];
     for (const key in filtered) {
       if (sensitiveFields.includes(key)) {
         filtered[key] = '[FILTERED]';
@@ -35,29 +41,37 @@ export class GraphQLLoggerPlugin implements ApolloServerPlugin {
         const detailedErrors = requestContext.errors?.map((error) => ({
           message: error.message,
           path: error.path,
-          locations: error.locations
+          locations: error.locations,
         }));
 
-        this.logger.error({
+        const dateLog = {
           ip: requestContext.contextValue.ip,
           duration: `${duration}ms`,
           operation: requestContext.contextValue.operation,
-          query: requestContext.request.query,
+          query: this.filterSensitiveData(requestContext.request.query),
           variables: this.filterSensitiveData(requestContext.request.variables),
           errors: detailedErrors,
-          result: 'ERROR'
-        });
+          result: 'ERROR',
+        };
+        this.logger.error(JSON.stringify(dateLog, null, 2));
       },
 
       willSendResponse: async (requestContext) => {
         const duration = Date.now() - requestContext.contextValue.startTime;
         const hasErrors =
           requestContext.errors && requestContext.errors.length > 0;
-
         if (!hasErrors) {
-          this.logger.log(
-            `GraphQL ${requestContext.contextValue.operation} - ${duration}ms - SUCCESS`,
-          );
+          const dateLog = {
+            ip: requestContext.contextValue.ip,
+            duration: `${duration}ms`,
+            operation: requestContext.contextValue.operation,
+            query: this.filterSensitiveData(requestContext.request.query),
+            variables: this.filterSensitiveData(
+              requestContext.request.variables,
+            ),
+            result: 'SUCCESS',
+          };
+          this.logger.log(JSON.stringify(dateLog, null, 2));
         }
       },
     };

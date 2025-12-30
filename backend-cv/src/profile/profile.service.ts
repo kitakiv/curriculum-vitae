@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from './entities/profile.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { errors } from '../errors/errors.config';
 import { Logger } from '@nestjs/common';
 import uploadVariables from '../variables/upload.variables';
@@ -17,6 +17,7 @@ export class ProfileService {
     private readonly profileRepository: Repository<Profile>,
     private readonly logger: Logger = new Logger(ProfileService.name),
     private readonly cacheManager: RedisCacheService,
+    private readonly dataSource: DataSource
   ) {}
 
   async find() {
@@ -30,7 +31,7 @@ export class ProfileService {
         profile = await this.createDefaultProfile();
       } catch (error) {
         this.logger.error(error);
-        throw new BadRequestException(error.message);
+        throw new BadRequestException(errors.NOT_CREATED('Profile'));
       }
     }
     await this.cacheManager.set(
@@ -49,7 +50,6 @@ export class ProfileService {
       }
       if (Object.keys(updateProfileInput).length === 0) return profile;
       await this.profileRepository.update(profile.id, {
-        name: profile.name,
         ...updateProfileInput,
       });
       const updatedProfile = await this.profileRepository.findOneBy({
@@ -66,9 +66,11 @@ export class ProfileService {
   async createDefaultProfile() {
     const profile = new Profile({});
     try {
-      const createdProfile = await this.profileRepository.create(profile);
-      await this.profileRepository.save(createdProfile);
-      return createdProfile;
+      return await this.dataSource.transaction(async (manager) => {
+        const createdProfile = await manager.create(Profile, profile);
+        await manager.save(Profile, createdProfile);
+        return createdProfile;
+      })
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Profile'));

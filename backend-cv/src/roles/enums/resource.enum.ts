@@ -7,4 +7,5 @@ export enum Resource {
   PROFILE = 'profile',
   ROLE = 'role',
   IMAGE = 'image',
+  REFRESH = "refresh"
 }

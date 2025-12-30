@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { errors } from '../errors/errors.config';
@@ -21,12 +21,16 @@ export class SlidersService {
     private readonly slidersRepository: Repository<Slider>,
     private readonly logger: Logger = new Logger(SlidersService.name),
     private readonly redisCacheService: RedisCacheService,
+    private readonly dataSource: DataSource,
   ) {}
   async create(createSliderInput: CreateSliderInput) {
     const slider = new Slider(createSliderInput);
     try {
-      const createdSlider = await this.slidersRepository.create(slider);
-      return await this.slidersRepository.save(createdSlider);
+      return await this.dataSource.transaction(async (manager) => {
+        const createdSlider = await manager.create(Slider, slider);
+        await manager.save(Slider, createdSlider);
+        return createdSlider;
+      })
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Slider'));

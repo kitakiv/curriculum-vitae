@@ -8,7 +8,7 @@ import { Role } from '../roles/entities/role.entity';
 import { Logger } from '@nestjs/common';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, RefreshToken, Role])],
+  imports: [TypeOrmModule.forFeature([User, RefreshToken, Role]),],
   providers: [AuthResolver, AuthService, Logger],
   exports: [AuthService],
 })

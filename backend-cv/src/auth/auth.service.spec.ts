@@ -12,7 +12,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { SingUpInput } from './dto/singUp.input';
+import { signUpInput } from './dto/signUp.input';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 import { LoginInput } from './dto/login.input';
@@ -153,8 +153,8 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('singUp', () => {
-    const singUpInput: SingUpInput = {
+  describe('signUp', () => {
+    const signUpInput: signUpInput = {
       name: 'Name',
       login: 'email@gmail.com',
       password: '12345@Vika',
@@ -166,12 +166,12 @@ describe('AuthService', () => {
       mockedBcrypt.hash.mockResolvedValue(hashedPassword as never);
       // create save user with hashed password
       mockUserRepository.save.mockResolvedValue({
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
         id: mockUuid,
       });
       const createdUser = {
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
         id: mockUuid,
       };
@@ -191,22 +191,22 @@ describe('AuthService', () => {
         token: refreshToken,
         expiryDate: new Date(),
       });
-      const result = await service.singUp(singUpInput);
+      const result = await service.signUp(signUpInput);
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
-        login: singUpInput.login,
+        login: signUpInput.login,
       });
       expect(mockUserRepository.create).toHaveBeenCalledWith({
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
       });
-      expect(mockedBcrypt.hash).toHaveBeenCalledWith(singUpInput.password, 10);
+      expect(mockedBcrypt.hash).toHaveBeenCalledWith(signUpInput.password, 10);
       expect(mockJwtService.sign).toHaveBeenCalledWith({ userId: mockUuid });
       expect(mockedUuid.v4).toHaveBeenCalled();
       expect(mockRefreshTokenRepository.create).toHaveBeenCalledWith({
         token: refreshToken,
         expiryDate: expect.any(Date),
         user: {
-          ...singUpInput,
+          ...signUpInput,
           id: mockUuid,
           password: hashedPassword,
         },
@@ -220,7 +220,7 @@ describe('AuthService', () => {
 
     it('should throw HttpException if user already exists', async () => {
       mockUserRepository.findOneBy.mockResolvedValue(mockUser);
-      const promise = service.singUp(singUpInput);
+      const promise = service.signUp(signUpInput);
       await expect(promise).rejects.toThrow(errors.EMAIL_EXISTS);
       await expect(promise).rejects.toBeInstanceOf(BadRequestException);
     });
@@ -229,7 +229,7 @@ describe('AuthService', () => {
       mockUserRepository.findOneBy.mockResolvedValueOnce(null);
       mockedBcrypt.hash.mockResolvedValue(hashedPassword as never);
       mockUserRepository.save.mockRejectedValue(new Error('DB Error'));
-      const promise = service.singUp(singUpInput);
+      const promise = service.signUp(signUpInput);
       await expect(promise).rejects.toThrow(errors.NOT_CREATED('User'));
       await expect(promise).rejects.toBeInstanceOf(BadRequestException);
     });
@@ -242,7 +242,7 @@ describe('AuthService', () => {
         password: hashedPassword,
       });
       const createdUser = {
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
         id: mockUuid,
       };
@@ -262,9 +262,9 @@ describe('AuthService', () => {
         token: refreshToken,
         expiryDate: new Date(),
       });
-      await service.singUp(singUpInput);
+      await service.signUp(signUpInput);
       expect(mockUserRepository.create).toHaveBeenCalledWith({
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
       });
     });
@@ -277,7 +277,7 @@ describe('AuthService', () => {
         password: hashedPassword,
       });
       const createdUser = {
-        ...singUpInput,
+        ...signUpInput,
         password: hashedPassword,
         id: mockUuid,
       };
@@ -290,7 +290,7 @@ describe('AuthService', () => {
         expiryDate: new Date(),
       });
       mockRefreshTokenRepository.save.mockRejectedValue(new Error('DB Error'));
-      await expect(service.singUp(singUpInput)).rejects.toThrow(
+      await expect(service.signUp(signUpInput)).rejects.toThrow(
         BadRequestException,
       );
     });
