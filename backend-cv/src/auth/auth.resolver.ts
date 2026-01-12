@@ -3,14 +3,13 @@ import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
 import { SignUpInput } from './dto/signUp.input';
 import { LoginInput } from './dto/login.input';
-import { RefreshTokenInput } from './dto/refreshToken.input';
 import { Public } from '../decorators/public.decorator';
 import {
   BadRequestException,
-  ExecutionContext,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { ChangePasswordInput } from './dto/changePassword.input';
 import { AttachRoleInput } from './dto/attachRole.input';
 import { AuthorizationGuard } from '../guards/authorization.guard';
@@ -19,49 +18,84 @@ import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import { errors } from '../errors/errors.config';
 import { UpdateUserInput } from './dto/updateAuth.input';
-import { UserData } from './entities/userData.type';
+import { CookiesService } from '../common/cookies/cookies.service';
+import { CookiesData } from './entities/cookiesData.type';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  private refreshTokenName = 'refreshToken';
+  constructor(
+    private readonly cookiesService: CookiesService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Public()
-  @Mutation(() => UserData)
+  @Mutation(() => CookiesData)
   async signup(
     @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
+    @Context() { res }: { res: Response },
   ) {
-    return await this.authService.signUp(signUpInput);
+    const result = await this.authService.signUp(signUpInput);
+    this.cookiesService.setCookies(
+      res,
+      result.tokens.refreshToken,
+      this.refreshTokenName,
+    );
+    return result;
   }
 
   @Public()
-  @Mutation(() => UserData)
+  @Mutation(() => CookiesData)
   async login(
     @Args('loginInput', { type: () => LoginInput }) loginInput: LoginInput,
+    @Context() { res }: { res: Response },
   ) {
-    return await this.authService.login(loginInput);
+    const result = await this.authService.login(loginInput);
+    this.cookiesService.setCookies(
+      res,
+      result.tokens.refreshToken,
+      this.refreshTokenName,
+    );
+    return result;
   }
 
   @Public()
-  @Mutation(() => UserData)
-  async refreshToken(
-    @Args('refreshTokenInput', { type: () => RefreshTokenInput })
-    refreshTokenInput: RefreshTokenInput,
-  ) {
-    return await this.authService.refreshToken(refreshTokenInput.refreshToken);
+  @Mutation(() => CookiesData)
+  async refreshToken(@Context() { req }: { req: Request }) {
+    const refreshToken = this.cookiesService.getCookie(
+      req,
+      this.refreshTokenName,
+    );
+    if (!refreshToken)
+      throw new BadRequestException(errors.NOT_FOUND('Refresh token'));
+    const result = await this.authService.refreshToken(refreshToken);
+    this.cookiesService.setCookies(
+      req.res,
+      result.tokens.refreshToken,
+      this.refreshTokenName,
+    );
+    return result;
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Context() { req, res }: { req: Request; res: Response }) {
+    if (!req['userId'])
+      throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    this.cookiesService.clearCookies(res, this.refreshTokenName);
+    return true;
   }
 
   @Mutation(() => User)
   async changePassword(
     @Args('changePasswordInput', { type: () => ChangePasswordInput })
     changePasswordInput: ChangePasswordInput,
-    @Context() context: ExecutionContext,
+    @Context() { req }: { req: Request },
   ) {
-    const req = context.getArgs()[2].req;
-    if (!req.userId) throw new BadRequestException(errors.NOT_FOUND('User'));
+    if (!req['userId']) throw new BadRequestException(errors.NOT_FOUND('User'));
     return await this.authService.changePassword(
       changePasswordInput,
-      req.userId,
+      req['userId'],
     );
   }
 
@@ -69,23 +103,23 @@ export class AuthResolver {
   async update(
     @Args('updateUserInput', { type: () => UpdateUserInput })
     updateUserInput: UpdateUserInput,
-    @Context() context: ExecutionContext,
+    @Context() { req }: { req: Request }
   ) {
-    const req = context.getArgs()[2].req;
-    if (!req.userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
-    return await this.authService.update(updateUserInput, req.userId);
+    if (!req['userId'])
+      throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return await this.authService.update(updateUserInput, req['userId']);
   }
 
   @Mutation(() => User)
-  async getUser(@Context() context: ExecutionContext) {
-    const req = context.getArgs()[2].req;
-    if (!req.userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
-    return await this.authService.getUser(req.userId);
+  async getUser(@Context() { req }: { req: Request }) {
+    if (!req['userId'])
+      throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return await this.authService.getUser(req['userId']);
   }
 
   @PermissionGuard([
     { resource: Resource.USER, actions: [Action.DELETE] },
-    { resource: Resource.REFRESH, actions: [Action.DELETE] }
+    { resource: Resource.REFRESH, actions: [Action.DELETE] },
   ])
   @Mutation(() => ID)
   async removeUser(@Args('id', { type: () => ID }) id: string) {

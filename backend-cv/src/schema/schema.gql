@@ -19,6 +19,11 @@ type Contact {
   id: ID!
 }
 
+type CookiesData {
+  tokens: Sign!
+  user: User!
+}
+
 input CreateContactInput {
   contactLink: String!
   contactName: String!
@@ -70,15 +75,16 @@ type Mutation {
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
   getUser: User!
-  login(loginInput: LoginInput!): UserData!
-  refreshToken(refreshTokenInput: RefreshTokenInput!): UserData!
+  login(loginInput: LoginInput!): CookiesData!
+  logout: Boolean!
+  refreshToken: CookiesData!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
   removeRole(id: ID!): ID!
   removeSlider(id: ID!): ID!
   removeTechStack(id: ID!): ID!
   removeUser(id: ID!): ID!
-  signup(signUpInput: SignUpInput!): UserData!
+  signup(signUpInput: SignUpInput!): CookiesData!
   update(updateUserInput: UpdateUserInput!): User!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
@@ -139,10 +145,6 @@ type RefreshToken {
   user: User!
 }
 
-input RefreshTokenInput {
-  refreshToken: String!
-}
-
 type Role {
   id: ID!
   name: String!
@@ -152,7 +154,6 @@ type Role {
 
 type Sign {
   accessToken: String!
-  refreshToken: String
 }
 
 input SignUpInput {
@@ -233,9 +234,4 @@ type User {
   password: String!
   refreshToken: RefreshToken!
   role: Role
-}
-
-type UserData {
-  tokens: Sign!
-  user: User!
 }

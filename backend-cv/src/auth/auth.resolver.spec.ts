@@ -77,11 +77,12 @@ const mockUser: User = {
   name: 'Name',
   login: 'email@gmail.com',
   password: '12345@Vika',
-  role: { id: '1', name: 'admin', permissions: [] },
   refreshToken: new RefreshToken({
     token: uuid.v4(),
     expiryDate: new Date(),
   }),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 describe('AuthResolver', () => {

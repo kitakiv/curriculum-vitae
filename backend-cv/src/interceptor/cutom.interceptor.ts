@@ -20,18 +20,20 @@ export class LoggingInterceptor implements NestInterceptor {
     );
   }
 
-  private filterSensitiveData(data: any): any {
-    if (Array.isArray(data)) {
-      return data.map((item) => this.filterSensitiveData(item));
+  private filterSensitiveData(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.filterSensitiveData(item));
+    };
+    if (!obj || typeof obj !== 'object') return obj;
+    const filtered = { ...obj };
+    const sensitiveFields = ['password', 'refreshToken', 'secretKey', 'token'];
+    for (const key in filtered) {
+      if (sensitiveFields.includes(key)) {
+        delete filtered[key];
+      } else if (typeof filtered[key] === 'object') {
+        filtered[key] = this.filterSensitiveData(filtered[key]);
+      }
     }
-
-    if (data && typeof data === 'object') {
-      const filtered = { ...data };
-      delete filtered.password;
-      delete filtered.secretKey;
-      return filtered;
-    }
-
-    return data;
+    return filtered;
   }
 }

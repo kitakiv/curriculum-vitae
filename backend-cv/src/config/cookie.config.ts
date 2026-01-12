@@ -1,3 +1,5 @@
+import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
+
 export const cookieConfig = {
   accessToken: {
     name: 'access_token',
@@ -5,7 +7,9 @@ export const cookieConfig = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict' as const,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge:
+        Number(process.env.ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC) ||
+        15 * 60 * 60 * 1000,
       path: '/',
     },
   },
@@ -15,7 +19,7 @@ export const cookieConfig = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
       path: '/',
     },
   },

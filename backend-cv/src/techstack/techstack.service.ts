@@ -41,17 +41,14 @@ export class TechStackService {
       );
     }
     try {
-      const createdTechStack = await this.dataSource.transaction(
-        async (manager) => {
-          const techStack = await manager.create(TechStack, {
-            ...createTechStackInput,
-            projects,
-          })
-          await manager.save(TechStack, techStack);
-          return techStack;
-        }
-      )
-      return createdTechStack
+      return await this.dataSource.transaction(async (manager) => {
+        const techStack = await manager.create(TechStack, {
+          ...createTechStackInput,
+          projects,
+        });
+        await manager.save(TechStack, techStack);
+        return techStack;
+      });
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('TechStack'));

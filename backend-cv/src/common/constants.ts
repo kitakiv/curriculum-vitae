@@ -1,7 +1,8 @@
 const MAX_FILE_IMAGES = 5;
 const KB = 1000;
 const MB = KB * 1000;
-const REFRESH_TOKEN_EXPIRATION_DAYS = 3;
+const REFRESH_TOKEN_EXPIRATION_DAYS =
+  Number(process.env.REFRESH_TOKEN_VALIDITY_DURATION_IN_DAYS) || 3;
 const FILE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp', 'svg+xml'];
 const directives: Record<string, string[]> =  {
   imgSrc: [

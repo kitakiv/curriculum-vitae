@@ -24,8 +24,8 @@ import { errors } from '../errors/errors.config';
 import { expiryDate } from '../common/constants';
 import { DataSource } from 'typeorm';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
-import { UserData } from './entities/userData.type';
-
+import { CookiesData } from './entities/cookiesData.type';
+import { Sign } from './entities/sign.type';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -41,23 +41,23 @@ export class AuthService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly logger: Logger,
   ) {}
-  async signUp(
-    createAuthInput: SignUpInput,
-  ): Promise<UserData | BadRequestException> {
+  async signUp(createAuthInput: SignUpInput): Promise<CookiesData> {
     const emailInUse = await this.userRepository.findOneBy({
       login: createAuthInput.login,
     });
     if (emailInUse) {
       throw new BadRequestException(errors.EMAIL_EXISTS);
     }
-    const user = await this.createUser(createAuthInput);
-    const tokens = await this.generateToken(user as User);
-    return { user, tokens } as UserData;
+    try {
+      const user = await this.createUser(createAuthInput);
+      const tokens = await this.generateToken(user as User);
+      return { user, tokens } as CookiesData;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  private async createUser(
-    createAuthInput: SignUpInput,
-  ): Promise<User | BadRequestException> {
+  private async createUser(createAuthInput: SignUpInput): Promise<User> {
     const hashPassword = await this.createHashPassword(
       createAuthInput.password,
     );
@@ -82,9 +82,7 @@ export class AuthService implements OnModuleInit {
     return await bcrypt.hash(password, saltOrRound);
   }
 
-  async login(
-    loginInput: LoginInput,
-  ): Promise<UserData | UnauthorizedException> {
+  async login(loginInput: LoginInput): Promise<CookiesData> {
     const { login, password } = loginInput;
     const user = await this.userRepository.findOneBy({ login });
     if (!user) {
@@ -97,10 +95,13 @@ export class AuthService implements OnModuleInit {
       throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password'));
     }
     const tokens = await this.generateToken(user);
-    return { user, tokens } as UserData;
+    if (!tokens) {
+      throw new BadRequestException(errors.NOT_CREATED('Tokens'));
+    }
+    return { user, tokens } as CookiesData;
   }
 
-  private async generateToken(user: User) {
+  private async generateToken(user: User): Promise<Sign> {
     const accessToken = this.jwtService.sign({ userId: user.id });
     const refreshToken = uuid.v4();
     try {
@@ -108,7 +109,7 @@ export class AuthService implements OnModuleInit {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken } as Sign;
   }
 
   private async findUserByRefreshToken(userId: string) {
@@ -160,9 +161,7 @@ export class AuthService implements OnModuleInit {
     }
   }
 
-  async refreshToken(
-    token: string,
-  ): Promise<UserData | UnauthorizedException | BadRequestException> {
+  async refreshToken(token: string): Promise<CookiesData> {
     const refreshToken = await this.refreshTokenRepository.findOne({
       where: {
         token,
@@ -253,7 +252,7 @@ export class AuthService implements OnModuleInit {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('User'));
     }
-    return await this.findUserById(userId)
+    return await this.findUserById(userId);
   }
 
   async update(updateUserInput: UpdateUserInput, userId: string) {
@@ -278,7 +277,7 @@ export class AuthService implements OnModuleInit {
           permissions: true,
         },
       },
-    })
+    });
   }
 
   async getUser(userId: string) {
