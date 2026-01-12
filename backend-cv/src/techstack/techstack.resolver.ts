@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { TechStackService } from './techstack.service';
 import { TechStack } from './entities/techstack.entity';
 import { CreateTechStackInput } from './dto/create-techstack.input';
@@ -12,6 +20,7 @@ import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { errors } from '../errors/errors.config';
+import { Project } from '../projects/entities/project.entity';
 
 
 @UseGuards(AuthorizationGuard)
@@ -43,6 +52,13 @@ export class TechStackResolver {
   @Query(() => TechStack, { name: 'techstack' })
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.techStackService.findOne(id);
+  }
+
+  @Public()
+  @ResolveField()
+  async projects(@Parent() techStack: TechStack) {
+    const { id } = techStack;
+    return await this.techStackService.findAllChildren(id);
   }
 
   @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.UPDATE] }])

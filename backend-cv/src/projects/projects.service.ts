@@ -90,6 +90,17 @@ export class ProjectsService {
     return project;
   }
 
+  async findAllChildren(id: string): Promise<TechStack[]> {
+    const techStacks = await this.techStackRepository.find({
+      where: {
+        projects: {
+          id,
+        },
+      },
+    });
+    return techStacks;
+  }
+
   async update(id: string, updateProjectInput: UpdateProjectInput) {
     const project = await this.findOne(id);
     if (!project)

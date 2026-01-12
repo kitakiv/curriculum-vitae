@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Parent, ResolveField } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
@@ -42,6 +42,13 @@ export class ProjectsResolver {
   @Query(() => Project, { name: 'project' })
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.projectsService.findOne(id);
+  }
+
+  @Public()
+  @ResolveField()
+  async techStacks(@Parent() project: Project) {
+    const { id } = project;
+    return this.projectsService.findAllChildren(id);
   }
 
 
