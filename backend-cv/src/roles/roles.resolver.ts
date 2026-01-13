@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
@@ -8,6 +16,8 @@ import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from './enums/resource.enum';
 import { Action } from './enums/action.enum';
+import { Permission } from './entities/permission.entity';
+import { User } from '../auth/entities/user.entity';
 
 
 @UseGuards(AuthorizationGuard)
@@ -35,6 +45,24 @@ export class RolesResolver {
   @Query(() => Role, { name: 'role' })
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.findOne(id);
+  }
+
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
+  @ResolveField(() => [Permission], { nullable: true })
+  async permissions(@Parent() role: Role) {
+    const { id } = role;
+    return this.rolesService.findAllPermissions(id);
+  }
+
+  @PermissionGuard([
+    { resource: Resource.ROLE, actions: [Action.READ] },
+    { resource: Resource.USER, actions: [Action.READ] },
+    { resource: Resource.REFRESH, actions: [Action.READ] },
+  ])
+  @ResolveField(() => [User])
+  async users(@Parent() user: User) {
+    const { id } = user;
+    return this.rolesService.findAllUsers(id);
   }
 
   @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.UPDATE] }])

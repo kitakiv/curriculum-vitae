@@ -10,6 +10,7 @@ import { Logger } from '@nestjs/common';
 import { IS_PERMISSION_KEY } from '../decorators/permission.decorator';
 import { Reflector } from '@nestjs/core';
 import { AuthService } from '../auth/auth.service';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -29,8 +30,10 @@ export class AuthorizationGuard implements CanActivate {
     const ctxType = context.getType<'graphql' | 'http'>();
     let request: Request;
     if (ctxType === 'graphql') {
+      const gqlCtx = GqlExecutionContext.create(context);
+      const ctx = gqlCtx.getContext();
       // GraphQL context
-      request = context.getArgs()[2].req;
+      request = ctx.req;
     } else {
       // HTTP context
       request = context.switchToHttp().getRequest();

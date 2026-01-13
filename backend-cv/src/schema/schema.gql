@@ -77,7 +77,7 @@ type Mutation {
   getUser: User!
   login(loginInput: LoginInput!): CookiesData!
   logout: Boolean!
-  refreshToken: CookiesData!
+  refreshTheTokens: CookiesData!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
   removeRole(id: ID!): ID!

@@ -27,7 +27,7 @@ export class RolesService implements OnModuleInit {
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
   ) {}
-  async create(createRoleInput: CreateRoleInput) {
+  async create(createRoleInput: CreateRoleInput): Promise<Role> {
     const { name, permissions } = createRoleInput;
     const roleExist = await this.roleRepository.findOneBy({ name });
     if (roleExist) throw new BadRequestException('Role already exist');
@@ -49,27 +49,31 @@ export class RolesService implements OnModuleInit {
     }
   }
 
-  async findAll() {
-    return await this.roleRepository.find({
-      relations: {
-        permissions: true,
-      },
-    });
+  async findAll(): Promise<Role[]> {
+    return await this.roleRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Role> {
     const role = await this.roleRepository.findOne({
       where: { id },
-      relations: {
-        permissions: true,
-      },
     });
     if (!role)
       throw new NotFoundException(errors.NOT_FOUND(`Role with id ${id}`));
     return role;
   }
 
-  async update(id: string, updateRoleInput: UpdateRoleInput) {
+  async findAllPermissions(id: string): Promise<Permission[]> {
+    return await this.dataSource.getRepository(Permission).find({
+      where: { role: { id } },
+    });
+  }
+  async findAllUsers(id: string): Promise<User[]> {
+    return this.dataSource.getRepository(User).find({
+      where: { role: { id } },
+    });
+  }
+
+  async update(id: string, updateRoleInput: UpdateRoleInput): Promise<Role> {
     const exist = await this.roleRepository.existsBy({ id });
     if (!exist) throw new NotFoundException('Role not found');
     if (updateRoleInput.permissions) {
@@ -87,7 +91,7 @@ export class RolesService implements OnModuleInit {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<string> {
     const exist = await this.roleRepository.existsBy({ id });
     if (!exist)
       throw new NotFoundException(errors.NOT_FOUND(`Role with id ${id}`));

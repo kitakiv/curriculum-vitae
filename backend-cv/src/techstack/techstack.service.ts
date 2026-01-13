@@ -84,7 +84,7 @@ export class TechStackService {
     });
   }
 
-  async findAllChildren(id: string): Promise<Project[]> {
+  async findAllProjects(id: string): Promise<Project[]> {
     const projects = await this.projectRepository.find({
       where: {
         techStacks: {

@@ -66,11 +66,7 @@ export class ProjectsService {
     if (cachedProjects) {
       return JSON.parse(cachedProjects);
     }
-    const projects = await this.projectsRepository.find({
-      relations: {
-        techStacks: true,
-      },
-    });
+    const projects = await this.projectsRepository.find();
     await this.redisCacheService.set(
       this.PROJECT_CACHE_KEY,
       JSON.stringify(projects),
@@ -82,15 +78,12 @@ export class ProjectsService {
   async findOne(id: string) {
     const project = await this.projectsRepository.findOne({
       where: { id },
-      relations: {
-        techStacks: true,
-      },
     });
     if (!project) throw new NotFoundException(errors.NOT_FOUND('Project'));
     return project;
   }
 
-  async findAllChildren(id: string): Promise<TechStack[]> {
+  async findAllTechStacks(id: string): Promise<TechStack[]> {
     const techStacks = await this.techStackRepository.find({
       where: {
         projects: {

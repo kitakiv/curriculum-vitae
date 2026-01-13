@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Context,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
 import { SignUpInput } from './dto/signUp.input';
@@ -20,6 +29,8 @@ import { errors } from '../errors/errors.config';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { CookiesService } from '../common/cookies/cookies.service';
 import { CookiesData } from './entities/cookiesData.type';
+import { Role } from '../roles/entities/role.entity';
+import { RefreshToken } from './entities/refreshToken.entity';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
@@ -62,7 +73,7 @@ export class AuthResolver {
 
   @Public()
   @Mutation(() => CookiesData)
-  async refreshToken(@Context() { req }: { req: Request }) {
+  async refreshTheTokens(@Context() { req }: { req: Request }) {
     const refreshToken = this.cookiesService.getCookie(
       req,
       this.refreshTokenName,
@@ -142,6 +153,26 @@ export class AuthResolver {
   @Query(() => [User], { name: 'users' })
   async findAll() {
     return await this.authService.findAll();
+  }
+
+  @PermissionGuard([
+    { resource: Resource.USER, actions: [Action.READ] },
+    { resource: Resource.ROLE, actions: [Action.READ] },
+  ])
+  @ResolveField(() => Role)
+  async role(@Parent() user: User) {
+    const { id } = user;
+    return this.authService.findAllRoles(id);
+  }
+
+  @PermissionGuard([
+    { resource: Resource.USER, actions: [Action.READ] },
+    { resource: Resource.REFRESH, actions: [Action.READ] },
+  ])
+  @ResolveField(() => RefreshToken)
+  async refreshToken(@Parent() user: User) {
+    const { id } = user;
+    return this.authService.findAllRefreshToken(id);
   }
 
   @PermissionGuard([{ resource: Resource.USER, actions: [Action.READ] }])

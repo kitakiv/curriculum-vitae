@@ -55,10 +55,10 @@ export class TechStackResolver {
   }
 
   @Public()
-  @ResolveField()
+  @ResolveField(() => [Project], { nullable: true })
   async projects(@Parent() techStack: TechStack) {
     const { id } = techStack;
-    return await this.techStackService.findAllChildren(id);
+    return await this.techStackService.findAllProjects(id);
   }
 
   @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.UPDATE] }])

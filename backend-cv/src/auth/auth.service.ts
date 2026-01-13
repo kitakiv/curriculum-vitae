@@ -207,13 +207,7 @@ export class AuthService implements OnModuleInit {
     }
   }
   async findAll() {
-    return await this.userRepository.find({
-      relations: {
-        role: {
-          permissions: true,
-        },
-      },
-    });
+    return await this.userRepository.find();
   }
 
   async findOne(login: string) {
@@ -221,15 +215,30 @@ export class AuthService implements OnModuleInit {
       where: {
         login,
       },
-      relations: {
-        role: {
-          permissions: true,
-        },
-      },
     });
     if (!user)
       throw new NotFoundException(errors.NOT_FOUND(`user with login ${login}`));
     return user;
+  }
+
+  async findAllRoles(userId: string) {
+    return this.dataSource.getRepository(Role).findOne({
+      where: {
+        users: {
+          id: userId,
+        },
+      },
+    })
+  }
+
+  async findAllRefreshToken(userId: string) {
+    return await this.dataSource.getRepository(RefreshToken).findOne({
+      where: {
+        user: {
+          id: userId,
+        }
+      }
+    })
   }
 
   async getUserPermissions(userId: string) {
