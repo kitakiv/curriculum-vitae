@@ -74,16 +74,21 @@ export class RolesService implements OnModuleInit {
   }
 
   async update(id: string, updateRoleInput: UpdateRoleInput): Promise<Role> {
-    const exist = await this.roleRepository.existsBy({ id });
-    if (!exist) throw new NotFoundException('Role not found');
+    const role = await this.roleRepository.findOneBy({ id });
+    if (!role) throw new NotFoundException('Role not found');
     if (updateRoleInput.permissions) {
       const permissions = updateRoleInput.permissions.map(
         (permission) => new Permission(permission),
       );
       updateRoleInput.permissions = permissions;
     }
+    updateRoleInput.id = id;
     try {
-      await this.roleRepository.update(id, updateRoleInput);
+      await this.roleRepository.save({
+        ...role,
+        ...updateRoleInput,
+        id,
+      });
       return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
