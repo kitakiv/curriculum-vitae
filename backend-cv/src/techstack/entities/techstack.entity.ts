@@ -7,15 +7,18 @@ import { Project } from '../../projects/entities/project.entity';
 @ObjectType()
 @Entity()
 export class TechStack extends AbstractEntity<TechStack> {
-  @Field(() => String)
+  @Field(() => String, { description: 'Tech stack name for example: React' })
   @Column()
   techName: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'Tech stack svg for example: React svg',
+  })
   @Column('varchar', { nullable: true, length: techVariables.length })
   techSvg?: string;
 
-  @Field(() => ID)
+  @Field(() => ID, { description: 'Tech stack id' })
   id: string;
 
   @ManyToMany(() => Project, (project) => project.techStacks)

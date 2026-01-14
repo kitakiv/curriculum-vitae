@@ -4,9 +4,9 @@ import { User } from './user.entity';
 
 @ObjectType()
 export class CookiesData {
-  @Field(() => Sign)
+  @Field(() => Sign, { description: 'Sign tokens' })
   tokens: Sign;
 
-  @Field(() => User)
+  @Field(() => User, { description: 'User data' })
   user: User;
 }

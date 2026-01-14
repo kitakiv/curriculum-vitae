@@ -6,30 +6,34 @@ import { TechStack } from '../../techstack/entities/techstack.entity';
 @ObjectType()
 @Entity()
 export class Project extends AbstractEntity<Project> {
-  @Field(() => ID)
+  @Field(() => ID, { description: 'Project id' })
   id: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Project title' })
   @Column()
   projectTitle: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Project description' })
   @Column()
   projectDescription: string;
 
-  @Field(() => String)
+  @Field(() => String, {
+    description: 'Project github link'})
   @Column()
   projectGithubLink: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Project demo link'})
   @Column('varchar', { length: 500 })
   projectDemoLink: string;
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String], { nullable: true, description: 'Project images' })
   @Column('simple-array', { nullable: true })
   projectImages?: string[];
 
-  @Field(() => [TechStack], { nullable: true })
+  @Field(() => [TechStack], {
+    nullable: true,
+    description: 'Project tech stacks',
+  })
   @ManyToMany(() => TechStack, (techStack) => techStack.projects, {
     cascade: true,
     nullable: true,
