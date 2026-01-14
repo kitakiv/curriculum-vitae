@@ -34,32 +34,23 @@ export class AuthorizationGuard implements CanActivate {
       const ctx = gqlCtx.getContext();
       // GraphQL context
       request = ctx.req;
-    } else {
+    } else if (ctxType === 'http') {
       // HTTP context
       request = context.switchToHttp().getRequest();
+    } else {
+      // another context
+      return false;
     }
     if (!request['userId']) {
       throw new UnauthorizedException('User ID not found');
     }
     try {
-      const userPermission = await this.authService.getUserPermissions(
-        request['userId'],
-      );
-      console.log(requiredRoutePermissions);
-      for (const routePermission of requiredRoutePermissions) {
-        const userHasPermission = userPermission.find(
-          (permission) => routePermission.resource === permission.resource,
+      const haveUserRequiredPermissions =
+        await this.authService.canActivateCurrentPermissions(
+          request['userId'],
+          requiredRoutePermissions,
         );
-        console.log(userHasPermission);
-        if (!userHasPermission) throw new ForbiddenException();
-
-        const allActionsAvailable = routePermission.actions.every((action) => {
-          return userHasPermission.actions.includes(action);
-        });
-        console.log(allActionsAvailable);
-        if (!allActionsAvailable) throw new ForbiddenException();
-      }
-      return true;
+      return haveUserRequiredPermissions;
     } catch (error) {
       this.logger.error(error.message);
       throw new ForbiddenException(error.message);

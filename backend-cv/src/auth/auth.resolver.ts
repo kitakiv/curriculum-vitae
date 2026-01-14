@@ -17,6 +17,7 @@ import {
   BadRequestException,
   UnauthorizedException,
   UseGuards,
+  Logger
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { ChangePasswordInput } from './dto/changePassword.input';
@@ -31,6 +32,7 @@ import { CookiesService } from '../common/cookies/cookies.service';
 import { CookiesData } from './entities/cookiesData.type';
 import { Role } from '../roles/entities/role.entity';
 import { RefreshToken } from './entities/refreshToken.entity';
+import { CurrentUserId } from 'src/decorators/currentuserid.decorator';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => User)
@@ -39,6 +41,7 @@ export class AuthResolver {
   constructor(
     private readonly cookiesService: CookiesService,
     private readonly authService: AuthService,
+    private readonly logger: Logger,
   ) {}
 
   @Public()
@@ -90,9 +93,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Context() { req, res }: { req: Request; res: Response }) {
-    if (!req['userId'])
-      throw new UnauthorizedException(errors.NOT_FOUND('User'));
+  async logout(
+    @Context() { res }: { res: Response },
+    @CurrentUserId() userId: string,
+  ) {
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     this.cookiesService.clearCookies(res, this.refreshTokenName);
     return true;
   }
@@ -101,31 +106,26 @@ export class AuthResolver {
   async changePassword(
     @Args('changePasswordInput', { type: () => ChangePasswordInput })
     changePasswordInput: ChangePasswordInput,
-    @Context() { req }: { req: Request },
+    @CurrentUserId() userId: string,
   ) {
-    if (!req['userId']) throw new BadRequestException(errors.NOT_FOUND('User'));
-    return await this.authService.changePassword(
-      changePasswordInput,
-      req['userId'],
-    );
+    if (!userId) throw new BadRequestException(errors.NOT_FOUND('User'));
+    return await this.authService.changePassword(changePasswordInput, userId);
   }
 
   @Mutation(() => User)
   async update(
     @Args('updateUserInput', { type: () => UpdateUserInput })
     updateUserInput: UpdateUserInput,
-    @Context() { req }: { req: Request }
+    @CurrentUserId() userId: string,
   ) {
-    if (!req['userId'])
-      throw new UnauthorizedException(errors.NOT_FOUND('User'));
-    return await this.authService.update(updateUserInput, req['userId']);
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return await this.authService.update(updateUserInput, userId);
   }
 
   @Mutation(() => User)
-  async getUser(@Context() { req }: { req: Request }) {
-    if (!req['userId'])
-      throw new UnauthorizedException(errors.NOT_FOUND('User'));
-    return await this.authService.getUser(req['userId']);
+  async getUser(@CurrentUserId() userId: string) {
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return await this.authService.getUser(userId);
   }
 
   @PermissionGuard([
@@ -155,24 +155,46 @@ export class AuthResolver {
     return await this.authService.findAll();
   }
 
-  @PermissionGuard([
-    { resource: Resource.USER, actions: [Action.READ] },
-    { resource: Resource.ROLE, actions: [Action.READ] },
-  ])
   @ResolveField(() => Role)
-  async role(@Parent() user: User) {
-    const { id } = user;
-    return this.authService.findAllRoles(id);
+  async role(@Parent() user: User, @CurrentUserId() userId: string) {
+    const requiredRoutePermissions = [
+      { resource: Resource.ROLE, actions: [Action.READ] },
+    ];
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    try {
+      const canActivateCurrentField =
+        await this.authService.canActivateCurrentPermissions(
+          userId,
+          requiredRoutePermissions,
+        );
+      if (!canActivateCurrentField) return null;
+      const { id } = user;
+      return this.authService.findAllRoles(id);
+    } catch (error) {
+      this.logger.error(error);
+      return null;
+    }
   }
 
-  @PermissionGuard([
-    { resource: Resource.USER, actions: [Action.READ] },
-    { resource: Resource.REFRESH, actions: [Action.READ] },
-  ])
   @ResolveField(() => RefreshToken)
-  async refreshToken(@Parent() user: User) {
-    const { id } = user;
-    return this.authService.findAllRefreshToken(id);
+  async refreshToken(@Parent() user: User, @CurrentUserId() userId: string) {
+    const requiredRoutePermissions = [
+      { resource: Resource.REFRESH, actions: [Action.READ] },
+    ];
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    try {
+      const canActivateCurrentField =
+        await this.authService.canActivateCurrentPermissions(
+          userId,
+          requiredRoutePermissions,
+        );
+      if (!canActivateCurrentField) return null;
+      const { id } = user;
+      return this.authService.findAllRefreshToken(id);
+    } catch (error) {
+      this.logger.error(error);
+      return null;
+    }
   }
 
   @PermissionGuard([{ resource: Resource.USER, actions: [Action.READ] }])

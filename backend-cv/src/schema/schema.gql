@@ -139,8 +139,13 @@ type Query {
 }
 
 type RefreshToken {
+  """Refresh token expiry date"""
   expiryDate: String!
+
+  """Refresh token id"""
   id: ID!
+
+  """Refresh token"""
   token: String!
   user: User!
 }
@@ -153,6 +158,7 @@ type Role {
 }
 
 type Sign {
+  """Access token"""
   accessToken: String!
 }
 
@@ -228,10 +234,21 @@ input UpdateUserInput {
 }
 
 type User {
+  """User id"""
   id: ID!
+
+  """User login"""
   login: String!
+
+  """User name"""
   name: String!
-  password: String!
-  refreshToken: RefreshToken!
+
+  """User password"""
+  password: String
+
+  """Refresh token"""
+  refreshToken: RefreshToken
+
+  """User role"""
   role: Role
 }

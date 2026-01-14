@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -26,6 +27,7 @@ import { DataSource } from 'typeorm';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
 import { CookiesData } from './entities/cookiesData.type';
 import { Sign } from './entities/sign.type';
+import { CreatePermissionInput } from '../roles/dto/create-role.input';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -228,7 +230,7 @@ export class AuthService implements OnModuleInit {
           id: userId,
         },
       },
-    })
+    });
   }
 
   async findAllRefreshToken(userId: string) {
@@ -236,9 +238,9 @@ export class AuthService implements OnModuleInit {
       where: {
         user: {
           id: userId,
-        }
-      }
-    })
+        },
+      },
+    });
   }
 
   async getUserPermissions(userId: string) {
@@ -334,5 +336,36 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException(errors.NOT_DELETED('User'));
     }
     return userId;
+  }
+
+  async canActivateCurrentPermissions(
+    userId: string,
+    requiredRoutePermissions: CreatePermissionInput[],
+  ) {
+    try {
+      const userPermission = await this.getUserPermissions(userId);
+      for (const routePermission of requiredRoutePermissions) {
+        const userHasPermission = userPermission.find(
+          (permission) => routePermission.resource === permission.resource,
+        );
+        if (!userHasPermission)
+          throw new ForbiddenException({
+            message: `User does not have sufficient permissions to access "${routePermission.resource}" resource.`,
+          });
+
+        const allActionsAvailable = routePermission.actions.every((action) => {
+          return userHasPermission.actions.includes(action);
+        });
+        if (!allActionsAvailable) {
+          throw new ForbiddenException({
+            message: `User does not have sufficient permissions to access "${routePermission.resource}" resource.`,
+          });
+        }
+      }
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      throw new ForbiddenException(error.message);
+    }
   }
 }

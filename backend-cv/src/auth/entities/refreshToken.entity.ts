@@ -6,14 +6,14 @@ import { User } from './user.entity';
 @ObjectType()
 @Entity()
 export class RefreshToken extends AbstractEntity<RefreshToken> {
-  @Field(() => ID)
+  @Field(() => ID, { description: 'Refresh token id' })
   id: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: 'Refresh token' })
   token: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Refresh token expiry date' })
   @Column()
   expiryDate: Date;
 

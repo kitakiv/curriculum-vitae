@@ -8,26 +8,27 @@ import { Exclude } from 'class-transformer';
 @ObjectType()
 @Entity()
 export class User extends AbstractEntity<User> {
-  @Field(() => ID)
+  @Field(() => ID, { description: 'User id' })
   id: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: 'User login' })
   login: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'User name' })
   @Column()
   name: string;
 
   @Exclude()
   @Column()
+  @Field(() => String, { description: 'User password', nullable: true })
   password: string;
 
-  @Field(() => RefreshToken)
+  @Field(() => RefreshToken, { description: 'Refresh token', nullable: true })
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshToken: RefreshToken;
 
-  @Field(() => Role, { nullable: true })
+  @Field(() => Role, { nullable: true, description: 'User role' })
   @ManyToOne(() => Role, (role) => role.users, {
     nullable: true,
   })

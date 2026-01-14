@@ -11,19 +11,25 @@ import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, Logger } from '@nestjs/common';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from './enums/resource.enum';
 import { Action } from './enums/action.enum';
 import { Permission } from './entities/permission.entity';
 import { User } from '../auth/entities/user.entity';
+import { CurrentUserId } from '../decorators/currentuserid.decorator';
+import { AuthService } from '../auth/auth.service';
 
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Role)
 export class RolesResolver {
-  constructor(private readonly rolesService: RolesService) {}
+  constructor(
+    private readonly rolesService: RolesService,
+    private readonly authService: AuthService,
+    private readonly logger: Logger,
+  ) {}
 
 
   @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.CREATE] }])
@@ -54,15 +60,25 @@ export class RolesResolver {
     return this.rolesService.findAllPermissions(id);
   }
 
-  @PermissionGuard([
-    { resource: Resource.ROLE, actions: [Action.READ] },
-    { resource: Resource.USER, actions: [Action.READ] },
-    { resource: Resource.REFRESH, actions: [Action.READ] },
-  ])
+
   @ResolveField(() => [User])
-  async users(@Parent() user: User) {
-    const { id } = user;
-    return this.rolesService.findAllUsers(id);
+  async users(@Parent() user: User, @CurrentUserId() userId: string) {
+    const requiredRoutePermissions = [
+      { resource: Resource.USER, actions: [Action.READ] },
+    ];
+    try {
+      const canActivateCurrentField =
+        await this.authService.canActivateCurrentPermissions(
+          userId,
+          requiredRoutePermissions,
+        );
+      if (!canActivateCurrentField) return null;
+      const { id } = user;
+      return this.rolesService.findAllUsers(id);
+    } catch (error) {
+      this.logger.error(error.message);
+      return null;
+    }
   }
 
   @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.UPDATE] }])
