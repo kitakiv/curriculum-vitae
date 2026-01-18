@@ -15,14 +15,18 @@ import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
 import MainText from "@/components/text/MainText";
 import BurgerMenu from "@/components/header/components/Menu";
+import LiquidGlass from "../wrapper/LiquidGlass";
+import FadeInSection from "../animation/FadeInSection";
 export default async function Header() {
     // const profile = await getProfile();
     return (
-        <header className=" w-full h-screen gradient-box flex flex-col justify-around gap-4" id={header.id}>
+        <header className=" w-full h-screen relative top-0 gradient-box overflow-hidden" id={header.id}>
             <HeaderSection>
+                <FadeInSection delay={100} animation={{visible: "translateX(0)", hidden: "translateX(-50%)"}}>
                 <Link href='/' className="lg:w-5/12 md:w-1/2 relative z-50">
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
+                </FadeInSection>
                 <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
                 <BurgerMenu burgerMenu={menu.mainHeader} />
                 <ThemeIcon key={header.keyIcons} />
@@ -32,18 +36,16 @@ export default async function Header() {
                 <Rounds />
                 <HeaderImage path={header.path} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
-            </StartPage >
-            <div className="w-full flex flex-col items-center gap-4">
-                    <HeaderSecondText text={header.text} />
-                <Link href={`#${aboutme.id}`}>
+                <HeaderSecondText text={header.text} />
+                <Link href={`#${aboutme.id}`} className=" col-span-12 col-start-1 col-end-13 row-span-2 row-start-11 row-end-13 flex justify-center items-center">
 
-                    <PinkButton tailwind="transition duration-700 group flex justify-between items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
+                    <PinkButton tailwind=" relative z-40 transition duration-700 group flex justify-between items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
                         {header.button}
                         <Image src={header.arrow} alt="arrow" width={20} height={20} className="w-0 opacity-0 group-hover:w-5 group-hover:opacity-100 transition duration-700"></Image>
                     </PinkButton>
 
                 </Link>
-            </div>
+            </StartPage >
         </header>
     );
 }

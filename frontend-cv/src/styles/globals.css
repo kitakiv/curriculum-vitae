@@ -23,6 +23,7 @@
     --admin-gr33: #FFFFFF;
     --admin-tx100: #D1D5DB;
     --admin-gr100: #F8FAFC;
+    /* #1e7de9; */
   }
 }
 .theme-black {
@@ -47,6 +48,7 @@
   --admin-gr100: #000000;
 }
 
+
 .theme-blue {
   --color-bg-100: #c0dbfe;
   --color-bg-33: #E2E8F0;
@@ -54,8 +56,8 @@
   --color-round-100: #5f85ff;
   --color-round-0: #abbeff;
   --color-tx-second: #374151;
-  --color-tx-first-100: #0891B2;
-  --color-tx-first-0: #1E40AF;
+  --color-tx-first-100: #9C27B0;
+  --color-tx-first-0: #1e7de9;
   --color-light: #fff;
   --color-black: #000000;
   --zero-opacity: rgba(0, 0, 0, 0);
@@ -68,6 +70,34 @@
   --admin-tx100: #3d3d3d;
   --admin-gr100: #d9f2ff;
 }
+
+
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(4px);
+	transition: all 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+	cursor: pointer;
+}
+
+.liquid-glass-burger {
+  background: rgba(255, 255, 255, 0.05);
+	backdrop-filter: blur(50px);
+	cursor: pointer;
+}
+
+.liquid-glass-shadow {
+  box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 2px 1px rgba(255, 255, 255, 0.3), 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.liquid-glass-rounded {
+  border-radius: 15px;
+}
+
+.liquid-glass-hover {
+  transform: scale(1.05);
+}
+
 
 
 .image-mask {
@@ -87,17 +117,88 @@
   padding: 2rem 0.5rem;
 }
 
-.gradient-box {
-
-  background: linear-gradient(45deg, var(--color-bg-100), var(--color-bg-33), var(--color-bg-0));
-  background-size: 100% 100%;
-  animation: gradient-animate infinite;
+@keyframes gradient-animate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
+
+@keyframes image-animation {
+  0% {
+    top: -100vh;
+  }
+  25% {
+    top: 0;
+    transform: rotate(0);
+  }
+  50% {
+    top: 0;
+    transform: translateX(25%) skewX(-10deg);
+    box-shadow: var(--color-tx-second) 0px 0px 10px 0px;
+  }
+  75% {
+    top: 0;
+    transform: rotate(0);
+  }
+  100% {
+    top: 100vh;
+  }
+}
+
+@keyframes image-animation-second {
+  0% {
+    top: -100vh;
+  }
+  25% {
+    top: 0;
+    transform: rotate(0);
+    shadow:
+  }
+  50% {
+    top: 0;
+    transform: translateX(-25%);
+  }
+  75% {
+    top: 0;
+    transform: rotate(0);
+  }
+  100% {
+    top: 100vh;
+  }
+}
+
+.image-second {
+  animation: image-animation-second infinite 7s ease-in-out;
+}
+
+.image {
+  animation: image-animation infinite 7s ease-in-out;
+
+}
+
+.gradient-box {
+  background: linear-gradient(
+    45deg,
+    var(--color-bg-0),
+    var(--color-bg-33),
+    var(--color-bg-100)
+  );
+  background-size: 300% 300%;
+  animation: gradient-animate 8s ease-in-out infinite;
+}
+
+
 
 .gradient-box-rounds {
   background: linear-gradient(45deg, var(--color-round-0), var(--color-round-100));
   background-size: 100% 100%;
-  animation: gradient-animate infinite;
+  animation: gradient-animate 8s ease-in-out infinite;
 }
 
 .gradient {

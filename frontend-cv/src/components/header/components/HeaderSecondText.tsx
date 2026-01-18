@@ -12,8 +12,13 @@ export default function HeaderSecondText({text}: {text: string}) {
       }, [text.length]);
 
     return (
-        <span className="text-wrap lg:min-h-[65px] md:min-h-[70px] min-h-[85px] text-center text-txSecond lg:text-2xl w-2/4 md:text-2xl text-xl">
+      <span className="flex items-center relative z-40 justify-center col-span-10 col-start-3 col-end-11 row-span-11 row-start-9 row-end-12">
+        <span className="text-wrap opacity-0 text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
+           {`${text}|`}
+        </span>
+        <span className="absolute text-wrap text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
            {`${text.slice(0, length)}|`}
         </span>
+      </span>
     )
 }
