@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '@/store/store'
+import type { RootState } from '@/store/store';
 import theme from '@/variables/theme/theme';
+
+export const LOCAL_STORAGE_THEME_KEY = 'theme';
 
 interface ThemeState {
   value: string
 }
 
 const initialState: ThemeState = {
-  value: "static",
+  value: 'static',
 }
 
 export const themeSlice = createSlice({

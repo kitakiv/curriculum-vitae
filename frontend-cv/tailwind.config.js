@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        strong: ['"BBH Bartle"', 'sans-serif'],
+      },
       colors: {
         bg100: "var(--color-bg-100)",
         bg33: "var(--color-bg-33)",

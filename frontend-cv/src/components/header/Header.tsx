@@ -17,6 +17,7 @@ import MainText from "@/components/text/MainText";
 import BurgerMenu from "@/components/header/components/Menu";
 import LiquidGlass from "../wrapper/LiquidGlass";
 import FadeInSection from "../animation/FadeInSection";
+import HeaderModel from "./components/HeaderModel";
 export default async function Header() {
     // const profile = await getProfile();
     return (
@@ -33,17 +34,16 @@ export default async function Header() {
                 </div>
             </HeaderSection>
             <StartPage>
+                <HeaderModel />
                 <Rounds />
                 <HeaderImage path={header.path} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
                 <HeaderSecondText text={header.text} />
                 <Link href={`#${aboutme.id}`} className=" col-span-12 col-start-1 col-end-13 row-span-2 row-start-11 row-end-13 flex justify-center items-center">
-
                     <PinkButton tailwind=" relative z-40 transition duration-700 group flex justify-between items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
                         {header.button}
                         <Image src={header.arrow} alt="arrow" width={20} height={20} className="w-0 opacity-0 group-hover:w-5 group-hover:opacity-100 transition duration-700"></Image>
                     </PinkButton>
-
                 </Link>
             </StartPage >
         </header>
