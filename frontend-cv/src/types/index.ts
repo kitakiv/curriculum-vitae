@@ -8,6 +8,14 @@ class ProjectCard {
     demoLink: string = "";
 }
 
+class ExperienceCard {
+    title: string = "";
+    description: string = "";
+    period: string = "";
+    certificate: string = "";
+    company: string = "";
+}
+
 class ContactsCard {
     name: string = "";
     contact: string = "";
@@ -55,4 +63,4 @@ enum CounterActionTypes {
     | { type: CounterActionTypes.SETSLIDER; payload: CounterState };
 
 export type {SliderText, FormType, CounterAction, CounterState};
-export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType, CounterActionTypes};
+export {ProjectCard, ContactsCard, FollowCard, InputType, MenuType, CounterActionTypes, ExperienceCard};

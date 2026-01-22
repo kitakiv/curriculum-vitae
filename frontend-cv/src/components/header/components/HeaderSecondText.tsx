@@ -16,7 +16,7 @@ export default function HeaderSecondText({text}: {text: string}) {
         <span className="text-wrap opacity-0 text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
            {`${text}|`}
         </span>
-        <span className="absolute text-wrap text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
+        <span className="absolute font-elegant text-wrap text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
            {`${text.slice(0, length)}|`}
         </span>
       </span>

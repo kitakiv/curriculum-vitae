@@ -9,6 +9,8 @@ module.exports = {
     extend: {
       fontFamily: {
         strong: ['"BBH Bartle"', 'sans-serif'],
+        crazy: ['"RubikStorm Regular"', 'sans-serif'],
+        elegant: ['"DancingScript"', 'sans-serif'],
       },
       colors: {
         bg100: "var(--color-bg-100)",

@@ -3,7 +3,6 @@
 import StartPage from "@/components/header/components/StartPage";
 import HeaderSection from "@/components/header/components/HeaderSection";
 import ThemeIcon from "@/components/header/components/ThemeIcon";
-import Rounds from "@/components/animation/Rounds";
 import HeaderTitle from "@/components/header/components/HeaderTitle";
 import header from "@/variables/header/header";
 import HeaderImage from "@/components/header/components/HeaderImage";
@@ -15,7 +14,6 @@ import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
 import MainText from "@/components/text/MainText";
 import BurgerMenu from "@/components/header/components/Menu";
-import LiquidGlass from "../wrapper/LiquidGlass";
 import FadeInSection from "../animation/FadeInSection";
 import HeaderModel from "./components/HeaderModel";
 export default async function Header() {
@@ -35,7 +33,6 @@ export default async function Header() {
             </HeaderSection>
             <StartPage>
                 <HeaderModel />
-                <Rounds />
                 <HeaderImage path={header.path} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
                 <HeaderSecondText text={header.text} />

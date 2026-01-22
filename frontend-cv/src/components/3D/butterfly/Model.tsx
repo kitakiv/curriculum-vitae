@@ -1,13 +1,11 @@
-import { Float, Line, useAnimations, useGLTF, useScroll } from "@react-three/drei"
+import { useAnimations, useGLTF } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useEffect, useMemo, useRef } from "react"
-import { Group } from "three"
+import { useMemo, useRef } from "react"
 import * as THREE from "three"
 
 useGLTF.preload("/model/animated_butterfly.glb")
 
 export default function Model() {
-    const NUMBER_OF_POINTS = 2500;
     const { viewport } = useThree();
     const left = (viewport.width / 2 - 3);
     const right = left * -1;
@@ -15,8 +13,8 @@ export default function Model() {
     const bottom = top * -1;
     const group = useRef<THREE.Group>(null!);
     const progress = useRef(0);
-    const { nodes, materials, animations, scene } = useGLTF("/model/animated_butterfly.glb");
-    const { actions, clips } = useAnimations(animations, scene);
+    const { animations, scene } = useGLTF("/model/animated_butterfly.glb");
+    const { actions } = useAnimations(animations, scene);
 
     const curve = useMemo(() => {
         return new THREE.CatmullRomCurve3([
@@ -28,9 +26,9 @@ export default function Model() {
         ], true, "centripetal", 2);
     }, []);
 
-    const linePoints = useMemo(() => {
-        return curve.getPoints(NUMBER_OF_POINTS);
-    }, [curve]);
+    // const linePoints = useMemo(() => {
+    //     return curve.getPoints(NUMBER_OF_POINTS);
+    // }, [curve]);
 
 
     useFrame((state, delta) => {

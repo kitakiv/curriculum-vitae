@@ -16,8 +16,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  model
 }: {
   children: React.ReactNode
+  model: React.ReactNode
 }) {
   return (
     <html lang="en" className={`${inter.className} scroll-smooth overflow-y-scroll`}>
@@ -25,6 +27,7 @@ export default function RootLayout({
       <ThemeWrapper>
           <PositionWrapper>
             {children}
+            {model}
           </PositionWrapper>
       </ThemeWrapper>
     </ProviderStore>

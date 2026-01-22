@@ -11,6 +11,6 @@ export default function HeaderLogin() {
                     <MainText>{header.name + " " + header.surname}</MainText>
                 </Link>
                 <ThemeIcon key={header.keyIcons} />
-            </HeaderSection>
+        </HeaderSection>
     )
 }

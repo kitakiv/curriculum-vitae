@@ -1,7 +1,14 @@
-export default function LiquidGlass({children, shadow = false, rounded = false, hover = false, tailwind}: {children: React.ReactNode, shadow?: boolean, rounded?: boolean, hover?: boolean, tailwind?: string}) {
+import SvgLiquidGlass from "@/components/wrapper/SvgLiquidGlass"
+export default function LiquidGlass({children, shadow = false, rounded = false, hover = false, shine = false, tint = false, width = false, tailwind}: {children: React.ReactNode, shadow?: boolean, rounded?: boolean, hover?: boolean, tint?: boolean, shine?: boolean, width?: boolean, tailwind?: string}) {
   return (
-    <div className={`${tailwind} liquid-glass ${shadow ? 'liquid-glass-shadow' : ''} ${rounded ? 'rounded-full' : ''} ${hover ? 'liquid-glass-hover' : ''}`}>
-        {children}
+    <>
+    <SvgLiquidGlass />
+    <div className={`liquidGlass-wrapper ${width ? "w-full": ""}  ${shadow ? "liquidGlass-shadow":  ""} ${rounded ? "rounded-full": ""} ${hover ? "liquidGlass-hover": ""}`}>
+          <div className="liquidGlass-effect"></div>
+          <div className={`${tint ? "liquidGlass-tint": ""}`}></div>
+          <div className={`${shine ? "liquidGlass-shine": ""}`}></div>
+          <div className={`${tailwind} liquidGlass-text`}>{children}</div>
     </div>
+    </>
   )
 }

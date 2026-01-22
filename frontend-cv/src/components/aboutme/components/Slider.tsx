@@ -7,7 +7,6 @@ import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import reducer from "@/hooks/sliderCount";
 import { useReducer } from "react";
 import { CounterActionTypes } from "@/types/index";
-import Image from "next/image";
 export default function Slider({ images = imagesDefault, titles = imagesTitle }: { images?: string[], titles?: SliderText[] }) {
     const initialState = { sliderCount: 0, maxSliders: images.length };
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -97,7 +96,8 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
                         return (
                             <>
                                 <div key={`image-slider-${index}`} className="flex-shrink-0 w-[100%] h-full relative">
-                                    <Image src={image} width={1000} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
+                                      {/* @eslint-disable-next-line */}
+                                    <img src={image} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
                                 </div>
                             </>
                         )

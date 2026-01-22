@@ -1,9 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @font-face {
   font-family: "BBH Bartle";
-  src: url('/public/fonts/BBHBartle-Regular.ttf');
+  src: url('/fonts/BBHBartle-Regular.ttf');
+}
+@font-face {
+  font-family: "RubikStorm Regular";
+  src: url('/fonts/RubikStorm-Regular.ttf');
+}
+@font-face {
+  font-family: "DancingScript";
+  src: url('/fonts/DancingScript-Regular.ttf');
 }
 
 
@@ -94,32 +103,69 @@
 }
 
 
-.liquid-glass {
+.liquidGlass-wrapper {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+}
+
+.liquidGlass-elem {
   background: rgba(255, 255, 255, 0.05);
-	backdrop-filter: blur(4px);
-	transition: all 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.5);
-	cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: all 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+  cursor: pointer;
 }
 
 .liquid-glass-burger {
   background: rgba(255, 255, 255, 0.05);
-	backdrop-filter: blur(50px);
-	cursor: pointer;
+    backdrop-filter: blur(50px);
+    cursor: pointer;
 }
 
-.liquid-glass-shadow {
-  box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.3),
-    inset -2px -2px 2px 1px rgba(255, 255, 255, 0.3), 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+.liquidGlass-shadow {
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.liquid-glass-rounded {
-  border-radius: 15px;
+.liquidGlass-border {
+  border-radius: 100%;
 }
 
-.liquid-glass-hover {
+.liquidGlass-effect {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  backdrop-filter: blur(3px);
+  filter: url(#glass-distortion);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquidGlass-tint {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.liquidGlass-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.liquidGlass-text {
+  z-index: 3;
+  font-size: 2rem;
+}
+
+.liquidGlass-hover {
   transform: scale(1.05);
 }
-
 
 
 .image-mask {
@@ -128,7 +174,7 @@
 }
 
 .padding {
-  padding: 3.5rem 1rem;
+  padding: 3.5rem 0.3rem;
 }
 
 .padding-admin {
@@ -215,20 +261,78 @@
   animation: gradient-animate 8s ease-in-out infinite;
 }
 
+@keyframes moveInCircle {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
+@keyframes moveVertical {
+  0% {
+    transform: translateY(-50%);
+  }
+  50% {
+    transform: translateY(50%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes moveHorizontal {
+  0% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+  50% {
+    transform: translateX(50%) translateY(10%);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+}
+
+.container-rounds {
+  filter: url(#goo) blur(40px);
+  width: 100%;
+  height: 100%;
+}
+
+.interactive {
+  background: radial-gradient(circle at center, var(--color-tx-first-100));
+  mix-blend-mode: hard-light;
+  background-size: 100% 100%;
+  transform: all 1s ease-in-out;
+  transform-origin: center center;
+}
 
 .gradient-box-rounds {
-  background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
+  background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
   background-size: 100% 100%;
-  animation: gradient-animate 8s ease-in-out infinite;
+  animation: moveHorizontal 8s ease-in-out infinite;
   mix-blend-mode: hard-light;
+  transform-origin: calc(50% - 200px);
 }
 
 .gradient-box-rounds-second {
-  background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
+  background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
   background-size: 100% 100%;
-  animation: gradient-animate 8s ease-in-out infinite;
+  transform-origin: calc(50% - 200px);
+  animation: moveInCircle 20s reverse infinite;
   mix-blend-mode: hard-light;
+}
+
+.gradient-box-rounds-third {
+  background: radial-gradient(var(--color-tx-first-100), var(--color-round-0));
+  background-size: 100% 100%;
+  animation: moveVertical 8s ease-in-out infinite;
+  mix-blend-mode: hard-light;
+  transform-origin: calc(50% - 200px);
 }
 
 .gradient {
@@ -242,7 +346,7 @@
   }
 
   .padding {
-    padding: 3rem 1rem;
+    padding: 3rem 0.5rem;
   }
 
   .padding-elements {
@@ -274,4 +378,20 @@
     padding: 3rem 1rem;
   }
 
+}
+
+.angle-box {
+  --angle: 15deg;
+  border: 5px solid transparent;
+  border-image: conic-gradient(
+    from var(--angle),
+    transparent,
+    var(--color-tx-first-100) 0.1turn,
+    var(--color-tx-first-100) 0.15turn,
+    transparent 0.25turn
+  ) 50;
+}
+
+.display-none {
+  display: none;
 }
