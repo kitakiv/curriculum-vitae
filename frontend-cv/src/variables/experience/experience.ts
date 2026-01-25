@@ -9,7 +9,10 @@ const experiences = {
     demoButton: "View Deploy",
     defaultImage: "/svg/image-broken.svg",
     name: "projects",
-    arrowSvg: "/svg/ok.svg"
+    arrowSvg: "/svg/ok.svg",
+    companySvg: "/svg/company.svg",
+    periodSvg: "/svg/period.svg",
+    doneSvg: "/svg/done.svg"
 }
 
 const cards: ExperienceCard[] = [
@@ -25,14 +28,28 @@ const cards: ExperienceCard[] = [
         company: "Epam",
         description: "Create own projects and do homeworks",
         period: "2022 - 2023",
-        certificate: "developer.jpg",
+        certificate: "developer2.jpg",
     },
     {
         title: "Middle Frontend Developer",
         company: "GoIT",
         description: "Create own projects and do homeworks",
         period: "2021 - 2022",
+        certificate: "developer3.jpg",
+    },
+    {
+        title: "Frontend Course",
+        company: "Udemy",
+        description: "Achive this course with 100% score",
+        period: "2023",
         certificate: "developer.jpg",
+    },
+    {
+        title: "Middle Frontend Developer",
+        company: "Epam",
+        description: "Create own projects and do homeworks",
+        period: "2022 - 2023",
+        certificate: "developer2.jpg",
     }
 ]
 export { cards }

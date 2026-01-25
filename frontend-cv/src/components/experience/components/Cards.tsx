@@ -1,24 +1,83 @@
+'use client'
 import experiences from "@/variables/experience/experience";
 import CardWrapper from "@/components/wrapper/CardWrapper";
 import { ExperienceCard } from "@/types/index";
 import Link from "next/link";
-export default function Cards({ cards }: { cards: ExperienceCard[] }) {
-    return <div>{
-        cards.map((card, index) => {
-            return (
-                <Link className="grid grid-cols-3 " key={`${experiences.name}-${card.title}-${index}`} href={`/${card.certificate}`} passHref>
-                    <div className="grid col-span-1 relative">
-                        <div className="flex items-center justify-center absolute top-0 right-0 translate-x-[50%] -translate-y-[20%] w-16 h-16 liquidGlass-elem liquidGlass-shadow rounded-full">
-                        <img src={experiences.arrowSvg} alt={card.title} className="w-2/3 h-2/3"/>
-                        </div>
-                        <img className=" rounded-s-3xl " src={`/image/${card.certificate}`} alt={card.title} />
-                    </div>
-                    <CardWrapper tailwind="col-span-2">
-                        <div key={card.title} className="w-full padding-elements">
-                            <div className="flex flex-col items-center justify-center gap-2"></div>
-                            <h3 className="text-lg font-bold">{card.title}</h3>
+import MainText from "@/components/text/MainText";
+import MiddleText from "@/components/text/MiddleText";
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ProgressRounds from "@/components/experience/components/Rounds";
+import ArrowWrapper from "@/components/experience/components/ArrowWrapper";
 
-                        </div>
+gsap.registerPlugin(ScrollTrigger);
+export default function Cards({ cards }: { cards: ExperienceCard[] }) {
+    useGSAP(() => {
+        gsap.utils.toArray<HTMLElement>('.timeline-card').forEach((card) => {
+            gsap.fromTo(
+                card,
+                {
+                  xPercent: -100,
+                  opacity: 0,
+                  ease: 'power2.in',
+                },
+                {
+                  xPercent: 0,
+                  opacity: 1,
+                  duration: 0.7,
+                  ease: 'power2.inOut',
+                  scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse',
+                  },
+                }
+              );
+        });
+        gsap.utils.toArray<HTMLElement>('.timeline-round').forEach((round) => {
+            gsap.fromTo(
+                round,
+                {
+                  scale: 0,
+                  ease: 'power2.in',
+                },
+                {
+                  scale: 1,
+                  duration: 2,
+                  ease: 'power2.inOut',
+                  scrollTrigger: {
+                    trigger: round,
+                    start: 'top center',
+                    toggleActions: 'play none none reverse',
+                  },
+                }
+              );
+        })
+    }, []);
+    const colors = ["gradient-round-two", "gradient-round-three", "gradient-round"];
+    return <div className="col-span-3 col-start-2 col-end-5 flex flex-col gap-4">{
+        cards.map((card, index) => {
+            const colorRound = colors[index % colors.length];
+            return (
+                <Link className="timeline-card relative z-10 grid grid-cols-3 hover:shadow-lg hover:shadow-txSecond rounded-s-3xl transition-all duration-700" key={`${experiences.name}-${card.title}-${index}`} href={`/${card.certificate}`} passHref>
+                    <ProgressRounds tailwind="timeline-round" colorRound={colorRound} />
+                    <ArrowWrapper tailwind="grid col-span-1">
+                        <img className=" rounded-s-3xl image-mask-right h-full" src={`/image/${card.certificate}`} alt={card.title} />
+                    </ArrowWrapper>
+                    <CardWrapper tailwind="col-span-2 grid grid-rows-6 padding-elements">
+                    <MainText tailwind="row-span-1">{card.title}</MainText>
+                    <MiddleText tailwind="text-txSecond opacity-80 row-span-3 row-start-2 row-end-4 flex items-center">
+                        {card.description}
+                    </MiddleText>
+                    <MiddleText tailwind="text-txSecond font-bold opacity-80 row-span-1 row-start-5 row-end-6">
+                        <img src={experiences.periodSvg} alt={experiences.periodSvg} className="w-5 h-5 inline mr-2" />
+                        {card.period}
+                    </MiddleText>
+                    <MiddleText tailwind="text-txSecond font-bold opacity-80 row-span-1 row-start-6 row-end-7">
+                        <img src={experiences.companySvg} alt={experiences.companySvg} className="w-5 h-5 inline mr-2" />
+                        {card.company}
+                    </MiddleText>
                     </CardWrapper>
                 </Link>
             )

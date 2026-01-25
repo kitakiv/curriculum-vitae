@@ -173,6 +173,16 @@
   -webkit-mask-image: linear-gradient(to left, black 0%, transparent);
 }
 
+.image-mask-right {
+  mask-image: linear-gradient(to right, var(--project-bg) 10%, transparent);
+  -webkit-mask-image: linear-gradient(to right, var(--project-bg) 10%, transparent);
+}
+
+.image-mask-left {
+  mask-image: linear-gradient(to left, var(--project-bg) 10%, transparent);
+  -webkit-mask-image: linear-gradient(to left, var(--project-bg) 10%, transparent);
+}
+
 .padding {
   padding: 3.5rem 0.3rem;
 }
@@ -261,6 +271,16 @@
   animation: gradient-animate 8s ease-in-out infinite;
 }
 
+.gradient-round {
+  background: linear-gradient(
+    45deg,
+    var(--color-bg-0),
+    var(--color-bg-33),
+    var(--color-bg-100)
+  );
+  background-size: 300% 300%;
+}
+
 @keyframes moveInCircle {
   0% {
     transform: rotate(0deg);
@@ -319,11 +339,23 @@
   transform-origin: calc(50% - 200px);
 }
 
+.gradient-round {
+  background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
+  background-size: 100% 100%;
+  mix-blend-mode: hard-light;
+}
+
 .gradient-box-rounds-second {
   background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
   background-size: 100% 100%;
   transform-origin: calc(50% - 200px);
   animation: moveInCircle 20s reverse infinite;
+  mix-blend-mode: hard-light;
+}
+
+.gradient-round-two {
+  background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
+  background-size: 100% 100%;
   mix-blend-mode: hard-light;
 }
 
@@ -333,6 +365,12 @@
   animation: moveVertical 8s ease-in-out infinite;
   mix-blend-mode: hard-light;
   transform-origin: calc(50% - 200px);
+}
+
+.gradient-round-three {
+  background: radial-gradient(var(--color-tx-first-100), var(--color-round-0));
+  background-size: 100% 100%;
+  mix-blend-mode: hard-light;
 }
 
 .gradient {

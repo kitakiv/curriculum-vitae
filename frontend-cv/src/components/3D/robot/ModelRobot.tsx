@@ -21,7 +21,7 @@ export default function ModelRobot() {
     })
     return (
         <>
-                <group  ref={group} position={[1, 1, 0]} dispose={null}>
+                <group  ref={group} position={[0, 0, 0]} scale={1.3} dispose={null}>
                     <primitive object={scene} />
                 </group>
             </>
