@@ -56,16 +56,16 @@ export default function Cards({ cards }: { cards: ExperienceCard[] }) {
         })
     }, []);
     const colors = ["gradient-round-two", "gradient-round-three", "gradient-round"];
-    return <div className="col-span-3 col-start-2 col-end-5 flex flex-col gap-4">{
+    return <div className=" xl:col-span-3 xl:col-start-2 xl:col-end-5 lg:col-span-4 lg:col-start-2 lg:col-end-6 md:col-span-4 md:col-start-2 md:col-end-6 col-span-5 col-start-2 col-end-7 md:mr-9 sm:mr-9 mr-9 flex flex-col gap-4">{
         cards.map((card, index) => {
             const colorRound = colors[index % colors.length];
             return (
-                <Link className="timeline-card relative z-10 grid grid-cols-3 hover:shadow-lg hover:shadow-txSecond rounded-s-3xl transition-all duration-700" key={`${experiences.name}-${card.title}-${index}`} href={`/${card.certificate}`} passHref>
+                <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={`${experiences.name}-${card.title}-${index}`} href={`/${card.certificate}`} passHref>
                     <ProgressRounds tailwind="timeline-round" colorRound={colorRound} />
                     <ArrowWrapper tailwind="grid col-span-1">
-                        <img className=" rounded-s-3xl image-mask-right h-full" src={`/image/${card.certificate}`} alt={card.title} />
+                        <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={`/image/${card.certificate}`} alt={card.title} />
                     </ArrowWrapper>
-                    <CardWrapper tailwind="col-span-2 grid grid-rows-6 padding-elements">
+                    <CardWrapper tailwind="col-span-2 grid grid-rows-6 padding-elements liquid-glass-burger">
                     <MainText tailwind="row-span-1">{card.title}</MainText>
                     <MiddleText tailwind="text-txSecond opacity-80 row-span-3 row-start-2 row-end-4 flex items-center">
                         {card.description}

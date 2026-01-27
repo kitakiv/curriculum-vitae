@@ -14,10 +14,10 @@ export default function ExperienceSection() {
         <FadeInSection>
             <TextGray tailwind="text-center">{experiences.text}</TextGray>
         </FadeInSection>
+        <SceneRobot tailwind='robot'></SceneRobot>
         <div className="grid lg:grid-cols-7 md:grid-cols-7 sm:grid-cols-4 grid-cols-4 gap-4 w-full">
         <Cards cards={cards} />
         <TimeLine />
-        <SceneRobot tailwind="flex justify-center items-center sticky top-0 -left-1/2 w-full h-[35vw]  col-span-3 col-start-5 col-end-8" />
         </div>
     </section>
 }

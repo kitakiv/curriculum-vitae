@@ -9,6 +9,18 @@ const techStack = {
     doneSvg: "/svg/done.svg"
 }
 
-const buttons = ["All", "Frontend", "Backend", "DevOps", "Testing", "Design", "Database", "Other"]
-export {buttons}
+const buttons = ["All", "Frontend", "Backend", "DevOps", "Testing", "Design", "Database", "Other"];
+const techStacks = [
+    {
+        techName: "TypeScript",
+        category: "Frontend",
+        logo: "/svg/github.svg"
+    },
+    {
+        techName: "React",
+        category: "Frontend",
+        logo: "/svg/github.svg"
+    },
+]
+export {buttons, techStacks}
 export default techStack;
