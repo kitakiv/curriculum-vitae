@@ -169,9 +169,21 @@
 
 
 .image-mask {
-  mask-image: linear-gradient(to left, black 0%, transparent);
-  -webkit-mask-image: linear-gradient(to left, black 0%, transparent);
+  mask-image: linear-gradient(to left, black 10%, transparent),
+  linear-gradient(to right, black 10%, transparent);
+  -webkit-mask-image: linear-gradient(to left, black 10%, transparent),
+  linear-gradient(to right, black 10%, transparent);
+  
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
+
 
 .image-mask-right {
   mask-image: linear-gradient(to right, black 0%, transparent);
@@ -387,8 +399,10 @@
 
 @screen sm {
   .image-mask {
-    mask-image: linear-gradient(to left, black 10%, transparent);
-    -webkit-mask-image: linear-gradient(to left, black 10%, transparent);
+    mask-image: linear-gradient(to left, black 10%, transparent),
+    linear-gradient(to right, black 10%, transparent);
+    -webkit-mask-image: linear-gradient(to left, black 10%, transparent),
+    linear-gradient(to right, black 10%, transparent);
   }
 
   .robot {
@@ -438,8 +452,10 @@
 
 @screen lg {
   .image-mask {
-    mask-image: linear-gradient(to left, black 70%, transparent);
-    -webkit-mask-image: linear-gradient(to left, black 70%, transparent);
+    mask-image: linear-gradient(to left, black 70%, transparent),
+    linear-gradient(to right, black 70%, transparent);
+    -webkit-mask-image: linear-gradient(to left, black 70%, transparent),
+    linear-gradient(to right, black 70%, transparent);
   }
 
   .image-mask-right {
@@ -468,8 +484,10 @@
 
 @screen xl {
   .image-mask {
-    mask-image: linear-gradient(to left, black 80%, transparent);
-    -webkit-mask-image: linear-gradient(to left, black 80%, transparent);
+    mask-image: linear-gradient(to left, black 80%, transparent),
+    linear-gradient(to right, black 80%, transparent);
+    -webkit-mask-image: linear-gradient(to left, black 80%, transparent),
+    linear-gradient(to right, black 80%, transparent);
   }
 
   .image-mask-right {

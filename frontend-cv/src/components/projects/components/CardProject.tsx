@@ -4,13 +4,22 @@ import TextGray from "@/components/text/TextGray";
 import Link from "next/link";
 import PinkButton from "@/components/button/PinkButton";
 import Image from "next/image";
-import projects from "@/variables/projects/projects";
+import projects, { projectImages, projectDescription } from "@/variables/projects/projects";
 import GrayButton from "@/components/button/GrayButton";
+import ProjectSlider from "./ProjectSlider";
 
 export default function CardProject({project}: {project: ProjectCard}) {
+  const colours = ["bg100",
+    "bg33",
+    "bg0",
+    "rn100",
+    "rn0",
+    "txSecond"];
+    const random = colours[Math.floor(Math.random() * colours.length)];
+    const random2 = colours[Math.floor(Math.random() * colours.length)];
   return (
     <div className="w-auto h-full bg-projectBg rounded-b-xl shadow-xl flex flex-col justify-between">
-        <Image src={project.image || projects.defaultImage} alt="project" width={340} height={340} className='w-full h-auto'  style={{backgroundImage: `url(${projects.defaultImage})`, backgroundSize: '30%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}} />
+        <ProjectSlider images={projectImages} random={random} random2={random2} />
         <div className="flex flex-col lg:gap-6 md:gap-5 sm:gap-4 gap-4 lg:p-7 md:p-6 sm:p-4 p-2 items-start justify-end h-auto">
           <TextWhite>{project.title}</TextWhite>
           <TextGray>{project.description}</TextGray>
