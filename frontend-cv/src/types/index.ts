@@ -6,6 +6,7 @@ class ProjectCard {
     image: string | null | undefined;
     githubLink: string = "";
     demoLink: string = "";
+    techStack?: Array<{techName: string, category: string, logo: string}> | undefined;
 }
 
 class ExperienceCard {

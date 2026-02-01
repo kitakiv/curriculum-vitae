@@ -1,34 +1,49 @@
 import { useAnimations, useGLTF } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useMemo, useRef } from "react"
-import * as THREE from "three"
+import { useEffect, useMemo, useRef } from "react"
+import * as THREE from "three";
+import { Line } from '@react-three/drei'
 
 useGLTF.preload("/model/animated_butterfly.glb")
 
 export default function Model() {
     const { viewport } = useThree();
-    const left = (viewport.width / 2 - 3);
-    const right = left * -1;
-    const top = -1 * (viewport.height / 2 - 2);
-    const bottom = top * -1;
+    const left = useRef(viewport.width / 2 - viewport.width / 6);
+    const right = useRef(left.current * -1);
+    const top = useRef(-1 * (viewport.height / 2 - 2));
+    const bottom = useRef(top.current * -1);
     const group = useRef<THREE.Group>(null!);
     const progress = useRef(0);
     const { animations, scene } = useGLTF("/model/animated_butterfly.glb");
     const { actions } = useAnimations(animations, scene);
-
-    const curve = useMemo(() => {
+    const curve = useRef<THREE.CatmullRomCurve3>(null!);
+    curve.current = useMemo(() => {
         return new THREE.CatmullRomCurve3([
-            new THREE.Vector3(left, top, 0),
-            new THREE.Vector3(left * 0.5, top * 0.8, 2),
+            new THREE.Vector3(left.current, top.current, 0),
+            new THREE.Vector3(left.current * 0.5, top.current * 0.8, 2),
             new THREE.Vector3(0, 0, -2),
-            new THREE.Vector3(right * 0.5, bottom * 0.8, 2),
-            new THREE.Vector3(right, bottom, 0),
+            new THREE.Vector3(right.current * 0.5, bottom.current * 0.8, 2),
+            new THREE.Vector3(right.current, bottom.current, 0),
         ], true, "centripetal", 2);
     }, []);
 
-    // const linePoints = useMemo(() => {
-    //     return curve.getPoints(NUMBER_OF_POINTS);
-    // }, [curve]);
+    useEffect(() => {
+        left.current = (viewport.width / 2 - viewport.width / 6);
+        right.current = left.current * -1;
+        top.current = -1 * (viewport.height / 2 - 2);
+        bottom.current = top.current * -1;
+        curve.current = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(left.current, top.current, 0),
+            new THREE.Vector3(left.current * 0.5, top.current * 0.8, 2),
+            new THREE.Vector3(0, 0, -2),
+            new THREE.Vector3(right.current * 0.5, bottom.current * 0.8, 2),
+            new THREE.Vector3(right.current, bottom.current, 0),
+        ], true, "centripetal", 2);
+    }, [viewport]);
+
+    const linePoints = useMemo(() => {
+        return curve.current.getPoints(100);
+    }, [curve]);
 
 
     useFrame((state, delta) => {
@@ -42,8 +57,8 @@ export default function Model() {
             progress.current = 0;
         }
 
-        const position = curve.getPoint(progress.current)
-        const tangent = curve.getTangent(progress.current)
+        const position = curve.current.getPoint(progress.current)
+        const tangent = curve.current.getTangent(progress.current)
 
         group.current.position.copy(position);
         group.current.rotation.y = Math.atan2(
@@ -56,6 +71,10 @@ export default function Model() {
     })
     return (
         <>
+            {/* <Line
+                points={linePoints}
+                color={"white"}
+                linewidth={1} /> */}
             {/* <Float speed={1.5} rotationIntensity={1} floatIntensity={2}> */}
                 <group scale={0.4} ref={group} position={[1, 1, 0]} dispose={null} rotation={[0, Math.PI / 3, Math.PI / 7]}>
                     <primitive object={scene} />

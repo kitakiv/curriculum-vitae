@@ -12,7 +12,8 @@ const experiences = {
     arrowSvg: "/svg/ok.svg",
     companySvg: "/svg/company.svg",
     periodSvg: "/svg/period.svg",
-    doneSvg: "/svg/done.svg"
+    doneSvg: "/svg/done.svg",
+    portfolio: "Professional Journey",
 }
 
 const cards: ExperienceCard[] = [

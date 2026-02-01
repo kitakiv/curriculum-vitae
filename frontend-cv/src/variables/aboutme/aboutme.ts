@@ -4,7 +4,8 @@ const aboutme = {
     name: "about me",
     id: "about_me",
     heading: "About Me",
-    text: "Get to know the person behind the code. Here's my journey, passions, and what drives me every day."
+    text: "Get to know the person behind the code. Here's my journey, passions, and what drives me every day.",
+    portfolio: "Me as a DEVELOPER"
 }
 
 const imagesDefault = ["/image/developer1.jpg", "/image/developer2.jpg", "/image/developer3.jpg"];

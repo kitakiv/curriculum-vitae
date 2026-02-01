@@ -44,18 +44,18 @@ export default function Cards({ cards }: { cards: ExperienceCard[] }) {
                 },
                 {
                   scale: 1,
-                  duration: 2,
+                  duration: 0.7,
                   ease: 'power2.inOut',
                   scrollTrigger: {
                     trigger: round,
-                    start: 'top center',
+                    start: 'top 80%',
                     toggleActions: 'play none none reverse',
                   },
                 }
               );
         })
     }, []);
-    const colors = ["gradient-round-two", "gradient-round-three", "gradient-round"];
+    const colors = ["gradient-round-two", "gradient-round-three", "gradient-round-one"];
     return <div className=" xl:col-span-3 xl:col-start-2 xl:col-end-5 lg:col-span-4 lg:col-start-2 lg:col-end-6 md:col-span-4 md:col-start-2 md:col-end-6 col-span-5 col-start-2 col-end-7 md:mr-9 sm:mr-9 mr-9 flex flex-col gap-4">{
         cards.map((card, index) => {
             const colorRound = colors[index % colors.length];

@@ -5,14 +5,16 @@ import aboutme from "@/variables/aboutme/aboutme"
 import Slider from "@/components/aboutme/components/Slider"
 import FadeInSection from "@/components/animation/FadeInSection"
 import LiquidGlass from "../wrapper/LiquidGlass"
+import TextPortfolio from "../text/TextPortfolio"
 
 // const Scene = dynamic(() => import('@/components/3D/butterfly/Scene'), {
 //     ssr: false,
 // });
 export default function AboutMeSection() {
     return (
-        <section className="flex flex-col items-center justify-center gap-4 w-full padding overflow-hidden" id={aboutme.id}>
+        <section className="flex relative z-10 flex-col min-h-screen items-center justify-center gap-4 w-full padding overflow-hidden" id={aboutme.id}>
             <FadeInSection>
+                <TextPortfolio tailwind="text-center">{aboutme.portfolio}</TextPortfolio>
                 <TextHeading>
                     {aboutme.heading}
                 </TextHeading>

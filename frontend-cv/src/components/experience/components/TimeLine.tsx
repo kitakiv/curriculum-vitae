@@ -3,8 +3,6 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { div } from 'three/tsl';
-import { use } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 export default function TimeLine() {
@@ -14,7 +12,7 @@ export default function TimeLine() {
         ease: 'power1.inOut',
         scrollTrigger: {
           trigger: '.timeline',
-          start: 'top center',
+          start: 'top 40%',
           end: '70% center',
           onUpdate: (self) => {
             gsap.to('.timeline', 

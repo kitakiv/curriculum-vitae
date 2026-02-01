@@ -89,8 +89,8 @@ export default function ProjectSlider({ images = imagesDefault, random = "bg100"
                 onMouseLeave={startAutoPlay}
                 className={`lg:min-h-96 min-h-96 lg:w-full sm:w-full w-full relative  overflow-hidden flex bg-gradient-to-r from-${random} to-${random2}`}>
 
-            <div key="slider-left" className="absolute top-1/2 left-3  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110" onClick={changeLeft}></div>
-            <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
+            <div key="slider-left" className="absolute top-1/2 left-3 cursor-pointer -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110" onClick={changeLeft}></div>
+            <div key="slider-right" className="absolute top-1/2 right-3 cursor-pointer -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
 
                 <div key="sliders-images" className="touch-pan-x transition duration-500 flex w-full h-full ease-out" style={{ transform: `translateX(-${state.sliderCount * 100}%)` }}>
                     {images.map((image, index) => {
@@ -98,7 +98,7 @@ export default function ProjectSlider({ images = imagesDefault, random = "bg100"
                             <>
                                 <div key={`image-slider-${index}`} className="flex-shrink-0 w-[100%] h-full relative z-20">
                                     {/* @eslint-disable-next-line */}
-                                    <img src={image} alt="developer" className={`image-mask transition duration-700  w-fit h-full absolute left-1/2 -translate-x-1/2 top-0`} />
+                                    <img src={image} alt="developer" className={`image-mask-project transition duration-700  w-fit h-full absolute left-1/2 -translate-x-1/2 top-0`} />
                                 </div>
                             </>
                         )

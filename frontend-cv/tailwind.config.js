@@ -12,6 +12,9 @@ module.exports = {
         crazy: ['"RubikStorm Regular"', 'sans-serif'],
         elegant: ['"DancingScript"', 'sans-serif'],
       },
+      backgroundImage: {
+        grRound: 'radial-gradient(circle at center, #7c3aed, #ec4899)'
+      },
       colors: {
         bg100: "var(--color-bg-100)",
         bg33: "var(--color-bg-33)",

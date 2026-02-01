@@ -46,7 +46,7 @@
   --color-bg-33: #21213b;
   --color-bg-0: #0F0F23;
   --color-round-100: #9C27B0;
-  --color-round-0: #310c87;
+  --color-round-0: #653cc4;
   --color-tx-second: #B0B0B0;
   --color-tx-first-100: #320087;
   --color-tx-first-0: #eb58d0;
@@ -173,7 +173,6 @@
   linear-gradient(to right, black 10%, transparent);
   -webkit-mask-image: linear-gradient(to left, black 10%, transparent),
   linear-gradient(to right, black 10%, transparent);
-  
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 
@@ -184,6 +183,20 @@
   mask-size: 100% 100%;
 }
 
+.image-mask-project {
+  mask-image: linear-gradient(to left, black 80%, transparent),
+  linear-gradient(to right, black 80%, transparent);
+  -webkit-mask-image: linear-gradient(to left, black 80%, transparent),
+  linear-gradient(to right, black 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
 
 .image-mask-right {
   mask-image: linear-gradient(to right, black 0%, transparent);
@@ -337,7 +350,7 @@
 }
 
 .interactive {
-  background: radial-gradient(circle at center, var(--color-tx-first-100));
+  background: radial-gradient(circle at center, var(--color-tx-first-100), var(--color-tx-first-0));
   mix-blend-mode: hard-light;
   background-size: 100% 100%;
   transform: all 1s ease-in-out;
@@ -352,11 +365,6 @@
   transform-origin: calc(50% - 200px);
 }
 
-.gradient-round {
-  background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
-  background-size: 100% 100%;
-  mix-blend-mode: hard-light;
-}
 
 .gradient-box-rounds-second {
   background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
@@ -366,11 +374,6 @@
   mix-blend-mode: hard-light;
 }
 
-.gradient-round-two {
-  background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
-  background-size: 100% 100%;
-  mix-blend-mode: hard-light;
-}
 
 .gradient-box-rounds-third {
   background: radial-gradient(var(--color-tx-first-100), var(--color-round-0));
@@ -380,10 +383,24 @@
   transform-origin: calc(50% - 200px);
 }
 
-.gradient-round-three {
-  background: radial-gradient(var(--color-tx-first-100), var(--color-round-0));
-  background-size: 100% 100%;
-  mix-blend-mode: hard-light;
+@layer utilities {
+  .gradient-round-three {
+    background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
+    background-size: 100% 100%;
+    mix-blend-mode: hard-light;
+  }
+
+  .gradient-round-two {
+    background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
+    background-size: 100% 100%;
+    mix-blend-mode: hard-light;
+  }
+  
+  .gradient-round-one {
+    background: radial-gradient(var(--color-bg-0), var(--color-round-100));
+    background-size: 100% 100%;
+    mix-blend-mode: hard-light;
+  }
 }
 
 .gradient {
@@ -409,6 +426,7 @@
     position: static;
     width: 100%;
     height: 100vw;
+    top: 30vh;
     transform: translateX(0) translateY(-20%);
   }
 
@@ -434,7 +452,7 @@
 
   .robot {
     position: sticky;
-    top: -10%;
+    top: 30vh;
     left: 0;
     width: 50vw;
     height: 50vw;
@@ -465,7 +483,7 @@
 
   .robot {
     position: sticky;
-    top: -10%;
+    top: 30vh;
     left: 0;
     width: 50vw;
     height: 50vw;
@@ -497,7 +515,7 @@
 
   .robot {
     position: sticky;
-    top: -10%;
+    top: 30vh;
     left: 0;
     width: 50vw;
     height: 50vw;
