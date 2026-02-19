@@ -13,14 +13,24 @@ input ChangePasswordInput {
 }
 
 type Contact {
+  """Contact link"""
   contactLink: String!
+
+  """Contact name"""
   contactName: String!
+
+  """Contact svg"""
   contactSvg: String
+
+  """Contact id"""
   id: ID!
 }
 
 type CookiesData {
+  """Sign tokens"""
   tokens: Sign!
+
+  """User data"""
   user: User!
 }
 
@@ -95,30 +105,63 @@ type Mutation {
 }
 
 type Permission {
+  """Permission actions example: [create, read, update, delete]"""
   actions: [String!]!
+
+  """Permission id"""
   id: ID!
+
+  """Permission resource example: user"""
   resource: String!
+
+  """Permission role"""
   role: Role!
 }
 
 type Profile {
+  """Profile email"""
   email: String!
   id: ID!
+
+  """Profile location"""
   location: String!
+
+  """Profile name"""
   name: String!
+
+  """Profile phone"""
   phone: String!
+
+  """Profile photos"""
   profilePhotos: [String!]
+
+  """Profile surname"""
   surname: String!
+
+  """Profile text on main page"""
   typingText: String!
 }
 
 type Project {
+  """Project id"""
   id: ID!
+
+  """Project demo link"""
   projectDemoLink: String!
+
+  """Project description"""
   projectDescription: String!
+
+  """Project github link"""
   projectGithubLink: String!
+
+  """Project images"""
   projectImages: [String!]
+
+  """Project title"""
   projectTitle: String!
+
+  """Project tech stacks"""
   techStacks: [TechStack!]
 }
 
@@ -151,9 +194,16 @@ type RefreshToken {
 }
 
 type Role {
+  """Role id"""
   id: ID!
+
+  """Role name"""
   name: String!
+
+  """Role permissions"""
   permissions: [Permission!]!
+
+  """Role users"""
   users: [User!]
 }
 
@@ -169,16 +219,28 @@ input SignUpInput {
 }
 
 type Slider {
+  """Slider unique identifier"""
   id: ID!
+
+  """Slider image on which will be slider text"""
   sliderImage: String
+
+  """Slider title will be on main slider"""
   sliderName: String!
+
+  """Slider text will be on main slider"""
   sliderText: String!
 }
 
 type TechStack {
+  """Tech stack id"""
   id: ID!
   projects: [Project!]!
+
+  """Tech stack name for example: React"""
   techName: String!
+
+  """Tech stack svg for example: React svg"""
   techSvg: String
 }
 
