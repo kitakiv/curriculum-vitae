@@ -16,14 +16,18 @@ import MainText from "@/components/text/MainText";
 import BurgerMenu from "@/components/header/components/Menu";
 import FadeInSection from "../animation/FadeInSection";
 import HeaderModel from "./components/HeaderModel";
+import { getProfileCached } from "@/query/profile.query";
+import { Profile, GetProfileQuery } from "@/gql/graphql";
 export default async function Header() {
-    // const profile = await getProfile();
+
+    const profile: GetProfileQuery["profile"] = await getProfileCached();
+    console.log("Profile data:", profile);
     return (
         <header className=" w-full h-screen relative top-0 gradient-box overflow-hidden" id={header.id}>
             <HeaderSection>
                 <FadeInSection delay={100} animation={{visible: "translateX(0)", hidden: "translateX(-50%)"}}>
                 <Link href='/' className="lg:w-5/12 md:w-1/2 relative z-50">
-                    <MainText>{header.name + " " + header.surname}</MainText>
+                    <MainText>{profile.name + " " + profile.surname}</MainText>
                 </Link>
                 </FadeInSection>
                 <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
@@ -35,7 +39,7 @@ export default async function Header() {
                 <HeaderModel />
                 <HeaderImage path={header.path} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
-                <HeaderSecondText text={header.text} />
+                <HeaderSecondText text={profile.typingText} />
                 <Link href={`#${aboutme.id}`} className=" col-span-12 col-start-1 col-end-13 row-span-2 row-start-11 row-end-13 flex justify-center items-center">
                     <PinkButton tailwind=" relative z-40 transition duration-700 group flex justify-between items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
                         {header.button}

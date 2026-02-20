@@ -30,7 +30,9 @@
       "@/query/*": ["query/*"],
       "@/types/*": ["types/*"],
       "@/validation/*": ["validation/*"],
-      "@/hooks/*": ["hooks/*"]
+      "@/hooks/*": ["hooks/*"], 
+      "@/graphql/*": ["graphql/*"],
+      "@/gql/*": ["gql/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

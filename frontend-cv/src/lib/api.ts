@@ -1,10 +1,140 @@
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-const QueryUrl = {
-    login: `${backendUrl}/api/login`,
-    register: `${backendUrl}/api/register`,
-    profile: `${backendUrl}/api/profile`,
+interface ApiConfig {
+    baseUrl?: string;
+    defaultHeaders?: Record<string, string>;
+    timeout?: number;
 }
 
-export default QueryUrl
+interface ApiResponse<T = any> {
+    data: T;
+    status: number;
+    headers: Headers;
+}
+
+class ApiError extends Error {
+    constructor(
+        message: string,
+        public status: number,
+        public response?: Response
+    ) {
+        super(message);
+        this.name = 'ApiError';
+    }
+}
+
+class GraphQlClient {
+    private config: Required<ApiConfig>;
+
+    constructor(config: ApiConfig = {}) {
+        this.config = {
+            baseUrl: config.baseUrl || process.env.GRAPHQL_BACKEND_URL || '',
+            defaultHeaders: {
+                'Content-Type': 'application/json',
+                ...config.defaultHeaders,
+            },
+            timeout: config.timeout || 10000,
+        };
+    }
+
+    async fetchGraphQL<
+        TResult,
+        TVariables extends object | undefined = undefined,
+    >(
+        document: TypedDocumentNode<TResult, TVariables>,
+        options?: {
+            variables?: TVariables;
+            headers?: Record<string, string>;
+        }
+    ): Promise<ApiResponse<TResult>> {
+        const url = this.buildUrl(this.config.baseUrl);
+        const requestOptions = this.buildRequestOptions(document, options || {});
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+
+            const res = await fetch(url, {
+                ...requestOptions,
+                signal: controller.signal,
+            });
+
+
+            clearTimeout(timeoutId);
+
+            if (!res.ok) {
+                throw new ApiError(
+                    `GraphQL error ${res.status}: ${res.statusText}`,
+                    res.status,
+                    res
+                );
+            }
+
+            const data = await this.parseResponse<TResult>(res);
+            const errors = (data as Record<string, unknown>).errors as Array<{ message: string }> | undefined;
+            if (errors?.length) {
+                const errorList = errors as Array<{ message: string }>;
+                throw new ApiError(
+                    `GraphQL errors: ${errorList.map((e) => e.message).join(", ")}`,
+                    res.status,
+                    res
+                );
+            }
+            return {
+                data,
+                status: res.status,
+                headers: res.headers,
+            };
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error;
+            } else if (error instanceof Error && error.name === 'AbortError') {
+                throw new ApiError('Request timed out', 408);
+            } else {
+                throw new ApiError(error instanceof Error ? error.message : 'Unknown error', 500);
+            }
+        }
+    }
+
+    private async parseResponse<T>(response: Response): Promise<T> {
+        const contentType = response.headers.get('content-type');
+
+        if (contentType?.includes('application/json')) {
+            try {
+                return await response.json();
+            } catch (_) {
+                throw new ApiError('Invalid JSON response', response.status, response);
+            }
+        }
+        return (await response.text()) as unknown as T;
+    }
+
+    private buildRequestOptions<TVariables extends object | undefined = undefined>(
+        document: TypedDocumentNode<any, TVariables>,
+        options: {
+            variables?: TVariables;
+            headers?: Record<string, string>;
+        }): RequestInit {
+        return {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...options?.headers,
+            },
+            body: JSON.stringify({
+                query: document.loc?.source.body,
+                variables: options?.variables,
+            }),
+            cache: "no-store",
+        }
+    }
+
+    private buildUrl(endpoint: string): string {
+        if (endpoint.startsWith('http')) {
+            return endpoint;
+        }
+        return `${this.config.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    }
+}
+
+export const apiClient = new GraphQlClient();
