@@ -1,3 +1,5 @@
+import { all } from "three/tsl";
+
 const techStack = {
     id: "techStack",
     heading: "Tech Stack & Skills",
@@ -7,7 +9,8 @@ const techStack = {
     companySvg: "/svg/company.svg",
     periodSvg: "/svg/period.svg",
     doneSvg: "/svg/done.svg",
-    portfolio: "Technical Expertise"
+    portfolio: "Technical Expertise",
+    all: "All",
 }
 
 const buttons = ["All", "Frontend", "Backend", "DevOps", "Testing", "Design", "Database", "Other"];

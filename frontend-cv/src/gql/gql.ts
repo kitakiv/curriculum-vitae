@@ -15,11 +15,17 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
+    "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": typeof types.GetSlidersDocument,
+    "\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n": typeof types.GetProjectsByTechStackDocument,
+    "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n": typeof types.GetTechStacksDocument,
 };
 const documents: Documents = {
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
+    "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": types.GetSlidersDocument,
+    "\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n": types.GetProjectsByTechStackDocument,
+    "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n": types.GetTechStacksDocument,
 };
 
 /**
@@ -43,7 +49,19 @@ export function graphql(source: "\n    query GetProfile {\n        profile {\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n"): (typeof documents)["\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n"): (typeof documents)["\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n"): (typeof documents)["\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

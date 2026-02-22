@@ -1,4 +1,4 @@
-const MAX_FILE_IMAGES = 5;
+const MAX_FILE_IMAGES = 10;
 const KB = 1000;
 const MB = KB * 1000;
 const REFRESH_TOKEN_EXPIRATION_DAYS =

@@ -55,12 +55,12 @@ class GraphQlClient {
     >(
         document: TypedDocumentNode<TResult, TVariables>,
         options?: {
-            variables?: TVariables;
+            variables?: object;
             headers?: Record<string, string>;
         }
     ): Promise<ApiResponse<TResult>> {
         const url = this.buildUrl(this.config.baseUrl);
-        const requestOptions = this.buildRequestOptions(document, options || {});
+        const requestOptions = this.buildRequestOptions(document, options as object);
 
         try {
             const controller = new AbortController();

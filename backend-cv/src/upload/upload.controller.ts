@@ -36,7 +36,7 @@ export class UploadController {
   async uploadFile(
     @UploadedFile(new FileValidationPipe())
     file: Express.Multer.File,
-    @Param('service', OneFilePipe, ServerExistPipe) service: string,
+    @Param('service', ServerExistPipe, OneFilePipe) service: string,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return await this.uploadService.uploadFile({ file, service, id });

@@ -17,18 +17,24 @@ export class S3Service {
     public logger: Logger = new Logger(S3Service.name),
   ) {
     this.s3Client = new S3Client({
-      region: this.configService.get('AWS_REGION'),
+      region: this.configService.getOrThrow('AWS_REGION'),
       credentials: {
-        accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+        accessKeyId: this.configService.getOrThrow('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.configService.getOrThrow('AWS_SECRET_ACCESS_KEY'),
       },
     });
-    this.bucketName = this.configService.get('AWS_S3_BUCKET');
+    this.bucketName = this.configService.getOrThrow('AWS_S3_BUCKET');
   }
   async uploadFile(
     file: { buffer: Buffer<ArrayBufferLike>; mimetype: string },
     key: string,
   ): Promise<string> {
+    console.log('Uploading file with key:', {
+      Bucket: this.bucketName,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
