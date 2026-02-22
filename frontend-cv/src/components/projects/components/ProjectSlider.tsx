@@ -1,13 +1,9 @@
 "use client"
 import { useRef, useEffect, useState } from "react"
-import { SliderText } from "@/types/index";
-import TextBlack from "@/components/text/TextBlack";
-import TextWhite from "@/components/text/TextWhite";
-import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import reducer from "@/hooks/sliderCount";
 import { useReducer } from "react";
 import { CounterActionTypes } from "@/types/index";
-export default function ProjectSlider({ images = imagesDefault, random = "bg100", random2 = "bg0" }: { images?: string[], random?: string, random2?: string }) {
+export default function ProjectSlider({ images, random = "bg100", random2 = "bg0" }: { images: string[], random?: string, random2?: string }) {
     const initialState = { sliderCount: 0, maxSliders: images.length };
     const [state, dispatch] = useReducer(reducer, initialState);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);

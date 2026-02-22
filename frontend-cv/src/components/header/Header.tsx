@@ -17,11 +17,10 @@ import BurgerMenu from "@/components/header/components/Menu";
 import FadeInSection from "../animation/FadeInSection";
 import HeaderModel from "./components/HeaderModel";
 import { getProfileCached } from "@/query/profile.query";
-import { Profile, GetProfileQuery } from "@/gql/graphql";
+import { GetProfileQuery } from "@/gql/graphql";
 export default async function Header() {
 
     const profile: GetProfileQuery["profile"] = await getProfileCached();
-    console.log("Profile data:", profile);
     return (
         <header className=" w-full h-screen relative top-0 gradient-box overflow-hidden" id={header.id}>
             <HeaderSection>
@@ -37,7 +36,7 @@ export default async function Header() {
             </HeaderSection>
             <StartPage>
                 <HeaderModel />
-                <HeaderImage path={header.path} />
+                <HeaderImage images={profile.profilePhotos || []} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
                 <HeaderSecondText text={profile.typingText} />
                 <Link href={`#${aboutme.id}`} className=" col-span-12 col-start-1 col-end-13 row-span-2 row-start-11 row-end-13 flex justify-center items-center">

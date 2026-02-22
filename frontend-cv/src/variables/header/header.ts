@@ -14,6 +14,7 @@ const header = {
     location: "Kyiv, Ukraine",
     email: "kit@gmail.com",
     phone: "+380931234567",
+    defaultImageChange: 7000,
 }
 
 const deafultProfile: Profile = {

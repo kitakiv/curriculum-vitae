@@ -1,14 +1,13 @@
 "use client"
 import { useRef, useEffect, useState } from "react"
-import { SliderText } from "@/types/index";
 import TextBlack from "@/components/text/TextBlack";
 import TextWhite from "@/components/text/TextWhite";
-import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import reducer from "@/hooks/sliderCount";
 import { useReducer } from "react";
 import { CounterActionTypes } from "@/types/index";
-export default function Slider({ images = imagesDefault, titles = imagesTitle }: { images?: string[], titles?: SliderText[] }) {
-    const initialState = { sliderCount: 0, maxSliders: images.length };
+import { Slider } from "@/gql/graphql";
+export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
+    const initialState = { sliderCount: 0, maxSliders: sliders.length };
     const [state, dispatch] = useReducer(reducer, initialState);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const widthRef = useRef<number>(0);
@@ -92,12 +91,12 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
                 className={`lg:h-96 h-96 lg:w-2/3 sm:w-5/6 w-full relative  overflow-hidden flex bg-gradient-to-r from-txSecond to-bg0`}>
 
                 <div key="sliders-images" className="transition duration-500 flex w-full h-full ease-out" style={{ transform: `translateX(-${state.sliderCount * 100}%)` }}>
-                    {images.map((image, index) => {
+                    {sliders.map((slider, index) => {
                         return (
                             <>
                                 <div key={`image-slider-${index}`} className="flex-shrink-0 w-[100%] h-full relative">
                                       {/* @eslint-disable-next-line */}
-                                    <img src={image} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
+                                    <img src={slider.sliderImage} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
                                 </div>
                             </>
                         )
@@ -105,11 +104,11 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
                 </div>
 
                 <div key="sliders-titles" className="transition duration-1000 flex flex-col w-full h-full absolute top-0 left-0 easy-in-out" style={{ transform: `translateY(-${state.sliderCount * 100}%)` }}>
-                    {titles.map((elem, index) => {
+                    {sliders.map((slider, index) => {
                         return (
                             <div key={`image-slider-title-${index}`} className="flex-shrink-0 w-[100%] h-full relative p-16 flex flex-col justify-end">
-                                <TextWhite key={`image-slider-title-${index}`}>{elem.title}</TextWhite>
-                                <TextBlack key={`image-slider-text-${index}`}>{elem.text}</TextBlack>
+                                <TextWhite key={`image-slider-title-${index}`}>{slider.sliderName}</TextWhite>
+                                <TextBlack key={`image-slider-text-${index}`}>{slider.sliderText}</TextBlack>
                             </div>
                         )
                     })}
@@ -117,7 +116,7 @@ export default function Slider({ images = imagesDefault, titles = imagesTitle }:
 
 
                 <div key={"sliders-dots"} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex gap-1">
-                    {images.map((_, index) => {
+                    {sliders.map((_, index) => {
                         return (
                             <div key={`image-slider-dot-${index}`} className="lg:w-9 lg:h-9 md:w-11 md:h-11 sm:w-20 sm:h-20 w-20 h-20 flex items-center justify-center group" onClick={() => handleSetSlider(index)}>
                                 {state.sliderCount === index ?

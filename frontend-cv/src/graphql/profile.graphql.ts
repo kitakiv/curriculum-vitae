@@ -8,6 +8,9 @@ const PROFILE_GET_QUERY = gql`
             surname
             profilePhotos
             typingText
+            email
+            phone
+            location
         }
     }
 `;

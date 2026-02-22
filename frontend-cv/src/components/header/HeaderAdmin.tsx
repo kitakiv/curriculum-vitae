@@ -6,11 +6,15 @@ import menu from "@/variables/menu/menu";
 import Link from "next/link";
 import MainText from "@/components/text/MainText";
 import BurgerMenu from "@/components/header/components/Menu";
+import { getProfileCached } from "@/query/profile.query";
+import { GetProfileQuery } from "@/gql/graphql";
+
 export default async function HeaderAdmin() {
+    const profile: GetProfileQuery["profile"] = await getProfileCached();
     return (
         <HeaderSection>
                 <Link href='/' className="lg:w-5/12 md:w-1/2 relative z-50">
-                    <MainText>{header.name + " " + header.surname}</MainText>
+                    <MainText>{profile.name + " " + profile.surname}</MainText>
                 </Link>
                 <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
                 <BurgerMenu burgerMenu={menu.adminHeader} />

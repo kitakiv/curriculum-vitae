@@ -12,6 +12,12 @@ interface ApiResponse<T = any> {
     headers: Headers;
 }
 
+interface AuthConfig {
+    tokenProvider?: () => Promise<string | null> | string | null;
+    tokenHeader?: string;
+    tokenPrefix?: string;
+}
+
 class ApiError extends Error {
     constructor(
         message: string,
@@ -25,8 +31,9 @@ class ApiError extends Error {
 
 class GraphQlClient {
     private config: Required<ApiConfig>;
+    private authConfig: AuthConfig;
 
-    constructor(config: ApiConfig = {}) {
+    constructor(config: ApiConfig = {}, authConfig: AuthConfig = {}) {
         this.config = {
             baseUrl: config.baseUrl || process.env.GRAPHQL_BACKEND_URL || '',
             defaultHeaders: {
@@ -34,6 +41,11 @@ class GraphQlClient {
                 ...config.defaultHeaders,
             },
             timeout: config.timeout || 10000,
+        };
+        this.authConfig = {
+            tokenHeader: 'Authorization',
+            tokenPrefix: 'Bearer',
+            ...authConfig,
         };
     }
 
@@ -103,7 +115,7 @@ class GraphQlClient {
             try {
                 return await response.json();
             } catch (_) {
-                throw new ApiError('Invalid JSON response', response.status, response);
+                return (await response.text()) as unknown as T;
             }
         }
         return (await response.text()) as unknown as T;
@@ -115,6 +127,18 @@ class GraphQlClient {
             variables?: TVariables;
             headers?: Record<string, string>;
         }): RequestInit {
+
+        if (this.authConfig.tokenProvider) {
+            const token = this.authConfig.tokenProvider();
+            if (token) {
+                options.headers = {
+                    ...options.headers,
+                    [this.authConfig.tokenHeader!]: `${this.authConfig.tokenPrefix ? this.authConfig.tokenPrefix + ' ' : ''}${token}`,
+                }
+
+            }
+        }
+
         return {
             method: "POST",
             headers: {

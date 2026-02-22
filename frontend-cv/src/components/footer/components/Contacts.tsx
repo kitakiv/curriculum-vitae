@@ -3,10 +3,11 @@ import Image from "next/image";
 import ButtonHeader from "@/components/button/ButtonHeader";
 import SmallText from "@/components/text/SmallText";
 import FadeInSection from "@/components/animation/FadeInSection";
+import { GetProfileQuery } from "@/gql/graphql";
 
 
 
-export default function Contacts({ contacts }: { contacts: ContactsCard[] }) {
+export default function Contacts({ contacts, profile }: { contacts: ContactsCard[], profile: GetProfileQuery["profile"] }) {
     return (
         <address className="flex flex-col gap-2">
             {contacts.map((contact, index) => (
@@ -20,7 +21,7 @@ export default function Contacts({ contacts }: { contacts: ContactsCard[] }) {
                         <div className="flex flex-col">
                             <span className="lg:text-md md:text-sm text-sm text-wrap text-txSecond font-bold">{contact.name.toUpperCase()}</span>
                             <a href={contact.href} target="_blank" rel="noopener noreferrer">
-                                <SmallText tailwind="opacity-70  text-footerTx" >{contact.contact}</SmallText>
+                                <SmallText tailwind="opacity-70  text-footerTx" >{profile[contact.name as keyof GetProfileQuery["profile"]] || contact.contact}</SmallText>
                             </a>
                         </div>
                     </div>

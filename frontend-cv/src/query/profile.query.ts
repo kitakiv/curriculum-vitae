@@ -6,8 +6,10 @@ import { deafultProfile } from "@/variables/header/header";
 
 async function getProfile() {
   try {
-    const res = await apiClient.fetchGraphQL<GetProfileQuery>(PROFILE_GET_QUERY);
-    console.log("Raw API response:", res);
+    const res = await apiClient.fetchGraphQL<{data: GetProfileQuery}>(PROFILE_GET_QUERY);
+    if (!res.data.data.profile.profilePhotos) {
+      res.data.data.profile.profilePhotos = deafultProfile.profilePhotos as string[];
+    }
     return res.data.data.profile;
   } catch (_) {
     return deafultProfile;
