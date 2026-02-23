@@ -1,3 +1,5 @@
+'use server'
+
 import CardProject from "@/components/projects/components/CardProject";
 import FadeInSection from "@/components/animation/FadeInSection";
 import techStack, { buttons } from "@/variables/techstack/techstack";

@@ -11,6 +11,7 @@ const techStack = {
     doneSvg: "/svg/done.svg",
     portfolio: "Technical Expertise",
     all: "All",
+    searchParam: "techId",
 }
 
 const buttons = ["All", "Frontend", "Backend", "DevOps", "Testing", "Design", "Database", "Other"];
