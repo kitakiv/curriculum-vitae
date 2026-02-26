@@ -9,8 +9,6 @@ export default function TechButtons({ techs }: { techs: GetTechStacksQuery["tech
   const router = useRouter()
   const searchParams = useSearchParams();
    const currentTechId = searchParams.get(techStack.searchParam) || techStack.all;
-   console.log("Current techId from URL:", currentTechId);
-
   const updateParam = (key: string, value?: string) => {
     const params = new URLSearchParams(searchParams)
 

@@ -21,7 +21,7 @@ export default async function ProjectSection({ selectedTechId }: { selectedTechI
                 <TextGray tailwind="text-center">{projects.text}</TextGray>
             </FadeInSection>
             <TechButtons techs={techStacks}/>
-            <ProjectComponent columns={2} techId={selectedTechId || techStackVariable.all} />
+            <ProjectComponent columns={2} techId={selectedTechId} />
         </section>
     )
 }

@@ -20,7 +20,7 @@ export default async function ProjectComponent({ columns = 2, techId = techStack
             : columns === 2
             ? "lg:grid-cols-2 md:grid-cols-2 grid-cols-1"
             : `lg:grid-cols-${columns}`;
-
+    console.log("techId: ", techId)
     const allProjects: GetProjectsQuery["projects"] = (await getProjectsCached()) || [];
     const projectsToShow: GetProjectsQuery["projects"] | GetProjectsByTechStackQuery["techstack"]["projects"] =
         techId === techStack.all ? allProjects : (await getProjectsByTechStackCached(techId)) || [];

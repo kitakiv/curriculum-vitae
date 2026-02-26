@@ -14,11 +14,31 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** Date custom scalar type */
+  Date: { input: any; output: any; }
 };
 
 export type AttachRoleInput = {
   roleId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
+};
+
+export type Certificate = {
+  __typename?: 'Certificate';
+  /** Certificate description */
+  certificateDescription: Scalars['String']['output'];
+  /** Certificate image on which will be certificate text */
+  certificateImage?: Maybe<Scalars['String']['output']>;
+  /** Certificate link */
+  certificateLink?: Maybe<Scalars['String']['output']>;
+  /** Certificate period end date */
+  certificatePeriodEnd: Scalars['Date']['output'];
+  /** Certificate period start date */
+  certificatePeriodStart: Scalars['Date']['output'];
+  /** Certificate title */
+  certificateTitle: Scalars['String']['output'];
+  /** Certificate unique identifier */
+  id: Scalars['ID']['output'];
 };
 
 export type ChangePasswordInput = {
@@ -44,6 +64,21 @@ export type CookiesData = {
   tokens: Sign;
   /** User data */
   user: User;
+};
+
+export type CreateCertificateInput = {
+  /** Certificate description */
+  certificateDescription: Scalars['String']['input'];
+  /** Certificate image on which will be certificate text */
+  certificateImage?: InputMaybe<Scalars['String']['input']>;
+  /** Certificate link */
+  certificateLink?: InputMaybe<Scalars['String']['input']>;
+  /** Certificate period end date */
+  certificatePeriodEnd: Scalars['Date']['input'];
+  /** Certificate period start date */
+  certificatePeriodStart: Scalars['Date']['input'];
+  /** Certificate title */
+  certificateTitle: Scalars['String']['input'];
 };
 
 export type CreateContactInput = {
@@ -77,8 +112,14 @@ export type CreateSliderInput = {
   sliderText: Scalars['String']['input'];
 };
 
+export type CreateTechCategoryInput = {
+  categoryName: Scalars['String']['input'];
+  techStacks?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type CreateTechStackInput = {
   projects?: InputMaybe<Array<Scalars['String']['input']>>;
+  techCategories?: InputMaybe<Array<Scalars['String']['input']>>;
   techName: Scalars['String']['input'];
   techSvg?: InputMaybe<Scalars['String']['input']>;
 };
@@ -92,28 +133,34 @@ export type Mutation = {
   __typename?: 'Mutation';
   attachRole: User;
   changePassword: User;
+  createCertificate: Certificate;
   createContact: Contact;
   createProject: Project;
   createRole: Role;
   createSlider: Slider;
+  createTechCategory: TechCategory;
   createTechStack: TechStack;
   getUser: User;
   login: CookiesData;
   logout: Scalars['Boolean']['output'];
   refreshTheTokens: CookiesData;
+  removeCertificate: Certificate;
   removeContact: Scalars['ID']['output'];
   removeProject: Scalars['ID']['output'];
   removeRole: Scalars['ID']['output'];
   removeSlider: Scalars['ID']['output'];
+  removeTechCategory: Scalars['ID']['output'];
   removeTechStack: Scalars['ID']['output'];
   removeUser: Scalars['ID']['output'];
   signup: CookiesData;
   update: User;
+  updateCertificate: Certificate;
   updateContact: Contact;
   updateProfile: Profile;
   updateProject: Project;
   updateRole: Role;
   updateSlider: Slider;
+  updateTechCategory: TechCategory;
   updateTechStack: TechStack;
 };
 
@@ -125,6 +172,11 @@ export type MutationAttachRoleArgs = {
 
 export type MutationChangePasswordArgs = {
   changePasswordInput: ChangePasswordInput;
+};
+
+
+export type MutationCreateCertificateArgs = {
+  createCertificateInput: CreateCertificateInput;
 };
 
 
@@ -148,6 +200,11 @@ export type MutationCreateSliderArgs = {
 };
 
 
+export type MutationCreateTechCategoryArgs = {
+  createTechCategoryInput: CreateTechCategoryInput;
+};
+
+
 export type MutationCreateTechStackArgs = {
   CreateTechStackInput: CreateTechStackInput;
 };
@@ -155,6 +212,11 @@ export type MutationCreateTechStackArgs = {
 
 export type MutationLoginArgs = {
   loginInput: LoginInput;
+};
+
+
+export type MutationRemoveCertificateArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -178,6 +240,11 @@ export type MutationRemoveSliderArgs = {
 };
 
 
+export type MutationRemoveTechCategoryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRemoveTechStackArgs = {
   id: Scalars['ID']['input'];
 };
@@ -195,6 +262,11 @@ export type MutationSignupArgs = {
 
 export type MutationUpdateArgs = {
   updateUserInput: UpdateUserInput;
+};
+
+
+export type MutationUpdateCertificateArgs = {
+  updateCertificateInput: UpdateCertificateInput;
 };
 
 
@@ -220,6 +292,11 @@ export type MutationUpdateRoleArgs = {
 
 export type MutationUpdateSliderArgs = {
   updateSliderInput: UpdateSliderInput;
+};
+
+
+export type MutationUpdateTechCategoryArgs = {
+  updateTechCategoryInput: UpdateTechCategoryInput;
 };
 
 
@@ -278,6 +355,8 @@ export type Project = {
 
 export type Query = {
   __typename?: 'Query';
+  certificate: Certificate;
+  certificates: Array<Certificate>;
   contact: Contact;
   contacts: Array<Contact>;
   profile: Profile;
@@ -287,10 +366,17 @@ export type Query = {
   roles: Array<Role>;
   slider: Slider;
   sliders: Array<Slider>;
+  techCategories: Array<TechCategory>;
+  techCategory: TechCategory;
   techstack: TechStack;
   techstacks: Array<TechStack>;
   user: User;
   users: Array<User>;
+};
+
+
+export type QueryCertificateArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -310,6 +396,11 @@ export type QueryRoleArgs = {
 
 
 export type QuerySliderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTechCategoryArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -370,15 +461,42 @@ export type Slider = {
   sliderText: Scalars['String']['output'];
 };
 
+export type TechCategory = {
+  __typename?: 'TechCategory';
+  /** Tech category name for example: Frontend */
+  categoryName: Scalars['String']['output'];
+  /** Tech category id */
+  id: Scalars['ID']['output'];
+  techStacks?: Maybe<Array<TechStack>>;
+};
+
 export type TechStack = {
   __typename?: 'TechStack';
   /** Tech stack id */
   id: Scalars['ID']['output'];
-  projects: Array<Project>;
+  projects?: Maybe<Array<Project>>;
+  /** Tech categories for example: Frontend, Backend */
+  techCategories?: Maybe<Array<TechCategory>>;
   /** Tech stack name for example: React */
   techName: Scalars['String']['output'];
   /** Tech stack svg for example: React svg */
   techSvg?: Maybe<Scalars['String']['output']>;
+};
+
+export type UpdateCertificateInput = {
+  /** Certificate description */
+  certificateDescription?: InputMaybe<Scalars['String']['input']>;
+  /** Certificate image on which will be certificate text */
+  certificateImage?: InputMaybe<Scalars['String']['input']>;
+  /** Certificate link */
+  certificateLink?: InputMaybe<Scalars['String']['input']>;
+  /** Certificate period end date */
+  certificatePeriodEnd?: InputMaybe<Scalars['Date']['input']>;
+  /** Certificate period start date */
+  certificatePeriodStart?: InputMaybe<Scalars['Date']['input']>;
+  /** Certificate title */
+  certificateTitle?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
 };
 
 export type UpdateContactInput = {
@@ -421,9 +539,16 @@ export type UpdateSliderInput = {
   sliderText?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateTechCategoryInput = {
+  categoryName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  techStacks?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type UpdateTechStackInput = {
   id: Scalars['ID']['input'];
   projects?: InputMaybe<Array<Scalars['String']['input']>>;
+  techCategories?: InputMaybe<Array<Scalars['String']['input']>>;
   techName?: InputMaybe<Scalars['String']['input']>;
   techSvg?: InputMaybe<Scalars['String']['input']>;
 };
@@ -463,12 +588,24 @@ export type GetSlidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetSlidersQuery = { __typename?: 'Query', sliders: Array<{ __typename?: 'Slider', id: string, sliderImage?: string | null, sliderName: string, sliderText: string }> };
 
+export type TechCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TechCategoriesQuery = { __typename?: 'Query', techCategories: Array<{ __typename?: 'TechCategory', categoryName: string, id: string }> };
+
+export type TechCategoryQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type TechCategoryQuery = { __typename?: 'Query', techCategory: { __typename?: 'TechCategory', categoryName: string, id: string, techStacks?: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> | null } };
+
 export type GetProjectsByTechStackQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetProjectsByTechStackQuery = { __typename?: 'Query', techstack: { __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null, projects: Array<{ __typename?: 'Project', id: string, projectDemoLink: string, projectDescription: string, projectGithubLink: string, projectImages?: Array<string> | null, projectTitle: string, techStacks?: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> | null }> } };
+export type GetProjectsByTechStackQuery = { __typename?: 'Query', techstack: { __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null, projects?: Array<{ __typename?: 'Project', id: string, projectDemoLink: string, projectDescription: string, projectGithubLink: string, projectImages?: Array<string> | null, projectTitle: string, techStacks?: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> | null }> | null } };
 
 export type GetTechStacksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -479,5 +616,7 @@ export type GetTechStacksQuery = { __typename?: 'Query', techstacks: Array<{ __t
 export const GetProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"surname"}},{"kind":"Field","name":{"kind":"Name","value":"profilePhotos"}},{"kind":"Field","name":{"kind":"Name","value":"typingText"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]} as unknown as DocumentNode<GetProfileQuery, GetProfileQueryVariables>;
 export const GetProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsQuery, GetProjectsQueryVariables>;
 export const GetSlidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSliders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sliders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sliderImage"}},{"kind":"Field","name":{"kind":"Name","value":"sliderName"}},{"kind":"Field","name":{"kind":"Name","value":"sliderText"}}]}}]}}]} as unknown as DocumentNode<GetSlidersQuery, GetSlidersQueryVariables>;
+export const TechCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TechCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<TechCategoriesQuery, TechCategoriesQueryVariables>;
+export const TechCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TechCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<TechCategoryQuery, TechCategoryQueryVariables>;
 export const GetProjectsByTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsByTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techstack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}},{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsByTechStackQuery, GetProjectsByTechStackQueryVariables>;
 export const GetTechStacksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTechStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techstacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]} as unknown as DocumentNode<GetTechStacksQuery, GetTechStacksQueryVariables>;

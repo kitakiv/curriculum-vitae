@@ -12,6 +12,7 @@ const techStack = {
     portfolio: "Technical Expertise",
     all: "All",
     searchParam: "techId",
+    searchParamCategory: "categoryId"
 }
 
 const buttons = ["All", "Frontend", "Backend", "DevOps", "Testing", "Design", "Database", "Other"];

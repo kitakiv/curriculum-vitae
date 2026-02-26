@@ -1,14 +1,14 @@
 'use client'
 
-import techStack, { techStacks } from "@/variables/techstack/techstack";
-import TechStackIcon from "./TechStackIcon";
+import techStack from "@/variables/techstack/techstack";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function IconSection(){
+export default function IconSection({
+    children}: {children: React.ReactNode}){
 
     useGSAP(() => {
         gsap.fromTo('.tech-stack-icon', 
@@ -31,10 +31,6 @@ export default function IconSection(){
         )
     }, []);
     return <div className="grid xl:grid-cols-8 lg:grid-cols-7 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-4">{
-        techStacks.map((techStack, index) => (
-            <div className="relative tech-stack-icon" key={`techStack-${index}`} >
-                <TechStackIcon icon={techStack.logo} name={techStack.techName} />
-            </div>
-        ))
+          children
         }</div>
 }

@@ -5,24 +5,25 @@ import Footer from "@/components/footer/Footer";
 import ExperienceSection from "@/components/experience/ExperienceSection";
 import TechStackSection from "@/components/techstack/TechStackSection";
 import FlyModelSection from "@/components/3D/FlyModelSection";
+import techStack from "@/variables/techstack/techstack";
 
 export type Props = {
-  params: {
-    techId: string;
-    projectId: string;
-  }
+  searchParams: Promise<{
+    [techStack.searchParam]?: string;
+    [techStack.searchParamCategory]?: string;
+  }>
 }
 
-export default async function Page({ params }: Props) {
-  const { techId, projectId } = params;
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams;
   return (
     <>
      <Header />
      <main className="flex flex-col items-center justify-between bg-gradient-to-r from-bg100 via-bg33 to-bg0">
       <FlyModelSection/>
       <AboutMeSection/>
-      <ProjectSection selectedTechId={techId} />
-      <TechStackSection/>
+      <ProjectSection selectedTechId={params[techStack.searchParam]} />
+      <TechStackSection selectedCategoryId={params[techStack.searchParamCategory]}/>
       <ExperienceSection/>
       </main>
       <Footer />
