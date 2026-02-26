@@ -21,6 +21,7 @@ import { Action } from '../roles/enums/action.enum';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { errors } from '../errors/errors.config';
 import { Project } from '../projects/entities/project.entity';
+import { TechCategory } from '../tech-category/entities/tech-category.entity';
 
 
 @UseGuards(AuthorizationGuard)
@@ -59,6 +60,13 @@ export class TechStackResolver {
   async projects(@Parent() techStack: TechStack) {
     const { id } = techStack;
     return await this.techStackService.findAllProjects(id);
+  }
+
+  @Public()
+  @ResolveField(() => [TechCategory], { nullable: true })
+  async categories(@Parent() techStack: TechStack) {
+    const { id } = techStack;
+    return await this.techStackService.findAllCategories(id);
   }
 
   @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.UPDATE] }])

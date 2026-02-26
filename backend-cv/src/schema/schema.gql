@@ -7,6 +7,29 @@ input AttachRoleInput {
   userId: String!
 }
 
+type Certificate {
+  """Certificate description"""
+  certificateDescription: String!
+
+  """Certificate image on which will be certificate text"""
+  certificateImage: String
+
+  """Certificate link"""
+  certificateLink: String
+
+  """Certificate period end date"""
+  certificatePeriodEnd: Date!
+
+  """Certificate period start date"""
+  certificatePeriodStart: Date!
+
+  """Certificate title"""
+  certificateTitle: String!
+
+  """Certificate unique identifier"""
+  id: ID!
+}
+
 input ChangePasswordInput {
   newPassword: String!
   oldPassword: String!
@@ -32,6 +55,26 @@ type CookiesData {
 
   """User data"""
   user: User!
+}
+
+input CreateCertificateInput {
+  """Certificate description"""
+  certificateDescription: String!
+
+  """Certificate image on which will be certificate text"""
+  certificateImage: String
+
+  """Certificate link"""
+  certificateLink: String
+
+  """Certificate period end date"""
+  certificatePeriodEnd: Date!
+
+  """Certificate period start date"""
+  certificatePeriodStart: Date!
+
+  """Certificate title"""
+  certificateTitle: String!
 }
 
 input CreateContactInput {
@@ -65,11 +108,20 @@ input CreateSliderInput {
   sliderText: String!
 }
 
+input CreateTechCategoryInput {
+  categoryName: String!
+  techStacks: [String!]
+}
+
 input CreateTechStackInput {
   projects: [String!]
+  techCategories: [String!]
   techName: String!
   techSvg: String
 }
+
+"""Date custom scalar type"""
+scalar Date
 
 input LoginInput {
   login: String!
@@ -79,28 +131,34 @@ input LoginInput {
 type Mutation {
   attachRole(attachRoleInput: AttachRoleInput!): User!
   changePassword(changePasswordInput: ChangePasswordInput!): User!
+  createCertificate(createCertificateInput: CreateCertificateInput!): Certificate!
   createContact(createContactInput: CreateContactInput!): Contact!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createRole(createRoleInput: CreateRoleInput!): Role!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
+  createTechCategory(createTechCategoryInput: CreateTechCategoryInput!): TechCategory!
   createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
   getUser: User!
   login(loginInput: LoginInput!): CookiesData!
   logout: Boolean!
   refreshTheTokens: CookiesData!
+  removeCertificate(id: ID!): Certificate!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
   removeRole(id: ID!): ID!
   removeSlider(id: ID!): ID!
+  removeTechCategory(id: ID!): ID!
   removeTechStack(id: ID!): ID!
   removeUser(id: ID!): ID!
   signup(signUpInput: SignUpInput!): CookiesData!
   update(updateUserInput: UpdateUserInput!): User!
+  updateCertificate(updateCertificateInput: UpdateCertificateInput!): Certificate!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
+  updateTechCategory(updateTechCategoryInput: UpdateTechCategoryInput!): TechCategory!
   updateTechStack(UpdateTechStackInput: UpdateTechStackInput!): TechStack!
 }
 
@@ -166,6 +224,8 @@ type Project {
 }
 
 type Query {
+  certificate(id: ID!): Certificate!
+  certificates: [Certificate!]!
   contact(id: ID!): Contact!
   contacts: [Contact!]!
   profile: Profile!
@@ -175,6 +235,8 @@ type Query {
   roles: [Role!]!
   slider(id: ID!): Slider!
   sliders: [Slider!]!
+  techCategories: [TechCategory!]!
+  techCategory(id: ID!): TechCategory!
   techstack(id: ID!): TechStack!
   techstacks: [TechStack!]!
   user(login: String!): User!
@@ -232,16 +294,51 @@ type Slider {
   sliderText: String!
 }
 
+type TechCategory {
+  """Tech category name for example: Frontend"""
+  categoryName: String!
+
+  """Tech category id"""
+  id: ID!
+  techStacks: [TechStack!]
+}
+
 type TechStack {
+  categories: [TechCategory!]
+
   """Tech stack id"""
   id: ID!
-  projects: [Project!]!
+  projects: [Project!]
+
+  """Tech categories for example: Frontend, Backend"""
+  techCategories: [TechCategory!]
 
   """Tech stack name for example: React"""
   techName: String!
 
   """Tech stack svg for example: React svg"""
   techSvg: String
+}
+
+input UpdateCertificateInput {
+  """Certificate description"""
+  certificateDescription: String
+
+  """Certificate image on which will be certificate text"""
+  certificateImage: String
+
+  """Certificate link"""
+  certificateLink: String
+
+  """Certificate period end date"""
+  certificatePeriodEnd: Date
+
+  """Certificate period start date"""
+  certificatePeriodStart: Date
+
+  """Certificate title"""
+  certificateTitle: String
+  id: ID!
 }
 
 input UpdateContactInput {
@@ -284,9 +381,16 @@ input UpdateSliderInput {
   sliderText: String
 }
 
+input UpdateTechCategoryInput {
+  categoryName: String
+  id: ID!
+  techStacks: [String!]
+}
+
 input UpdateTechStackInput {
   id: ID!
   projects: [String!]
+  techCategories: [String!]
   techName: String
   techSvg: String
 }

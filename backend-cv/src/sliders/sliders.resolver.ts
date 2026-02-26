@@ -68,8 +68,6 @@ export class SlidersResolver {
         cause: error,
       });
     }
-    return {
-      id,
-    };
+    return id;
   }
 }

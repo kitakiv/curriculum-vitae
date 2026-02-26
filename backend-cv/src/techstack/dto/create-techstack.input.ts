@@ -23,4 +23,10 @@ export class CreateTechStackInput {
   @IsOptional()
   @Field(() => [String], { nullable: true })
   projects?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  techCategories?: string[];
 }

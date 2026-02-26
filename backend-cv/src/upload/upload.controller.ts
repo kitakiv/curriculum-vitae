@@ -48,7 +48,6 @@ export class UploadController {
       actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
     },
   ])
-
   @Post('files/:service/:id')
   @UseInterceptors(FilesInterceptor('Files'))
   async uploadFiles(

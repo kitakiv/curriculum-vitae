@@ -6,6 +6,7 @@ import { SliderImageService } from '../sliders/sliderImage.service';
 import { TechStackImageService } from '../techstack/tachstackImage.service';
 import { ProjectsImageService } from '../projects/projectsImage.service';
 import { ProfileImageService } from '../profile/profileImage.service';
+import { CertificateImageService } from 'src/certificate/certificateImage.service';
 
 
 @Injectable()
@@ -18,6 +19,7 @@ export class UploadService {
     private readonly techStackImageService: TechStackImageService,
     private readonly projectsImageService: ProjectsImageService,
     private readonly profileImageService: ProfileImageService,
+    private readonly certificateImageService: CertificateImageService,
     private readonly logger: Logger = new Logger(UploadService.name),
   ) {
     this.services = {
@@ -26,6 +28,7 @@ export class UploadService {
       [uploadVariables.techstack.name]: this.techStackImageService,
       [uploadVariables.projects.name]: this.projectsImageService,
       [uploadVariables.profile.name]: this.profileImageService,
+      [uploadVariables.certificate.name]: this.certificateImageService,
     };
   }
 

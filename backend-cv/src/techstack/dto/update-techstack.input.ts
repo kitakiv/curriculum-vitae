@@ -13,4 +13,5 @@ export class UpdateTechStackInput extends PartialType(CreateTechStackInput) {
 
 export class UpdateTechStackInputDto extends OmitType(UpdateTechStackInput, [
   'projects',
+  'techCategories'
 ] as const) {}

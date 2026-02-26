@@ -5,18 +5,16 @@ import {
   Logger,
 } from '@nestjs/common';
 import { CreateTechStackInput } from './dto/create-techstack.input';
-import {
-  UpdateTechStackInput,
-  UpdateTechStackInputDto,
-} from './dto/update-techstack.input';
+import { UpdateTechStackInput } from './dto/update-techstack.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
 import { errors } from '../errors/errors.config';
 import uploadVariables from '../variables/upload.variables';
 import { RedisCacheService } from '../cache/cache.service';
 import { Project } from '../projects/entities/project.entity';
 import { DataSource } from 'typeorm';
+import { TechCategory } from '../tech-category/entities/tech-category.entity';
 
 @Injectable()
 export class TechStackService {
@@ -28,6 +26,8 @@ export class TechStackService {
     private readonly techStackRepository: Repository<TechStack>,
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(TechCategory)
+    private readonly techCategoryRepository: Repository<TechCategory>,
     private readonly logger: Logger = new Logger(TechStackService.name),
     private readonly redisCacheService: RedisCacheService,
   ) {}
@@ -35,9 +35,21 @@ export class TechStackService {
     const { projects, notFoundProjects } = await this.getProjects(
       createTechStackInput.projects,
     );
+    const { entities: techCategories, notFoundIds: notFoundTechCategories } =
+      await this.getEntitesByIds(
+        this.techCategoryRepository,
+        createTechStackInput.techCategories,
+      );
     if (notFoundProjects.length > 0) {
       throw new NotFoundException(
         errors.NOT_FOUND(`Projects (${notFoundProjects.join(', ')})`),
+      );
+    }
+    if (notFoundTechCategories.length > 0) {
+      throw new NotFoundException(
+        errors.NOT_FOUND(
+          `Tech categories (${notFoundTechCategories.join(', ')})`,
+        ),
       );
     }
     try {
@@ -45,6 +57,7 @@ export class TechStackService {
         const techStack = await manager.create(TechStack, {
           ...createTechStackInput,
           projects,
+          techCategories,
         });
         await manager.save(TechStack, techStack);
         return techStack;
@@ -63,6 +76,7 @@ export class TechStackService {
     const newTechStack = await this.techStackRepository.find({
       relations: {
         projects: true,
+        techCategories: true,
       },
     });
     await this.redisCacheService.set(
@@ -80,6 +94,7 @@ export class TechStackService {
       where: { id },
       relations: {
         projects: true,
+        techCategories: true,
       },
     });
   }
@@ -95,6 +110,16 @@ export class TechStackService {
     return projects;
   }
 
+  async findAllCategories(id: string): Promise<TechCategory[]> {
+    const categories = await this.techCategoryRepository.find({
+      where: {
+        techStacks: {
+          id,
+        },
+      },
+    });
+    return categories;
+  }
   async update(
     id: string,
     updateTechStackInput: UpdateTechStackInput,
@@ -102,41 +127,64 @@ export class TechStackService {
     const techStack = await this.techStackRepository.findOneBy({ id });
     if (!techStack)
       throw new NotFoundException(errors.NOT_FOUND(`TechStack ${id}`));
-    if (!updateTechStackInput.projects) {
-      try {
-        delete updateTechStackInput.projects;
-        const updatedInput = {
-          ...updateTechStackInput,
-        } as UpdateTechStackInputDto;
-        await this.techStackRepository.update(id, updatedInput);
-        return await this.findOne(id);
-      } catch (error) {
-        this.logger.error(error);
-        throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
-      }
+    // if (!updateTechStackInput.projects) {
+    //   try {
+    //     delete updateTechStackInput.projects;
+    //     const updatedInput = {
+    //       ...updateTechStackInput,
+    //     } as UpdateTechStackInputDto;
+    //     await this.techStackRepository.update(id, updatedInput);
+    //     return await this.findOne(id);
+    //   } catch (error) {
+    //     this.logger.error(error);
+    //     throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
+    //   }
+    // } toDo: refactor this method to avoid this condition and make it more clean
+    
+    // toDo: create for this one method
+    const { projects: foundProjects, notFoundProjects } =
+      await this.getProjects(updateTechStackInput.projects);
+    const { entities: techCategories, notFoundIds: notFoundTechCategories } =
+      await this.getEntitesByIds(
+        this.techCategoryRepository,
+        updateTechStackInput.techCategories || [],
+      );
+    if (notFoundTechCategories.length > 0) {
+      throw new NotFoundException(
+        errors.NOT_FOUND(
+          `Tech categories (${notFoundTechCategories.join(', ')})`,
+        ),
+      );
     }
-    const { projects, notFoundProjects } = await this.getProjects(
-      updateTechStackInput.projects,
-    );
     if (notFoundProjects.length > 0) {
       throw new NotFoundException(
         errors.NOT_FOUND(`Projects (${notFoundProjects.join(', ')})`),
       );
     }
     try {
-      await this.techStackRepository.save({
-        ...techStack,
-        ...updateTechStackInput,
-        projects,
+      return await this.dataSource.transaction(async (manager) => {
+        const preloadedTechStack = await manager.preload(TechStack, {
+          id,
+          ...updateTechStackInput,
+          projects:
+            Array.isArray(foundProjects) && foundProjects.length > 0
+              ? foundProjects
+              : techStack.projects,
+          techCategories:
+            techCategories && techCategories.length > 0
+              ? techCategories
+              : techStack.techCategories,
+        });
+        await manager.save(preloadedTechStack);
+        return preloadedTechStack as TechStack;
       });
-      return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
     }
   }
 
-  private async getProjects(projectsIds: string[]): Promise<{
+  private async getProjects(projectsIds: string[] = []): Promise<{
     projects: Project[];
     notFoundProjects: string[];
   }> {
@@ -151,6 +199,24 @@ export class TechStackService {
     );
     return { projects, notFoundProjects };
   }
+
+
+  // check
+  private async getEntitesByIds<T extends { id: string }>(
+    repository: Repository<T>,
+    ids: string[] = [],
+  ): Promise<{ entities: T[]; notFoundIds: string[] }> {
+    const uniqueIds = [...new Set(ids)];
+    const entities = await repository.find({
+      where: {
+        id: In(uniqueIds),
+      } as FindOptionsWhere<T>,
+    });
+    const notFoundIds = ids.filter(
+      (id) => !entities.find((entity: T) => entity.id === id),
+    );
+    return { entities, notFoundIds };
+  }
   async remove(
     id: string,
   ): Promise<void | NotFoundException | BadRequestException> {
@@ -162,6 +228,12 @@ export class TechStackService {
           .createQueryBuilder()
           .delete()
           .from('project_tech_stacks_tech_stack')
+          .where('techStackId = :id', { id })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('tech_stack_tech_categories_tech_category')
           .where('techStackId = :id', { id })
           .execute();
         await manager
