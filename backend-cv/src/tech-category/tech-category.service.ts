@@ -44,27 +44,16 @@ export class TechCategoryService {
         errors.ALREADY_EXISTS('Tech category with this name'),
       );
     }
-    let techStacks: TechStack[] = [];
-    try {
-      const foundTechStacks = await this.checkEntitiesExistence(
-        this.techStackRepository,
-        createTechCategoryInput.techStacks || [],
-        'Tech stacks',
-      );
-      techStacks = foundTechStacks;
-    } catch (error: unknown) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      this.logger.error(error);
-      throw new BadRequestException(errors.NOT_CREATED('Tech category'));
-    }
-
+    const techCategoryEntity = await this.checkEntitiesExistence(
+      this.techStackRepository,
+      createTechCategoryInput.techStacks,
+      'Tech stacks',
+    )
     try {
       return await this.dataSource.transaction(async (manager) => {
         const techCategory = await manager.create(TechCategory, {
           ...createTechCategoryInput,
-          techStacks,
+          techStacks: techCategoryEntity,
         });
         await manager.save(TechCategory, techCategory);
         return techCategory;
@@ -75,11 +64,15 @@ export class TechCategoryService {
     }
   }
 
+
   private async checkEntitiesExistence<T extends { id: string }>(
     repository: Repository<T>,
-    ids: string[],
+    ids: string[] = [],
     name: string,
   ): Promise<T[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
     const { entities, notFoundIds } = await this.getEntitesByIds(
       repository,
       ids,
@@ -152,35 +145,34 @@ export class TechCategoryService {
   }
 
   async update(id: string, updateTechCategoryInput: UpdateTechCategoryInput) {
-    const techCategory = await this.techCategoryRepository.findOneBy({ id });
-    if (!techCategory) {
-      throw new NotFoundException(errors.NOT_FOUND('Tech category'));
-    }
-    let techStacks: TechStack[] = [];
-    try {
-      const foundTechStacks = await this.checkEntitiesExistence(
-        this.techStackRepository,
-        updateTechCategoryInput.techStacks || [],
-        'Tech stacks',
-      );
-      techStacks = foundTechStacks;
-    } catch (error: unknown) {
-      if (error instanceof NotFoundException) {
-        throw error;
+    const techCategory = await this.findOne(id);
+    if (!techCategory)
+      throw new NotFoundException(errors.NOT_FOUND(`TechCategory ${id}`));
+    if (updateTechCategoryInput.categoryName) {
+      const existTechStack = await this.techCategoryRepository.findOne({
+        where: {
+          categoryName: updateTechCategoryInput.categoryName,
+        },
+      });
+      if (existTechStack) {
+        throw new BadRequestException(
+          errors.ALREADY_EXISTS('Tech category with this name'),
+        );
       }
-      this.logger.error(error);
-      throw new BadRequestException(errors.NOT_UPDATED('Tech category'));
     }
-
+    const techStackEntity = (Array.isArray(updateTechCategoryInput.techStacks)
+      ? await this.checkEntitiesExistence(
+        this.techStackRepository,
+        updateTechCategoryInput.techStacks,
+        'Tech stacks',
+      )
+      : techCategory.techStacks)
     try {
       return await this.dataSource.transaction(async (manager) => {
         const preloadedTechCategory = await manager.preload(TechCategory, {
           id,
           ...updateTechCategoryInput,
-          techStacks:
-            Array.isArray(techStacks) && techStacks.length > 0
-              ? techStacks
-              : techCategory.techStacks,
+          techStacks: techStackEntity
         });
         await manager.save(TechCategory, preloadedTechCategory);
         return preloadedTechCategory;

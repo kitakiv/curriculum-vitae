@@ -304,8 +304,6 @@ type TechCategory {
 }
 
 type TechStack {
-  categories: [TechCategory!]
-
   """Tech stack id"""
   id: ID!
   projects: [Project!]

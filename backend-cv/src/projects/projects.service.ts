@@ -133,8 +133,7 @@ export class ProjectsService {
         this.techStackRepository,
         updateProjectInput.techStacks,
         'Tech stacks'))
-      :
-      project.techStacks;
+      : project.techStacks;
     try {
       return await this.dataSource.transaction(async (manager) => {
         const updatedProject = await manager.preload(Project, {

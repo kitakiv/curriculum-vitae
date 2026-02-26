@@ -64,7 +64,7 @@ export class TechStackResolver {
 
   @Public()
   @ResolveField(() => [TechCategory], { nullable: true })
-  async categories(@Parent() techStack: TechStack) {
+  async techCategories(@Parent() techStack: TechStack) {
     const { id } = techStack;
     return await this.techStackService.findAllCategories(id);
   }
