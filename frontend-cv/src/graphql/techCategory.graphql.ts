@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 
 const TECHCATEGORIES_GET_QUERY = gql`
-    query TechCategories {
+    query GetTechCategories {
         techCategories {
             categoryName
             id
@@ -11,7 +11,7 @@ const TECHCATEGORIES_GET_QUERY = gql`
 `;
 
 const TECHCATEGORY_TECHSTACK_QUERY = gql`
-    query TechCategory($id: ID!) {
+    query GetTechCategory($id: ID!) {
         techCategory(id: $id) {
             categoryName
             id

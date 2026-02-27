@@ -1,10 +1,10 @@
 "use client"
 import { useRouter, useSearchParams } from "next/navigation"
 import SkillButton from "@/components/button/SkillButton"
-import { TechCategoriesQuery } from "@/gql/graphql"
+import { GetTechCategoriesQuery } from "@/gql/graphql"
 import techStack from "@/variables/techstack/techstack"
 
-export default function CategoryButtons({ categories }: { categories: TechCategoriesQuery["techCategories"]}) {
+export default function CategoryButtons({ categories }: { categories: GetTechCategoriesQuery["techCategories"]}) {
   const router = useRouter()
   const searchParams = useSearchParams();
   const currentCategoryId = searchParams.get(techStack.searchParamCategory) || techStack.all;

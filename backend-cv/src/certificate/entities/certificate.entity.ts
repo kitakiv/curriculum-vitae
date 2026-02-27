@@ -32,6 +32,12 @@ export class Certificate extends AbstractEntity<Certificate> {
   @Column('date')
   certificatePeriodEnd: Date;
 
+  @Field(() => String, { nullable: true, description: 'Certificate company where the course work was done' })
+  @Column({
+    nullable: true,
+  })
+  certificateCompany?: string;
+
   @Field(() => ID, { description: 'Certificate unique identifier' })
   id: string;
 }

@@ -8,6 +8,9 @@ input AttachRoleInput {
 }
 
 type Certificate {
+  """Certificate company where the course work was done"""
+  certificateCompany: String
+
   """Certificate description"""
   certificateDescription: String!
 
@@ -58,6 +61,9 @@ type CookiesData {
 }
 
 input CreateCertificateInput {
+  """Certificate company where the course/work was done"""
+  certificateCompany: String
+
   """Certificate description"""
   certificateDescription: String!
 
@@ -319,6 +325,9 @@ type TechStack {
 }
 
 input UpdateCertificateInput {
+  """Certificate company where the course/work was done"""
+  certificateCompany: String
+
   """Certificate description"""
   certificateDescription: String
 

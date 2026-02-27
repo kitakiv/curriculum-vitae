@@ -49,4 +49,10 @@ export class CreateCertificateInput {
   @MinDate(new Date('1900-01-01'))
   @Field(() => Date, { description: 'Certificate period end date' })
   certificatePeriodEnd: Date;
+
+  @IsString()
+  @MinLength(3)
+  @IsOptional()
+  @Field(() => String, { description: 'Certificate company where the course/work was done' })
+  certificateCompany?: string | null;
 }

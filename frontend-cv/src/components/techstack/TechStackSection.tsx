@@ -6,10 +6,10 @@ import TextPortfolio from "../text/TextPortfolio"
 import TechStacksComponent from "./components/TechStacksComponents"
 import CategoryButtons from "./components/CategoryButtons"
 import { getTechCategoriesCached } from "@/query/techCategory.query"
-import { TechCategoriesQuery } from "@/gql/graphql"
+import { GetTechCategoriesQuery } from "@/gql/graphql"
 
 export default async function TechStackSection({selectedCategoryId = techStack.all}: {selectedCategoryId?: string | null}) {
-    const techCategories: TechCategoriesQuery["techCategories"] = await getTechCategoriesCached();
+    const techCategories: GetTechCategoriesQuery["techCategories"] = await getTechCategoriesCached();
     return  <section className="flex flex-col overflow-hidden items-center justify-center padding gap-4" id={techStack.id}>
     <FadeInSection>
     <TextPortfolio tailwind="text-center">{techStack.portfolio}</TextPortfolio>

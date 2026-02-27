@@ -1,7 +1,7 @@
 'use server'
 import techStack from "@/variables/techstack/techstack";
 import SkillButton from "@/components/button/SkillButton";
-import { GetTechStacksQuery, TechCategoryQuery } from "@/gql/graphql";
+import { GetTechStacksQuery, GetTechCategoryQuery } from "@/gql/graphql";
 import { getTechStackByTechCategoryCached } from "@/query/techCategory.query";
 import TechStackIcon from "./TechStackIcon";
 import IconSection from "./IconSection";
@@ -12,7 +12,7 @@ type TechStackProps = {
 
 export default async function TechStacksComponent({ categoryId = techStack.all}: TechStackProps) {
     const allTechStacks: GetTechStacksQuery["techstacks"] = await getTechStacksCached() || [];
-    const techStacksToShow: GetTechStacksQuery["techstacks"] | TechCategoryQuery["techCategory"]["techStacks"] =
+    const techStacksToShow: GetTechStacksQuery["techstacks"] | GetTechCategoryQuery["techCategory"]["techStacks"] =
         categoryId === techStack.all ? allTechStacks : (await getTechStackByTechCategoryCached(categoryId)) || [];
 
     const shownCount = techStacksToShow?.length ?? 0;

@@ -14,20 +14,22 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": typeof types.GetCertificatesDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": typeof types.GetSlidersDocument,
-    "\n    query TechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n": typeof types.TechCategoriesDocument,
-    "\n    query TechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.TechCategoryDocument,
+    "\n    query GetTechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n": typeof types.GetTechCategoriesDocument,
+    "\n    query GetTechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetTechCategoryDocument,
     "\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n": typeof types.GetProjectsByTechStackDocument,
     "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n": typeof types.GetTechStacksDocument,
 };
 const documents: Documents = {
+    "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": types.GetCertificatesDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": types.GetSlidersDocument,
-    "\n    query TechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n": types.TechCategoriesDocument,
-    "\n    query TechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.TechCategoryDocument,
+    "\n    query GetTechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n": types.GetTechCategoriesDocument,
+    "\n    query GetTechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetTechCategoryDocument,
     "\n\tquery GetProjectsByTechStack($id: ID!) {\n\t\ttechstack(id: $id) {\n\t\t\tid\n            techName\n            techSvg\n            projects {\n                id\n                projectDemoLink\n                projectDescription\n                projectGithubLink\n                projectImages\n                projectTitle\n                techStacks {\n                    id\n                    techName\n                    techSvg\n                }\n            }\n\t\t}\n\t}\n": types.GetProjectsByTechStackDocument,
     "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n": types.GetTechStacksDocument,
 };
@@ -49,6 +51,10 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n"): (typeof documents)["\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n"): (typeof documents)["\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -61,11 +67,11 @@ export function graphql(source: "\n    query GetSliders {\n    sliders {\n      
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query TechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n"): (typeof documents)["\n    query TechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n"];
+export function graphql(source: "\n    query GetTechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n"): (typeof documents)["\n    query GetTechCategories {\n        techCategories {\n            categoryName\n            id\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query TechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    query TechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
+export function graphql(source: "\n    query GetTechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    query GetTechCategory($id: ID!) {\n        techCategory(id: $id) {\n            categoryName\n            id\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
