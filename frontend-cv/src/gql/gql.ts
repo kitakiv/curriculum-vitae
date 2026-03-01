@@ -14,6 +14,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        tokens {\n            accessToken\n        }\n    }\n}\n": typeof types.SignupDocument,
+    "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": typeof types.LoginDocument,
+    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n    }\n}": typeof types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": typeof types.GetCertificatesDocument,
     "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": typeof types.GetContactsDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
@@ -25,6 +28,9 @@ type Documents = {
     "\n    query GetTechStacks {\n        techstacks {\n            id\n            techName\n            techSvg\n        }\n    }\n": typeof types.GetTechStacksDocument,
 };
 const documents: Documents = {
+    "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        tokens {\n            accessToken\n        }\n    }\n}\n": types.SignupDocument,
+    "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": types.LoginDocument,
+    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n    }\n}": types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": types.GetCertificatesDocument,
     "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": types.GetContactsDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
@@ -50,6 +56,18 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        tokens {\n            accessToken\n        }\n    }\n}\n"): (typeof documents)["\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        tokens {\n            accessToken\n        }\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n"): (typeof documents)["\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n    }\n}"): (typeof documents)["\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n    }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

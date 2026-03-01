@@ -20,6 +20,6 @@ export default async function HeaderAdmin() {
                 <BurgerMenu burgerMenu={menu.adminHeader} />
                 <ThemeIcon key={header.keyIcons} />
                 </div>
-            </HeaderSection>
+        </HeaderSection>
     );
 }

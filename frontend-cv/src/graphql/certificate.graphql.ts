@@ -15,4 +15,6 @@ const CERTIFICATE_GET_QUERY = gql`
 }
 `;
 
+
+
 export { CERTIFICATE_GET_QUERY };

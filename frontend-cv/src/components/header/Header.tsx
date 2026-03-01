@@ -17,9 +17,10 @@ import BurgerMenu from "@/components/header/components/Menu";
 import FadeInSection from "../animation/FadeInSection";
 import HeaderModel from "./components/HeaderModel";
 import { getProfileCached } from "@/query/profile.query";
-import { GetProfileQuery } from "@/gql/graphql";
+import { GetProfileQuery, GetUserMutation } from "@/gql/graphql";
+import { getMe } from "@/query/auth.query";
 export default async function Header() {
-
+    const user: GetUserMutation['getUser'] | false = await getMe()
     const profile: GetProfileQuery["profile"] = await getProfileCached();
     return (
         <header className=" w-full h-screen relative top-0 gradient-box overflow-hidden" id={header.id}>
@@ -30,6 +31,8 @@ export default async function Header() {
                 </Link>
                 </FadeInSection>
                 <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
+                {user && <Link href='/admin' className="relative z-50"><PinkButton tailwind="text-sm px-4 py-2">Admin page</PinkButton></Link>}
+                {!user && <Link href='/login' className="relative z-50"><PinkButton tailwind="text-sm px-4 py-2">Login</PinkButton></Link>}
                 <BurgerMenu burgerMenu={menu.mainHeader} />
                 <ThemeIcon key={header.keyIcons} />
                 </div>

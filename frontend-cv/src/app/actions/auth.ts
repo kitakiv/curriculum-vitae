@@ -1,32 +1,44 @@
 'use server'
+import { LoginInput, SignUpInput } from "@/gql/graphql"
+import { loginUser, signUpUser } from "@/query/auth.query";
+import { setAccessToken } from "@/lib/auth";
 
-export type FormState = {
+export type LoginFormState = {
     message?: string;
     errors?: {
-        login?: string[];
-        name?: string[];
-        password?: string[];
+        [K in keyof LoginInput]?: string[];
     };
     success?: boolean;
 };
 
-export async function signup(prevState: FormState | undefined, formData: FormData): Promise<FormState> {
-    const login = formData.get('login') as string;
+export type SignupFormState = {
+    message?: string;
+    errors?: {
+        [K in keyof SignUpInput]?: string[];
+    };
+    success?: boolean;
+};
+
+export async function signup(prevState: SignupFormState | undefined, formData: FormData): Promise<SignupFormState> {
     const name = formData.get('name') as string;
+    const login = formData.get('login') as string;
     const password = formData.get('password') as string;
 
     try {
-        // Call your GraphQL signup mutation
-        // Backend will set cookies via Set-Cookie header
-        // const result = await apiClient.fetchGraphQL(SIGNUP_MUTATION, {
-        //     variables: { signUpInput: { login, name, password } }
-        // });
-
+        const result = await signUpUser({
+            signUpInput: {
+                login,
+                name,
+                password
+            }
+        });
+        
         return {
             success: true,
             message: 'Signup successful!'
         };
     } catch (error) {
+        console.error('Signup error:', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Signup failed'
@@ -34,17 +46,19 @@ export async function signup(prevState: FormState | undefined, formData: FormDat
     }
 }
 
-export async function login(prevState: FormState | undefined, formData: FormData): Promise<FormState> {
+export async function login(prevState: LoginFormState | undefined, formData: FormData): Promise<LoginFormState> {
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
 
     try {
-        // Call your GraphQL login mutation
-        // Backend will set cookies via Set-Cookie header
-        // const result = await apiClient.fetchGraphQL(LOGIN_MUTATION, {
-        //     variables: { loginInput: { login, password } }
-        // });
-
+       const result = await loginUser({
+            loginInput: {
+                login,
+                password
+            }
+        });
+        
+        
         return {
             success: true,
             message: 'Login successful!'

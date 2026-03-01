@@ -15,7 +15,8 @@ const form = {
         name: "login as admin",
         id: "/login",
         metadataTitle: "Login Page",
-        metadataDesctiption: "Login Form"
+        metadataDesctiption: "Login Form",
+        loginFormLoading: "Loading..."
     },
     signupForm: {
         initialValues: { login: "", name: "", password: "" },
@@ -31,7 +32,8 @@ const form = {
         name: "signup as admin",
         id: "/signup",
         metadataTitle: "SingUp Page",
-        metadataDesctiption: "SingUp Form"
+        metadataDesctiption: "SingUp Form",
+        signUpFormLoading: "Creating Account..."
     },
     
     profileForm: {

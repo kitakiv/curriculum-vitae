@@ -10,14 +10,22 @@ import SmallText from '@/components/text/SmallText';
 import { Formik, Form, useFormikContext } from 'formik';
 import InputElement from '@/components/Input/Input';
 import { login } from 'app/actions/auth';
-export default async function FormLoginAdmin() {
+import { startTransition, useActionState } from 'react';
+export default function FormLoginAdmin() {
+  const [state, action, pending] = useActionState(login, undefined)
   return (
     <>
       <>
         <Formik initialValues={form.loginForm.initialValues}
           validationSchema={schema.custom}
           onSubmit={async (values) => {
-            await login(values)
+            const formData = new FormData();
+            Object.entries(values).forEach(([key, value]) => {
+              formData.append(key, value);
+            });
+            startTransition(() => {
+              action(formData);
+            });
           }}
         >
           {({ setFieldValue }) => (
@@ -27,6 +35,11 @@ export default async function FormLoginAdmin() {
               </div>
               <TextBlack tailwind='text-center w-full font-bold'>{form.loginForm.title}</TextBlack>
               <SmallText tailwind='text-center w-full  text-footerTx'>{form.loginForm.text}</SmallText>
+              {state?.message && (
+                <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
+                  {state.message}
+                </SmallText>
+              )}
               {form.loginForm.inputs.map((input) => (
                 <InputElement
                   key={input.id}
@@ -34,7 +47,7 @@ export default async function FormLoginAdmin() {
                   setFieldValue={setFieldValue}
                 />
               ))}
-              <SubmitButton />
+              <SubmitButton pending={pending} />
             </Form>
           )}
         </Formik>
@@ -43,19 +56,19 @@ export default async function FormLoginAdmin() {
   );
 }
 
-function SubmitButton() {
+function SubmitButton({ pending }: { pending: boolean }) {
   const { errors, isValid } = useFormikContext();
   const hasErrors = Object.keys(errors).length > 0;
-  const isDisabled = !isValid || hasErrors;
-  
+  const isDisabled = !isValid || hasErrors || pending;
+
   return (
-    <PinkButton 
-      type="submit" 
+    <PinkButton
+      type="submit"
       disabled={isDisabled}
       tailwind={`transition duration-700 flex justify-center items-center gap-2 ${!isDisabled ? 'group hover:shadow-lg hover:shadow-txSecond' : 'opacity-50 cursor-not-allowed'}`}
     >
-      {form.loginForm.buttonText}
-      <Image src={header.arrow} alt="arrow" width={20} height={20} className={`transition duration-700 ${!isDisabled ? 'w-0 opacity-0 group-hover:w-5 group-hover:opacity-100' : 'w-0 opacity-0'}`}></Image>
+      {pending ? form.loginForm.loginFormLoading : form.loginForm.buttonText}
+      {!pending && <Image src={header.arrow} alt="arrow" width={20} height={20} className={`transition duration-700 ${!isDisabled ? 'w-0 opacity-0 group-hover:w-5 group-hover:opacity-100' : 'w-0 opacity-0'}`}></Image>}
     </PinkButton>
   );
 }

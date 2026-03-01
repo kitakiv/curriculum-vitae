@@ -67,7 +67,7 @@ function SubmitButton({ pending }: { pending: boolean }) {
       disabled={isDisabled}
       tailwind={`transition duration-700 flex justify-center items-center gap-2 ${!isDisabled ? 'group hover:shadow-lg hover:shadow-txSecond' : 'opacity-50 cursor-not-allowed'}`}
     >
-      {pending ? 'Loading...' : form.signupForm.buttonText}
+      {pending ? form.loginForm.loginFormLoading : form.signupForm.buttonText}
       {!pending && <Image src={header.arrow} alt="arrow" width={20} height={20} className={`transition duration-700 ${!isDisabled ? 'w-0 opacity-0 group-hover:w-5 group-hover:opacity-100' : 'w-0 opacity-0'}`}></Image>}
     </PinkButton>
   );

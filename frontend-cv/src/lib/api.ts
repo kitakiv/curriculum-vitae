@@ -1,5 +1,7 @@
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import { getAccessToken } from './auth';
+import { getAccessToken, setAccessToken } from './auth';
+import ErrorHandler from "@/lib/errors";
+import { GraphQLResponse } from "./errors";
 
 interface ApiConfig {
     baseUrl?: string;
@@ -14,7 +16,7 @@ interface ApiResponse<T = any> {
 }
 
 interface AuthConfig {
-    tokenProvider?: () => Promise<string | null> | string | null;
+    tokenProvider?: Promise<string | null> | string | null;
     tokenHeader?: string;
     tokenPrefix?: string;
 }
@@ -33,6 +35,7 @@ class ApiError extends Error {
 class GraphQlClient {
     private config: Required<ApiConfig>;
     private authConfig: AuthConfig;
+    private errorHandler = new ErrorHandler();
 
     constructor(config: ApiConfig = {}, authConfig: AuthConfig = {}) {
         this.config = {
@@ -84,14 +87,9 @@ class GraphQlClient {
             }
 
             const data = await this.parseResponse<TResult>(res);
-            const errors = (data as Record<string, unknown>).errors as Array<{ message: string }> | undefined;
+            const errors = (data as  GraphQLResponse).errors;
             if (errors?.length) {
-                const errorList = errors as Array<{ message: string }>;
-                throw new ApiError(
-                    `GraphQL errors: ${errorList.map((e) => e.message).join(", ")}`,
-                    res.status,
-                    res
-                );
+                this.handleError(data)
             }
             return {
                 data,
@@ -134,10 +132,9 @@ class GraphQlClient {
             ...options?.headers,
         };
 
-        // Get token from cookies (server-side)
         const token = await getAccessToken();
         if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+            headers[this.authConfig.tokenHeader || 'Authorization'] = `${this.authConfig.tokenPrefix || 'Bearer'} ${token}`;
         }
 
         return {
@@ -156,6 +153,24 @@ class GraphQlClient {
             return endpoint;
         }
         return `${this.config.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    }
+
+    setAuthTokens(authConfig: AuthConfig) {
+        if (authConfig.tokenProvider) {
+            setAccessToken(authConfig.tokenProvider as string);
+        }
+    }
+
+    private handleError(data: GraphQLResponse, statusCode: number) {
+       
+            const errorMessage = this.errorHandler.handleApiError(data);
+            if (errorMessage.errors && errorMessage.errors.length > 0) {
+                console.error(`GraphQL Error: ${errorMessage.message}`, errorMessage.errors);
+                throw new ApiError(`GraphQL Error: ${errorMessage.message}
+                    ${errorMessage.errors.join('\n')}`, statusCode)
+            } else {
+                throw new ApiError(`GraphQL Error: ${errorMessage.message}`, statusCode)
+            }
     }
 }
 
