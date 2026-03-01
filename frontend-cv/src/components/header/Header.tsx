@@ -34,7 +34,7 @@ export default async function Header() {
                 <ThemeIcon key={header.keyIcons} />
                 </div>
             </HeaderSection>
-            <StartPage>
+            <StartPage tailwind="grid grid-cols-12 grid-flow-col grid-rows-12">
                 <HeaderModel />
                 <HeaderImage images={profile.profilePhotos || []} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />

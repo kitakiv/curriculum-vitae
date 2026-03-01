@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": typeof types.GetCertificatesDocument,
+    "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": typeof types.GetContactsDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": typeof types.GetSlidersDocument,
@@ -25,6 +26,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": types.GetCertificatesDocument,
+    "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": types.GetContactsDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": types.GetSlidersDocument,
@@ -52,6 +54,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n"): (typeof documents)["\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n"): (typeof documents)["\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

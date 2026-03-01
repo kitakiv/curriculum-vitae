@@ -1,4 +1,5 @@
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { getAccessToken } from './auth';
 
 interface ApiConfig {
     baseUrl?: string;
@@ -60,7 +61,7 @@ class GraphQlClient {
         }
     ): Promise<ApiResponse<TResult>> {
         const url = this.buildUrl(this.config.baseUrl);
-        const requestOptions = this.buildRequestOptions(document, options as object);
+        const requestOptions = await this.buildRequestOptions(document, options as object);
 
         try {
             const controller = new AbortController();
@@ -121,30 +122,27 @@ class GraphQlClient {
         return (await response.text()) as unknown as T;
     }
 
-    private buildRequestOptions<TVariables extends object | undefined = undefined>(
+    private async buildRequestOptions<TVariables extends object | undefined = undefined>(
         document: TypedDocumentNode<any, TVariables>,
         options: {
             variables?: TVariables;
             headers?: Record<string, string>;
-        }): RequestInit {
+        }): Promise<RequestInit> {
 
-        if (this.authConfig.tokenProvider) {
-            const token = this.authConfig.tokenProvider();
-            if (token) {
-                options.headers = {
-                    ...options.headers,
-                    [this.authConfig.tokenHeader!]: `${this.authConfig.tokenPrefix ? this.authConfig.tokenPrefix + ' ' : ''}${token}`,
-                }
+        const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            ...options?.headers,
+        };
 
-            }
+        // Get token from cookies (server-side)
+        const token = await getAccessToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
 
         return {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                ...options?.headers,
-            },
+            headers,
             body: JSON.stringify({
                 query: document.loc?.source.body,
                 variables: options?.variables,

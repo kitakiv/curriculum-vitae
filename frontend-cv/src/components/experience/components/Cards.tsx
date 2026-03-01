@@ -61,7 +61,7 @@ export default function Cards({ certificates }: { certificates: GetCertificatesQ
         certificates.map((certificate, index) => {
             const colorRound = colors[index % colors.length];
             return (
-                <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={`${experiences.name}-${certificate.certificateTitle}-${index}`} href={`/${certificate.id}`} passHref>
+                <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={certificate.id} href={`/${certificate.id}`} passHref>
                     <ProgressRounds tailwind="timeline-round" colorRound={colorRound} />
                     <ArrowWrapper tailwind="grid col-span-1">
                         <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={`/image/${certificate.certificateImage}`} alt={certificate.certificateTitle} />

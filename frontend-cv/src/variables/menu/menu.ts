@@ -3,11 +3,15 @@ import projects from "@/variables/projects/projects";
 import form from "@/variables/form/form";
 import footer from "@/variables/footer/footer";
 import header from "@/variables/header/header";
+import techStack from "@/variables/techstack/techstack";
+import experiences from "@/variables/experience/experience";
 
 const menu = {
         mainHeader:  [
             { href: `#${aboutme.id}`, name: aboutme.name, id: aboutme.id },
             { href: `#${projects.id}`, name: projects.name, id: projects.id },
+            { href: `#${techStack.id}`, name: techStack.name, id: techStack.id },
+            { href: `#${experiences.id}`, name: experiences.name, id: experiences.id },
             { href: `#${footer.id}`, name: footer.name, id: footer.id },
             { href: `${form.loginForm.id}`, name: form.loginForm.name, id: form.loginForm.id },
             { href: `#${header.id}`, name: '', id: header.id },

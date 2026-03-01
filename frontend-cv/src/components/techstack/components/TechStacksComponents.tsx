@@ -22,8 +22,8 @@ export default async function TechStacksComponent({ categoryId = techStack.all}:
         <>
                 {shownCount > 0 ? (
                     <IconSection>{
-                    techStacksToShow.map((techStack, index) => (
-                        <div className="relative tech-stack-icon" key={`techStack-${index}`} >
+                    techStacksToShow.map((techStack) => (
+                        <div className="relative tech-stack-icon" key={techStack.id} >
                             <TechStackIcon techStack={techStack} />
                         </div>
                     ))

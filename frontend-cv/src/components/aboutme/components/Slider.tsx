@@ -94,7 +94,7 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
                     {sliders.map((slider, index) => {
                         return (
                             <>
-                                <div key={`image-slider-${index}`} className="flex-shrink-0 w-[100%] h-full relative">
+                                <div key={`image-slider-${slider.id}`} className="flex-shrink-0 w-[100%] h-full relative">
                                       {/* @eslint-disable-next-line */}
                                     <img src={slider.sliderImage} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
                                 </div>
@@ -106,7 +106,7 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
                 <div key="sliders-titles" className="transition duration-1000 flex flex-col w-full h-full absolute top-0 left-0 easy-in-out" style={{ transform: `translateY(-${state.sliderCount * 100}%)` }}>
                     {sliders.map((slider, index) => {
                         return (
-                            <div key={`image-slider-title-${index}`} className="flex-shrink-0 w-[100%] h-full relative p-16 flex flex-col justify-end">
+                            <div key={`image-slider-title-${slider.id}`} className="flex-shrink-0 w-[100%] h-full relative p-16 flex flex-col justify-end">
                                 <TextWhite key={`image-slider-title-${index}`}>{slider.sliderName}</TextWhite>
                                 <TextBlack key={`image-slider-text-${index}`}>{slider.sliderText}</TextBlack>
                             </div>

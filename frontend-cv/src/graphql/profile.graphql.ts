@@ -15,4 +15,6 @@ const PROFILE_GET_QUERY = gql`
     }
 `;
 
+
+
 export { PROFILE_GET_QUERY };

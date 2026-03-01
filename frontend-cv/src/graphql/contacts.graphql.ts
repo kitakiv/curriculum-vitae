@@ -9,6 +9,6 @@ const CONTACT_GET_QUERY = gql`
         id
         }
     }
-}`;
+`;
 
 export { CONTACT_GET_QUERY };

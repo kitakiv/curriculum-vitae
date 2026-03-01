@@ -1,4 +1,5 @@
 
+import { sign } from "crypto";
 import * as Yup from "yup";
 // const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 // const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
@@ -92,8 +93,13 @@ const contactLink = Yup.string().required("Contact link is required")
 
 const schema = {
     custom : Yup.object().shape({
-        login,
+        login: email,
         password,
+    }),
+    signUp: Yup.object().shape({
+        login: email,
+        name,
+        password
     }),
     profile: Yup.object().shape({
         name,

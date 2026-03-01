@@ -2,7 +2,7 @@
 export default function Rounds({children}: {children: React.ReactNode}) {
     return (
        <>
-       <svg xmlns="http://www.w3.org/2000/svg">
+       <svg xmlns="http://www.w3.org/2000/svg" className="hidden">
       <defs>
         <filter id="goo">
           <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />

@@ -1,10 +1,10 @@
-import { all } from "three/tsl";
+
 
 const techStack = {
     id: "techStack",
     heading: "Tech Stack & Skills",
     text: "A comprehensive overview of my technical skills, tools, and technologies I work with to build exceptional digital experiences.",
-    name: "projects",
+    name: "TechStack",
     arrowSvg: "/svg/ok.svg",
     companySvg: "/svg/company.svg",
     periodSvg: "/svg/period.svg",

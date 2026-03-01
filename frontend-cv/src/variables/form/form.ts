@@ -13,8 +13,27 @@ const form = {
         title: "Welcome back!",
         text: "Sign in to your account to continue",
         name: "login as admin",
-        id: "/admin/login",
+        id: "/login",
+        metadataTitle: "Login Page",
+        metadataDesctiption: "Login Form"
     },
+    signupForm: {
+        initialValues: { login: "", name: "", password: "" },
+        inputs: [
+            { id: "login", label: "Login", name: "login", placeholder: "Login", type: "text" },
+            { id: "name", label: "Name", name: "name", placeholder: "Name", type: "text" },
+            { id: "password", label: "Password", name: "password", placeholder: "Password", type: "password" },
+        ],
+        buttonText: "Sign Up",
+        svg: "/svg/login.svg",
+        title: "Create Account",
+        text: "Sign up to get started",
+        name: "signup as admin",
+        id: "/signup",
+        metadataTitle: "SingUp Page",
+        metadataDesctiption: "SingUp Form"
+    },
+    
     profileForm: {
         type: "oneElement",
         initialValues: { name: "", surname: "", typingText: "", email: "", phone: "", location: "" },

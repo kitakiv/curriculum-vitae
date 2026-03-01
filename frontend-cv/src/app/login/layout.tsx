@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import form from "@/variables/form/form";
 
 export const metadata: Metadata = {
-  title: "Login Page",
-  description: "Login Page",
+  title: form.loginForm.metadataTitle,
+  description: form.loginForm.metadataDesctiption,
 };
 
 export default function RootLayout({
