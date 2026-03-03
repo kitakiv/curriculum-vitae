@@ -45,17 +45,16 @@ export class AuthResolver {
   ) {}
 
   @Public()
-  @Mutation(() => CookiesData)
+  @Mutation(() => Boolean)
   async signup(
     @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
-    @Context() { res }: { res: Response },
   ) {
     const result = await this.authService.signUp(signUpInput);
-    this.cookiesService.setCookies(
-      res,
-      result.tokens.refreshToken,
-      this.refreshTokenName,
-    );
+    // this.cookiesService.setCookies(
+    //   res,
+    //   result.tokens.refreshToken,
+    //   this.refreshTokenName,
+    // );
     return result;
   }
 

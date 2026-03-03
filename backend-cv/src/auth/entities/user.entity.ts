@@ -4,6 +4,7 @@ import { AbstractEntity } from '../../database/abstract.entity';
 import { RefreshToken } from './refreshToken.entity';
 import { Role } from '../../roles/entities/role.entity';
 import { Exclude } from 'class-transformer';
+import { UserProvider } from 'src/common/types/types';
 
 @ObjectType()
 @Entity()
@@ -20,9 +21,32 @@ export class User extends AbstractEntity<User> {
   name: string;
 
   @Exclude()
-  @Column()
+  @Column({ nullable: true })
   @Field(() => String, { description: 'User password', nullable: true })
-  password: string;
+  password?: string;
+
+  @Field(() => Boolean, {
+    description: 'Email verification status',
+    defaultValue: false,
+  })
+  @Column({ default: false })
+  isEmailVerified: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => String, { description: 'User url image', nullable: true })
+  avatarPhoto?: string;
+
+  @Field(() => UserProvider, {
+    description: 'Auth provider',
+    defaultValue: UserProvider.LOCAL,
+  })
+  @Column({ type: 'enum', enum: UserProvider, default: UserProvider.LOCAL })
+  provider: UserProvider;
+
+  @Exclude()
+  @Column({ nullable: true })
+  @Field(() => String, { description: 'Google id', nullable: true })
+  googleId?: string
 
   @Field(() => RefreshToken, { description: 'Refresh token', nullable: true })
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
@@ -33,4 +57,9 @@ export class User extends AbstractEntity<User> {
     nullable: true,
   })
   role?: Role;
+
+  @Exclude()
+  @Field(() => String, { description: 'User surname', nullable: true })
+  @Column({ nullable: true })
+  verificationToken?: string;
 }

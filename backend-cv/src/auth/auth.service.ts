@@ -28,6 +28,11 @@ import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
 import { CookiesData } from './entities/cookiesData.type';
 import { Sign } from './entities/sign.type';
 import { CreatePermissionInput } from '../roles/dto/create-role.input';
+import { SignUpGoogleInput } from './dto/signUpGoogle';
+import { randomBytes } from 'crypto';
+import { UserProvider } from 'src/common/types/types';
+import { LoginGoogleInput } from './dto/loginGoogle.input';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -41,9 +46,10 @@ export class AuthService implements OnModuleInit {
     private readonly roleRepository: Repository<Role>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly logger: Logger,
+    private readonly logger: Logger = new Logger(AuthService.name),
+    private readonly emailService: EmailService
   ) {}
-  async signUp(createAuthInput: SignUpInput): Promise<CookiesData> {
+  async signUp(createAuthInput: SignUpInput): Promise<boolean> {
     const emailInUse = await this.userRepository.findOneBy({
       login: createAuthInput.login,
     });
@@ -51,23 +57,38 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException(errors.EMAIL_EXISTS);
     }
     try {
-      const user = await this.createUser(createAuthInput);
-      const tokens = await this.generateToken(user as User);
-      return { user, tokens } as CookiesData;
+      const createdUser = await this.createUser(createAuthInput);
+      await this.emailService.sendVerificationEmail(
+        createdUser.login,
+        createdUser.verificationToken,
+      );
+      return true;
+      // const tokens = await this.generateToken(user as User);
+      // return { user, tokens } as CookiesData;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_CREATED('User'));
     }
   }
 
-  private async createUser(createAuthInput: SignUpInput): Promise<User> {
-    const hashPassword = await this.createHashPassword(
-      createAuthInput.password,
-    );
+  private async createUser(
+    createAuthInput: SignUpInput | SignUpGoogleInput,
+  ): Promise<User> {
+    let password: string | null;
+    let verificationToken: string | null;
+    if (createAuthInput instanceof SignUpGoogleInput) {
+      password = null;
+      verificationToken = null
+    } else if (createAuthInput instanceof SignUpInput) {
+      password = await this.createHashPassword(createAuthInput.password);
+      verificationToken = randomBytes(32).toString('hex');
+    }
     try {
       const createdUser = await this.dataSource.transaction(async (manager) => {
         const user = await manager.create(User, {
           ...createAuthInput,
-          password: hashPassword,
+          password: password,
+          verificationToken: verificationToken
         });
         await manager.save(User, user);
         return user;
@@ -86,21 +107,30 @@ export class AuthService implements OnModuleInit {
 
   async login(loginInput: LoginInput): Promise<CookiesData> {
     const { login, password } = loginInput;
+    const user = await this.checkCredentials(login, password);
+    const tokens = await this.generateToken(user);
+    if (!tokens) {
+      throw new BadRequestException(errors.NOT_CREATED('Tokens'));
+    }
+    return { user, tokens } as CookiesData;
+  }
+
+  async checkCredentials(login: string, password: string) {
     const user = await this.userRepository.findOneBy({ login });
     if (!user) {
       throw new UnauthorizedException(
         errors.NOT_FOUND(`user with login ${login}`),
       );
     }
+    if (!user.isEmailVerified) {
+      throw new UnauthorizedException('Please verify your email first');
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password'));
     }
-    const tokens = await this.generateToken(user);
-    if (!tokens) {
-      throw new BadRequestException(errors.NOT_CREATED('Tokens'));
-    }
-    return { user, tokens } as CookiesData;
+    return user;
   }
 
   private async generateToken(user: User): Promise<Sign> {
@@ -313,11 +343,18 @@ export class AuthService implements OnModuleInit {
     let admin: User = await this.userRepository.findOneBy({
       login: adminLogin,
     });
+    if (admin && admin.isEmailVerified === false) {
+      admin.isEmailVerified = true;
+      admin.verificationToken = null;
+      await this.userRepository.save(admin);
+    }
     if (!admin) {
       admin = (await this.createUser({
         login: adminLogin,
         password: adminPassword,
         name: 'Admin',
+        provider: UserProvider.LOCAL,
+        isEmailVerified: true,
       })) as User;
       if (!admin) {
         this.logger.warn('Something went wrong check the errors in the logs');
@@ -366,6 +403,66 @@ export class AuthService implements OnModuleInit {
     } catch (error) {
       this.logger.error(error);
       throw new ForbiddenException(error.message);
+    }
+  }
+
+  async validateGoogleUser(googleUser: SignUpInput) {
+    const user = await this.userRepository.findOne({
+      where: {
+        login: googleUser.login,
+      },
+    });
+    if (!user) {
+      const newUser = await this.createUser(googleUser);
+      return newUser;
+    }
+  }
+
+  private async updateGoogleUser(
+    existingUser: User,
+    googleUserInput: SignUpGoogleInput,
+  ) {
+    // execlude password from googleUserInput
+    const { password, ...googleUser } = googleUserInput;
+    try {
+      await this.userRepository.update(existingUser.id, {
+        ...googleUser,
+        googleId: UserProvider.BOTH,
+      });
+      return await this.findOne(existingUser.id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('User'));
+    }
+  }
+
+  async createOrUpdateGoogleUser(googleUserInput: SignUpGoogleInput) {
+    const user = await this.userRepository.findOne({
+      where: {
+        login: googleUserInput.login,
+      },
+    });
+    if (!user) {
+      const newUser = await this.createUser(googleUserInput);
+      return newUser;
+    } else if (!user.googleId) {
+      const updatedUser = await this.updateGoogleUser(user, googleUserInput);
+      return updatedUser;
+    }
+    return user;
+  }
+
+  async loginGoogle(loginGoogleInput: LoginGoogleInput) {
+    const user = await this.findOne(loginGoogleInput.login);
+    if (
+      user.provider === UserProvider.GOOGLE ||
+      user.provider === UserProvider.BOTH
+    ) {
+      const tokens = await this.generateToken(user);
+      if (!tokens) {
+        throw new BadRequestException(errors.NOT_CREATED('Tokens'));
+      }
+      return { user, tokens } as CookiesData;
     }
   }
 }

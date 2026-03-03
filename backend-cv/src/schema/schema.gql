@@ -156,7 +156,7 @@ type Mutation {
   removeTechCategory(id: ID!): ID!
   removeTechStack(id: ID!): ID!
   removeUser(id: ID!): ID!
-  signup(signUpInput: SignUpInput!): CookiesData!
+  signup(signUpInput: SignUpInput!): Boolean!
   update(updateUserInput: UpdateUserInput!): User!
   updateCertificate(updateCertificateInput: UpdateCertificateInput!): Certificate!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
@@ -281,6 +281,7 @@ type Sign {
 }
 
 input SignUpInput {
+  avatarPhoto: String
   login: String!
   name: String!
   password: String!
@@ -407,8 +408,17 @@ input UpdateUserInput {
 }
 
 type User {
+  """User url image"""
+  avatarPhoto: String
+
+  """Google id"""
+  googleId: String
+
   """User id"""
   id: ID!
+
+  """Email verification status"""
+  isEmailVerified: Boolean!
 
   """User login"""
   login: String!
@@ -419,9 +429,22 @@ type User {
   """User password"""
   password: String
 
+  """Auth provider"""
+  provider: UserProvider!
+
   """Refresh token"""
   refreshToken: RefreshToken
 
   """User role"""
   role: Role
+
+  """User surname"""
+  verificationToken: String
+}
+
+"""Authentication provider type"""
+enum UserProvider {
+  BOTH
+  GOOGLE
+  LOCAL
 }
