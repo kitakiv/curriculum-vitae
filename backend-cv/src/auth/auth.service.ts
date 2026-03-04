@@ -61,10 +61,9 @@ export class AuthService implements OnModuleInit {
       await this.emailService.sendVerificationEmail(
         createdUser.login,
         createdUser.verificationToken,
+        createdUser.name
       );
       return true;
-      // const tokens = await this.generateToken(user as User);
-      // return { user, tokens } as CookiesData;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('User'));
@@ -118,9 +117,7 @@ export class AuthService implements OnModuleInit {
   async checkCredentials(login: string, password: string) {
     const user = await this.userRepository.findOneBy({ login });
     if (!user) {
-      throw new UnauthorizedException(
-        errors.NOT_FOUND(`user with login ${login}`),
-      );
+      throw new UnauthorizedException(errors.SIGNUP(login));
     }
     if (!user.isEmailVerified) {
       throw new UnauthorizedException('Please verify your email first');
@@ -437,6 +434,7 @@ export class AuthService implements OnModuleInit {
   }
 
   async createOrUpdateGoogleUser(googleUserInput: SignUpGoogleInput) {
+    console.log(googleUserInput)
     const user = await this.userRepository.findOne({
       where: {
         login: googleUserInput.login,

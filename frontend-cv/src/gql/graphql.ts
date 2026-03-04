@@ -156,7 +156,7 @@ export type Mutation = {
   removeTechCategory: Scalars['ID']['output'];
   removeTechStack: Scalars['ID']['output'];
   removeUser: Scalars['ID']['output'];
-  signup: CookiesData;
+  signup: Scalars['Boolean']['output'];
   update: User;
   updateCertificate: Certificate;
   updateContact: Contact;
@@ -448,6 +448,7 @@ export type Sign = {
 };
 
 export type SignUpInput = {
+  avatarPhoto?: InputMaybe<Scalars['String']['input']>;
   login: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -565,26 +566,43 @@ export type UpdateUserInput = {
 
 export type User = {
   __typename?: 'User';
+  /** User url image */
+  avatarPhoto?: Maybe<Scalars['String']['output']>;
+  /** Google id */
+  googleId?: Maybe<Scalars['String']['output']>;
   /** User id */
   id: Scalars['ID']['output'];
+  /** Email verification status */
+  isEmailVerified: Scalars['Boolean']['output'];
   /** User login */
   login: Scalars['String']['output'];
   /** User name */
   name: Scalars['String']['output'];
   /** User password */
   password?: Maybe<Scalars['String']['output']>;
+  /** Auth provider */
+  provider: UserProvider;
   /** Refresh token */
   refreshToken?: Maybe<RefreshToken>;
   /** User role */
   role?: Maybe<Role>;
+  /** User surname */
+  verificationToken?: Maybe<Scalars['String']['output']>;
 };
+
+/** Authentication provider type */
+export enum UserProvider {
+  Both = 'BOTH',
+  Google = 'GOOGLE',
+  Local = 'LOCAL'
+}
 
 export type SignupMutationVariables = Exact<{
   signUpInput: SignUpInput;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'CookiesData', tokens: { __typename?: 'Sign', accessToken: string } } };
+export type SignupMutation = { __typename?: 'Mutation', signup: boolean };
 
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
@@ -648,7 +666,7 @@ export type GetTechStacksQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetTechStacksQuery = { __typename?: 'Query', techstacks: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> };
 
 
-export const SignupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Signup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SignUpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"signUpInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}}]}}]}}]} as unknown as DocumentNode<SignupMutation, SignupMutationVariables>;
+export const SignupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Signup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SignUpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"signUpInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}}}]}]}}]} as unknown as DocumentNode<SignupMutation, SignupMutationVariables>;
 export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetUserMutation, GetUserMutationVariables>;
 export const GetCertificatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCertificates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"certificates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"certificateDescription"}},{"kind":"Field","name":{"kind":"Name","value":"certificateImage"}},{"kind":"Field","name":{"kind":"Name","value":"certificateLink"}},{"kind":"Field","name":{"kind":"Name","value":"certificatePeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"certificatePeriodStart"}},{"kind":"Field","name":{"kind":"Name","value":"certificateTitle"}},{"kind":"Field","name":{"kind":"Name","value":"certificateCompany"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetCertificatesQuery, GetCertificatesQueryVariables>;

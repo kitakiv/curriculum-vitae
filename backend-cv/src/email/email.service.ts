@@ -7,6 +7,7 @@ import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { errors } from 'src/errors/errors.config';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { verifiedEmailPage, emailVerificatioMessage } from '../variables/email.variables';
 
 @Injectable()
 export class EmailService {
@@ -31,32 +32,25 @@ export class EmailService {
     this.transporter = nodemailer.createTransport(transportOptions);
   }
 
-  async sendVerificationEmail(email: string, token: string) {
-    try {
-      this.logger.log(`Sending verification email to: ${email}`);
-      this.logger.log(`Verification token: ${token}`);
-
-      const verificationUrl = `${this.emailConfig.backendUrl}/email/verify-email?token=${token}`;
-
-      this.logger.log(`Verification URL: ${verificationUrl}`);
-
-      const info = await this.transporter.sendMail({
-        from: this.emailConfig.emailFrom,
-        to: email,
-        subject: 'Verify your email',
-        html: `
-        <h1>Email Verification</h1>
-        <p>Click the link below to verify your email:</p>
-        <a href="${verificationUrl}">Verify Email</a>
-      `,
-      });
-
-      this.logger.log(`Email sent successfully: ${info.messageId}`);
-      return info;
-    } catch (error) {
-      this.logger.error('Failed to send email:', error);
-      throw new BadRequestException('Failed to send verification email');
+  async sendVerificationEmail(email: string, token: string, name: string) {
+    const verificationUrl = `${this.emailConfig.backendUrl}/email/verify-email?token=${token}`;
+    const mailOptions = {
+      from: this.emailConfig.emailFrom,
+      to: email,
+      subject: 'Verify your email',
+      html: emailVerificatioMessage(verificationUrl, name),
     }
+
+    const info = await this.transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        this.logger.error('Error sending email:', error);
+        throw new BadRequestException('Failed to send verification email');
+      } else {
+        this.logger.log('Email sent successfully:', info);
+      }
+      return info;
+    });
+    return info;
   }
 
 
@@ -72,7 +66,8 @@ export class EmailService {
     user.verificationToken = null;
     try {
       await this.userRepository.save(user);
-      return { message: 'Email verified successfully. You can now login.' };
+      const frontendUrl = this.emailConfig.frontendUrl || 'http://localhost:3000';
+      return verifiedEmailPage(frontendUrl);
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('User'));

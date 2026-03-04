@@ -2,11 +2,7 @@ import { gql } from "@apollo/client";
 
 const SIGNUP_AUTH_QUERY = gql`
     mutation Signup($signUpInput: SignUpInput!) {
-    signup(signUpInput: $signUpInput) {
-        tokens {
-            accessToken
-        }
-    }
+    signup(signUpInput: $signUpInput)
 }
 `;
 

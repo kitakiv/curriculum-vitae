@@ -16,4 +16,6 @@ export const errors = {
     'Not authorized to perform this action on this resource',
   NOT_AUTHORIZED_TO_PERFORM_ACTION_ON_RESOURCE_WITH_ID:
     'Not authorized to perform this action on this resource with id',
+  SIGNUP: (email: string) =>
+    `User with email ${email} doesn't exist. Please sign up`,
 };

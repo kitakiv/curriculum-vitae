@@ -39,7 +39,7 @@ class GraphQlClient {
 
     constructor(config: ApiConfig = {}, authConfig: AuthConfig = {}) {
         this.config = {
-            baseUrl: config.baseUrl || process.env.GRAPHQL_BACKEND_URL || '',
+            baseUrl: config.baseUrl || `${process.env.BACKEND_URL}/graphql` || '',
             defaultHeaders: {
                 'Content-Type': 'application/json',
                 ...config.defaultHeaders,

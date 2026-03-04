@@ -11,6 +11,8 @@ import { Formik, Form, useFormikContext } from 'formik';
 import InputElement from '@/components/Input/Input';
 import { login } from 'app/actions/auth';
 import { startTransition, useActionState } from 'react';
+import GoogleButton from '@/components/button/GoogleButton';
+import GoogleWrapper from '@/components/button/GoogleWrapper';
 export default function FormLoginAdmin() {
   const [state, action, pending] = useActionState(login, undefined)
   return (
@@ -47,6 +49,7 @@ export default function FormLoginAdmin() {
                   setFieldValue={setFieldValue}
                 />
               ))}
+              <GoogleWrapper/>
               <SubmitButton pending={pending} />
             </Form>
           )}
