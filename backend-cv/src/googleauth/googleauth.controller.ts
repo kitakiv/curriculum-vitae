@@ -27,7 +27,7 @@ export class GoogleauthController {
       isEmailVerified: req.user.isEmailVerified,
     });
     res.redirect(
-      `${this.configService.getOrThrow<string>('FRONTEND_URL')}/login?token=${response.tokens.accessToken}`,
+      `${this.configService.getOrThrow<string>('FRONTEND_URL')}?token=${response.tokens.accessToken}`,
     );
   }
 }

@@ -8,8 +8,8 @@ export const throttlerOptions: ThrottlerAsyncOptions = {
   useFactory: (config: ConfigService) => ({
     throttlers: [
       {
-        ttl: config.get('THROTTLE_TTL'),
-        limit: config.get('THROTTLE_LIMIT'),
+        ttl: parseInt(config.get('THROTTLE_TTL') || '60', 10) * 1000,
+        limit: parseInt(config.get('THROTTLE_LIMIT') || '5', 10),
       },
     ],
     storage: new ThrottlerStorageRedisService(

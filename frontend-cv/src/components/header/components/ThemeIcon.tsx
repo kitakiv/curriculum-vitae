@@ -26,11 +26,11 @@ export default function ThemeIcon() {
         {allTheme.filter((item) => item === value).map((item, index) => {
             return (
                 <div key={`theme-list-key-${index}`}>
-                <LiquidGlass rounded hover>
+                <div className="liquidGlass-elem rounded-full border-[1px] border-light roudned-full">
                 <ButtonHeader key={`theme-button-${item}`}>
                     <Image className="group-hover:animate-spin" src={theme[item as keyof typeof theme].svg.path} alt="theme" width={20} height={20}/>
                 </ButtonHeader>
-                </LiquidGlass>
+                </div>
                 {showTheme &&
                 <div key={"theme-buttons"} className="transition-all position-absolute top-32 right-0">
                     <LiquidGlass rounded shadow>

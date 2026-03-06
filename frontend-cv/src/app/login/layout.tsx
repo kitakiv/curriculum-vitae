@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   description: form.loginForm.metadataDesctiption,
 };
 
-export default function RootLayout({
+export default function LoginLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
       <>

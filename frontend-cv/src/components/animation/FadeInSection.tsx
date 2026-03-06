@@ -1,7 +1,7 @@
 'use client';
 import {useState, useEffect, useRef} from 'react';
 
-export default function FadeInSection({children, tailwind, delay = 300, animation = {visible: "translateY(0)", hidden: "translateY(120px)"}}: {children: React.ReactNode, tailwind?: string, delay?: number, animation?: {visible: string, hidden: string}}) {
+export default function FadeInSection({children, tailwind, delay = 300, animation = {visible: "translateY(0)", hidden: "translateY(120px)"}, resetOnExit = false}: {children: React.ReactNode, tailwind?: string, delay?: number, animation?: {visible: string, hidden: string}, resetOnExit?: boolean}) {
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -11,7 +11,11 @@ export default function FadeInSection({children, tailwind, delay = 300, animatio
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         setIsVisible(true);
-                        observer.disconnect();
+                        if (!resetOnExit) {
+                            observer.disconnect();
+                        }
+                    } else if (resetOnExit) {
+                        setIsVisible(false);
                     }
                 });
             },
@@ -20,7 +24,7 @@ export default function FadeInSection({children, tailwind, delay = 300, animatio
 
         if (ref.current) observer.observe(ref.current);
         return () => observer.disconnect();
-    }, []);
+    }, [resetOnExit]);
 
     return (
         <div className={`transition-all duration-1000 ${tailwind} ease-out transform`}  ref={ref} style={{opacity: isVisible ? 1 : 0, transform: isVisible ? animation.visible : animation.hidden, transitionDelay: `${delay}ms`}}>{children}</div>

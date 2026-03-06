@@ -13,7 +13,6 @@ const menu = {
             { href: `#${techStack.id}`, name: techStack.name, id: techStack.id },
             { href: `#${experiences.id}`, name: experiences.name, id: experiences.id },
             { href: `#${footer.id}`, name: footer.name, id: footer.id },
-            { href: `${form.loginForm.id}`, name: form.loginForm.name, id: form.loginForm.id },
             { href: `#${header.id}`, name: '', id: header.id },
         ],
         adminHeader: [

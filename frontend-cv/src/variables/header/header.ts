@@ -1,5 +1,6 @@
 import { Profile } from "@/gql/graphql";
 
+
 const header = {
     name: "Victoria",
     surname: "Surename",
@@ -15,6 +16,21 @@ const header = {
     email: "kit@gmail.com",
     phone: "+380931234567",
     defaultImageChange: 7000,
+    buttonSignUp: {
+        text: "Sign up",
+        link: "/signup"
+    },
+    buttonLogin: {
+        text: "Log in",
+        link: "/login"
+    },
+    buttonAdmin: {
+        text: "Admin",
+        link: "/admin/dashboard"
+    },
+    profileButton: {
+        svgLink: "/svg/profile.svg"
+    }
 }
 
 const deafultProfile: Profile = {

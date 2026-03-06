@@ -213,6 +213,10 @@
   padding: 3.5rem 0.3rem;
 }
 
+.padding-button {
+  padding: 0.75rem 2rem;
+}
+
 .padding-admin {
   padding-top: 4rem;
 }
@@ -388,18 +392,21 @@
     background: radial-gradient(var(--color-tx-first-100), var(--color-round-100));
     background-size: 100% 100%;
     mix-blend-mode: hard-light;
+    transition: all 0.6s ease-in-out;
   }
 
   .gradient-round-two {
     background: radial-gradient(var(--color-tx-first-0), var(--color-round-0));
     background-size: 100% 100%;
     mix-blend-mode: hard-light;
+    transition: all 0.6s ease-in-out;
   }
   
   .gradient-round-one {
     background: radial-gradient(var(--color-bg-0), var(--color-round-100));
     background-size: 100% 100%;
     mix-blend-mode: hard-light;
+    transition: all 0.6s ease-in-out;
   }
 }
 

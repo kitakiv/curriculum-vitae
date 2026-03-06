@@ -27,6 +27,7 @@ const GET_ME_USER = gql`
         id
         login
         name
+        avatarPhoto
     }
 }`
 

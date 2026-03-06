@@ -1,9 +1,6 @@
-export const getGoogleLink = () => {
-    return `${process.env.BACKEND_URL}/google/login`;
-};
 
 const googleVariables = {
-    googleLink: getGoogleLink,
+    googleLink: `${process.env.NEXT_PUBLIC_BACKEND_URL}`,
     googleSvg: '',
     googleSignUpText: '',
     googleLoginText: '',

@@ -424,7 +424,7 @@ export class AuthService implements OnModuleInit {
     try {
       await this.userRepository.update(existingUser.id, {
         ...googleUser,
-        googleId: UserProvider.BOTH,
+        provider: UserProvider.BOTH,
       });
       return await this.findOne(existingUser.id);
     } catch (error) {

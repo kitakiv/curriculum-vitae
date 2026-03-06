@@ -12,7 +12,6 @@ import InputElement from '@/components/Input/Input';
 import { login } from 'app/actions/auth';
 import { startTransition, useActionState } from 'react';
 import GoogleButton from '@/components/button/GoogleButton';
-import GoogleWrapper from '@/components/button/GoogleWrapper';
 export default function FormLoginAdmin() {
   const [state, action, pending] = useActionState(login, undefined)
   return (
@@ -31,7 +30,7 @@ export default function FormLoginAdmin() {
           }}
         >
           {({ setFieldValue }) => (
-            <Form className='padding-elements gap-4 grid xl:w-[30vw] lg:w-[40vw] md:w-[40vw] sm:w-full w-full  liquidGlass-elem liquidGlass-shadow rounded-lg  bg-slate-950'>
+            <Form className='padding-elements gap-4 grid xl:w-[30vw] lg:w-[40vw] md:w-[40vw] sm:w-full w-full  liquidGlass-elem liquidGlass-shadow rounded-lg '>
               <div className="w-full flex justify-center items-center">
                 <img className="rounded-xl bg-gradient-to-tr from-txFirst0 to-txFirst100 p-1 w-11 h-11" src={form.loginForm.svg} alt="logo"></img>
               </div>
@@ -49,7 +48,7 @@ export default function FormLoginAdmin() {
                   setFieldValue={setFieldValue}
                 />
               ))}
-              <GoogleWrapper/>
+              <GoogleButton/>
               <SubmitButton pending={pending} />
             </Form>
           )}

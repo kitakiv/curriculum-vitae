@@ -43,4 +43,10 @@ export async function getMe() {
     }
 }
 
-export { signUpUser,  loginUser }
+async function setToken(token: string) {
+    apiClient.setAuthTokens({
+        tokenProvider: token
+    })
+}
+
+export { signUpUser,  loginUser, setToken }

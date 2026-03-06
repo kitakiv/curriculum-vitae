@@ -1,7 +1,6 @@
 'use server'
 import { LoginInput, SignUpInput } from "@/gql/graphql"
 import { loginUser, signUpUser } from "@/query/auth.query";
-import { setAccessToken } from "@/lib/auth";
 
 export type LoginFormState = {
     message?: string;
