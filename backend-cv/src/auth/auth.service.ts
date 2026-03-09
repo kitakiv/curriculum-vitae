@@ -323,6 +323,11 @@ export class AuthService implements OnModuleInit {
       where: {
         id: userId,
       },
+      relations: {
+        role: {
+          permissions: true
+        }
+      }
     });
     if (!user) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     return user;

@@ -6,23 +6,18 @@ import ExperienceSection from "@/components/experience/ExperienceSection";
 import TechStackSection from "@/components/techstack/TechStackSection";
 import FlyModelSection from "@/components/3D/FlyModelSection";
 import techStack from "@/variables/techstack/techstack";
-import { setAccessToken } from "@/lib/auth";
+
 
 export type Props = {
   searchParams: Promise<{
     [techStack.searchParam]?: string;
     [techStack.searchParamCategory]?: string;
-    token?: string;
   }>
 }
 
 export default async function Page({ searchParams }: Props) {
   const params = await searchParams;
-  if (params.token) {
-    await setAccessToken(params.token);
-    console.log(params.token)
-  }
-  
+
   
   return (
     <>

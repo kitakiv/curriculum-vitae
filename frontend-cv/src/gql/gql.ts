@@ -16,9 +16,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n": typeof types.SignupDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": typeof types.LoginDocument,
-    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n    }\n}": typeof types.GetUserDocument,
+    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": typeof types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": typeof types.GetCertificatesDocument,
     "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": typeof types.GetContactsDocument,
+    "\n    mutation CreateContact($createContactInput: CreateContactInput!) {\n      createContact(createContactInput: $createContactInput) {\n        contactLink\n        contactName\n        contactSvg\n        id\n      }\n    }\n": typeof types.CreateContactDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": typeof types.GetSlidersDocument,
@@ -30,9 +31,10 @@ type Documents = {
 const documents: Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n": types.SignupDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": types.LoginDocument,
-    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n    }\n}": types.GetUserDocument,
+    "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": types.GetCertificatesDocument,
     "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n": types.GetContactsDocument,
+    "\n    mutation CreateContact($createContactInput: CreateContactInput!) {\n      createContact(createContactInput: $createContactInput) {\n        contactLink\n        contactName\n        contactSvg\n        id\n      }\n    }\n": types.CreateContactDocument,
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectsDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": types.GetSlidersDocument,
@@ -67,7 +69,7 @@ export function graphql(source: "\n    mutation Login($loginInput: LoginInput!) 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n    }\n}"): (typeof documents)["\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n    }\n}"];
+export function graphql(source: "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}"): (typeof documents)["\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -76,6 +78,10 @@ export function graphql(source: "\n    query GetCertificates {\n    certificates
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n"): (typeof documents)["\n    query GetContacts {\n      contacts {\n        contactLink\n        contactName\n        contactSvg\n        id\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation CreateContact($createContactInput: CreateContactInput!) {\n      createContact(createContactInput: $createContactInput) {\n        contactLink\n        contactName\n        contactSvg\n        id\n      }\n    }\n"): (typeof documents)["\n    mutation CreateContact($createContactInput: CreateContactInput!) {\n      createContact(createContactInput: $createContactInput) {\n        contactLink\n        contactName\n        contactSvg\n        id\n      }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

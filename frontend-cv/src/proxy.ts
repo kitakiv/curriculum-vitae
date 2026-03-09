@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { setToken } from './query/auth.query'
+import { setAccessToken, getAccessToken } from "@/lib/auth"
  
 const protectedRoutes = ['/admin']
 const authRoutes = ['/login', '/signup']
@@ -10,7 +9,7 @@ export default async function middleware(req: NextRequest) {
   const tokenFromQuery = req.nextUrl.searchParams.get('token')
   if (tokenFromQuery) {
     const token = tokenFromQuery;
-    await setToken(token);
+    await setAccessToken(token);
     
     return NextResponse.redirect(new URL('/', req.nextUrl))
   }
@@ -18,8 +17,7 @@ export default async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route))
   const isAuthRoute = authRoutes.some(route => path.startsWith(route))
  
-  const cookieStore = await cookies()
-  const token = cookieStore.get('accessToken')?.value
+  const token = await getAccessToken();
  
   if (isProtectedRoute && !token) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))

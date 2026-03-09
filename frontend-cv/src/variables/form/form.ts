@@ -94,7 +94,7 @@ const form = {
     },
     contactsForm: {
         initialValues: { contactName: "", contactSvg: "", contactLink: "" },
-        inputsAdd: [
+        inputsAdd:[
             { id: "contactName", label: "Contact Name", name: "contactName", placeholder: "Contact Name", type: "text" },
             { id: "contactSvg", label: "Contact Svg", name: "contactSvg", placeholder: "Contact Svg", type: "file" },
             { id: "contactLink", label: "Contact Link", name: "contactLink", placeholder: "Contact Link", type: "text" },

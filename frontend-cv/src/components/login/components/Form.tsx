@@ -13,7 +13,7 @@ import { login } from 'app/actions/auth';
 import { startTransition, useActionState } from 'react';
 import GoogleButton from '@/components/button/GoogleButton';
 export default function FormLoginAdmin() {
-  const [state, action, pending] = useActionState(login, undefined)
+  const [state, action, pending] = useActionState(login, undefined);
   return (
     <>
       <>

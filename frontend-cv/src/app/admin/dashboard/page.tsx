@@ -1,12 +1,18 @@
 import AdminHeader from "@/components/header/HeaderAdmin";
-import AdminPage from "@/components/admin/Admin";
+import AdminDashboard from "@/components/admin/AdminDashboard";
+import { GetUserMutation } from "@/gql/graphql";
+import { getMe } from "@/query/auth.query";
+import ResourceSection from "@/components/admin/components/ResourceSection";
 
-export default function Admin() {
+export default async function Admin() {
+     const user: GetUserMutation['getUser'] | false = await getMe()
     return (
         <>
         <AdminHeader/>
         <main className="bg-adminGr100 w-full h-full min-h-screen">
-         <AdminPage/>
+         <AdminDashboard user={user}>
+           <ResourceSection user={user}/>
+         </AdminDashboard>
         </main>
         </>
     );

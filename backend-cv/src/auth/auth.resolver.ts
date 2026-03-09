@@ -50,11 +50,6 @@ export class AuthResolver {
     @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
   ) {
     const result = await this.authService.signUp(signUpInput);
-    // this.cookiesService.setCookies(
-    //   res,
-    //   result.tokens.refreshToken,
-    //   this.refreshTokenName,
-    // );
     return result;
   }
 

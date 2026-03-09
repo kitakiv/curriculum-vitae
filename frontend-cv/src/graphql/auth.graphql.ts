@@ -28,6 +28,12 @@ const GET_ME_USER = gql`
         login
         name
         avatarPhoto
+        role {
+            permissions {
+                actions
+                resource
+            }
+        }
     }
 }`
 
