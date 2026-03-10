@@ -66,7 +66,18 @@ const image = Yup.mixed().required("Contact image is required")
 .test("fileSize", `File size must be less than 1MB`,
     (value) => value && (value as File).size <= 1024 * 1024 * 1)
 .test("fileType", "Invalid file type",
-    (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
+    (value) => value && [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+  "image/gif",
+  "image/avif",
+  "image/bmp",
+  "image/tiff",
+  "image/x-icon",
+  "image/svg"
+].includes((value as File).type));
 
 
 const projectGithubLink = Yup.string().required("Github link is required")

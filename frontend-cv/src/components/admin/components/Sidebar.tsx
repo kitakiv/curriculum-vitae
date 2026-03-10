@@ -33,7 +33,7 @@ export default function Sidebar({ user }: SidebarProps) {
                   : 'hover:bg-adminGr33 text-adminTx100'
               }`}
             >
-              <span className="text-lg">{config.title}</span>
+              <span className="text-lg transition-all duration-700">{config.title}</span>
             </Link>
           );
         })}

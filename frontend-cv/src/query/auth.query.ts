@@ -9,10 +9,7 @@ async function signUpUser(variables: SignupMutationVariables) {
     const res = await apiClient.fetchGraphQL<{data: SignupMutation}>(SIGNUP_AUTH_QUERY, {
         variables: variables
     });
-    // apiClient.setAuthTokens({
-    //     tokenProvider: res.data.data.signup.tokens.accessToken
-    // });
-    return true
+    return res.data.data.signup
   } catch (error) {
     console.error("Error while signUp", error);
     throw error;

@@ -2,6 +2,7 @@ import { create } from "domain";
 import form from "../form/form";
 import schema from "@/validation/schemaValidation";
 import { createContactAction } from "@/app/actions/contacts";
+import { UPLOADSERVICE } from "@/variables/upload/upload";
 
 export enum Resource {
   PROJECT = 'project',
@@ -37,6 +38,8 @@ const resourceConfig = {
       initialValues: form.projectForm.initialValues,
       action: null,
       schema: schema.project,
+      title: 'Create project',
+      uploadConfig: UPLOADSERVICE.PROJECTS
     },
     validationSchema: schema.project,
     form: form.projectForm,
@@ -53,6 +56,7 @@ const resourceConfig = {
       initialValues: form.sliderForm.initialValues,
       action: null,
       schema: schema.slider,
+      title: 'Create slider',
     },
     validationSchema: schema.slider,
     form: form.sliderForm,
@@ -69,6 +73,7 @@ const resourceConfig = {
       initialValues: null,
       action: null,
       schema: null,
+      title: 'Create certificate',
     },
     validationSchema: null,
     form: null,
@@ -85,6 +90,8 @@ const resourceConfig = {
       initialValues: form.contactsForm.initialValues,
       action: createContactAction,
       schema: schema.contact.contactAdd,
+      title: 'Create contact',
+      uploadConfig: UPLOADSERVICE.CONTACTS
     },
     validationSchema: schema.contact,
     form: form.contactsForm,
@@ -100,6 +107,7 @@ const resourceConfig = {
       initialValues: null,
       action: null,
       schema: null,
+      title: 'Create techstack',
     },
     validationSchema: null,
     form: null,
@@ -114,7 +122,7 @@ const resourceConfig = {
     createForm: null,
     validationSchema: null,
     form: null,
-    actionCreate: null
+    actionCreate: null,
   },
   [Resource.PROFILE]: {
     id: 'admin-profile',

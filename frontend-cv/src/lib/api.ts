@@ -2,11 +2,21 @@ import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { getAccessToken, setAccessToken } from './auth';
 import ErrorHandler from "@/lib/errors";
 import { GraphQLResponse } from "./errors";
+import { UPLOADTYPE, UPLOADSERVICE, HTTPMETHOD, uploadVariables } from "@/variables/upload/upload";
+import { update } from "three/examples/jsm/libs/tween.module.js";
+
 
 interface ApiConfig {
     baseUrl?: string;
     defaultHeaders?: Record<string, string>;
     timeout?: number;
+    cache?: RequestCache;
+}
+
+interface ResponseHttp {
+    statusCode: number;
+    error: string;
+    message: string;
 }
 
 interface ApiResponse<T = any> {
@@ -32,12 +42,13 @@ class ApiError extends Error {
     }
 }
 
-class GraphQlClient {
+class RequestClient {
     private config: Required<ApiConfig>;
+    private configUpload: Required<ApiConfig>;
     private authConfig: AuthConfig;
     private errorHandler = new ErrorHandler();
 
-    constructor(config: ApiConfig = {}, authConfig: AuthConfig = {}) {
+    constructor(config: ApiConfig = {}, authConfig: AuthConfig = {}, configUpload: ApiConfig = {}) {
         this.config = {
             baseUrl: config.baseUrl || `${process.env.BACKEND_URL}/graphql` || '',
             defaultHeaders: {
@@ -45,7 +56,16 @@ class GraphQlClient {
                 ...config.defaultHeaders,
             },
             timeout: config.timeout || 10000,
+            cache: config.cache || 'no-cache'
         };
+        this.configUpload = {
+            baseUrl: configUpload.baseUrl || `${process.env.BACKEND_URL}/upload` || '',
+            defaultHeaders: {
+                ...configUpload.defaultHeaders,
+            },
+            timeout: configUpload.timeout || 10000,
+            cache: configUpload.cache || 'no-cache'
+        }
         this.authConfig = {
             tokenHeader: 'Authorization',
             tokenPrefix: 'Bearer',
@@ -80,7 +100,7 @@ class GraphQlClient {
 
             if (!res.ok) {
                 throw new ApiError(
-                    `GraphQL error ${res.status}: ${res.statusText}`,
+                    `${res.status}: ${res.statusText}`,
                     res.status,
                     res
                 );
@@ -90,6 +110,60 @@ class GraphQlClient {
             const errors = (data as  GraphQLResponse).errors;
             if (errors?.length) {
                 this.handleError(data)
+            }
+            return {
+                data,
+                status: res.status,
+                headers: res.headers,
+            };
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error;
+            } else if (error instanceof Error && error.name === 'AbortError') {
+                throw new ApiError('Request timed out', 408);
+            } else {
+                throw new ApiError(error instanceof Error ? error.message : 'Unknown error', 500);
+            }
+        }
+    }
+
+    async fetchHttp({
+        method,
+        body,
+        headers,
+        url
+    }: {
+        method: HTTPMETHOD;
+        body: FormData | string;
+        headers?: Record<string, string> | undefined;
+        url: string
+    }) {
+        const checkUrl = this.buildUrl(url, this.configUpload);
+        const requestOptions = await this.buildRequestOptionsHttp({
+            method,
+            body,
+            headers
+        });
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+            const res = await fetch(checkUrl, {
+                ...requestOptions,
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            if (!res.ok) {
+                throw new ApiError(
+                    `${res.status}: ${res.statusText}`,
+                    res.status,
+                    res
+                );
+            }
+
+            const data = await this.parseResponse(res);
+            const errors = (data as ResponseHttp).error;
+            if (errors?.length) {
+                this.handleErrorHttp(data as ResponseHttp, res.status)
             }
             return {
                 data,
@@ -120,6 +194,46 @@ class GraphQlClient {
         return (await response.text()) as unknown as T;
     }
 
+
+    private async AuthHeader({
+        headers
+    }: {
+        headers: Record<string, string>;
+    }) {
+        const headersAuth: Record<string, string> = {
+            ...headers,
+        };
+
+        const token = await getAccessToken();
+        if (token) {
+            headersAuth[this.authConfig.tokenHeader || 'Authorization'] = `${this.authConfig.tokenPrefix || 'Bearer'} ${token}`;
+        }
+
+        return headersAuth;
+    }
+
+     private async buildRequestOptionsHttp({
+        method,
+        body,
+        headers
+     }: {
+        method: HTTPMETHOD;
+        body: FormData | string;
+        headers?: Record<string, string> | undefined;
+     }) : Promise<RequestInit>{
+        const headersAuth = await this.AuthHeader({
+            headers: headers || this.configUpload.defaultHeaders,
+        });
+        return {
+            method:  method,
+            headers: headersAuth,
+            body,
+            cache: this.configUpload.cache,
+        }
+
+     }
+
+
     private async buildRequestOptions<TVariables extends object | undefined = undefined>(
         document: TypedDocumentNode<any, TVariables>,
         options: {
@@ -127,15 +241,9 @@ class GraphQlClient {
             headers?: Record<string, string>;
         }): Promise<RequestInit> {
 
-        const headers: Record<string, string> = {
-            "Content-Type": "application/json",
-            ...options?.headers,
-        };
-
-        const token = await getAccessToken();
-        if (token) {
-            headers[this.authConfig.tokenHeader || 'Authorization'] = `${this.authConfig.tokenPrefix || 'Bearer'} ${token}`;
-        }
+        const headers = await this.AuthHeader({
+            headers: options?.headers || this.config.defaultHeaders,
+        });
 
         return {
             method: "POST",
@@ -144,15 +252,15 @@ class GraphQlClient {
                 query: document.loc?.source.body,
                 variables: options?.variables,
             }),
-            cache: "no-store",
+            cache: this.config.cache,
         }
     }
 
-    private buildUrl(endpoint: string): string {
+    private buildUrl(endpoint: string, config?: ApiConfig): string {
         if (endpoint.startsWith('http')) {
             return endpoint;
         }
-        return `${this.config.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+        return `${config?.baseUrl || this.config.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
     }
 
     setAuthTokens(authConfig: AuthConfig) {
@@ -172,6 +280,30 @@ class GraphQlClient {
                 throw new ApiError(`GraphQL Error: ${errorMessage.message}`, statusCode)
             }
     }
+
+    private handleErrorHttp(data: ResponseHttp, statusCode: number) {
+        throw new ApiError(`Http Error: ${data.error}`, statusCode)
+    }
 }
 
-export const apiClient = new GraphQlClient();
+
+class ServerApi extends RequestClient {
+    constructor() {
+        super();
+    }
+
+    async uploadFile(resource: UPLOADSERVICE, body: FormData, id: string, index?: number) {
+        const url = this.createUrl(resource, id, index)
+        return await this.fetchHttp({ method: HTTPMETHOD.POST, body, url });
+    }
+
+    private createUrl(resource: UPLOADSERVICE, id: string, index?: number) {
+        if (index) {
+            return `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}-${index}`;
+        } else {
+           return uploadVariables[resource].multiFile ? `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}` : `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}`
+        }
+    }
+}
+
+export const apiClient = new ServerApi();

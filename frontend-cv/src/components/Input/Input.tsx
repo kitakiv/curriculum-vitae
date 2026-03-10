@@ -53,7 +53,7 @@ export default function InputElement({ inputData, setFieldValue }: { inputData: 
                     </MiddleText>
                 </label>
                 <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${hasError ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
-                <span className="text-red-700">{handleError(errors[name] as string) }</span>
+                <span className={`${hasError ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
             </>
         )
     }

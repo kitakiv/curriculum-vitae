@@ -3,16 +3,17 @@ import { Resource, resourceConfig
  } from "@/variables/admin/resource"
 
 import FormCreate from "./FormCreate"
-
-import MiddleText from "@/components/text/MiddleText"
+import MainText from "@/components/text/MainText"
 export default function ContactSection() {
     if (resourceConfig[Resource.CONTACT].createForm === null) return null
     if (!resourceConfig[Resource.CONTACT].createForm.action) return null
     return (
         
-        <FormCreate 
+        <FormCreate
         resourceType={Resource.CONTACT}>
-            <MiddleText tailwind='text-adminTx font-bold'>{resourceConfig[Resource.CONTACT].title}</MiddleText>
+            <MainText tailwind="text-center">
+                {resourceConfig[Resource.CONTACT].createForm.title}
+            </MainText>
         </FormCreate>
     )
 }

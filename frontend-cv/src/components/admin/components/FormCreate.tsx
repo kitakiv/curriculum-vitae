@@ -32,7 +32,7 @@ export default function FormCreate({ children, tailwind, resourceType}: FormElem
             onSubmit={async (values) => {
                 const formData = new FormData();
                 Object.entries(values).forEach(([key, value]) => {
-                    formData.append(key, String(value));
+                    formData.append(key, value);
                 });
                 startTransition(() => {
                     action(formData)
@@ -40,7 +40,7 @@ export default function FormCreate({ children, tailwind, resourceType}: FormElem
             }}
         >
             {({ setFieldValue }) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col gap-2 padding-elements`}>
+                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg`}>
                     {children}
                     {state?.message && (
                         <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
@@ -66,10 +66,9 @@ function SubmitButton({ pending }: { pending: boolean }) {
     const isDisabled = !isValid || hasErrors || pending;
 
     return (
-        <AdminButton
-            type="submit"
+        <AdminButton type="submit"
             disabled={isDisabled}
-            tailwind={`transition duration-700 flex justify-center items-center gap-2 ${!isDisabled ? 'group hover:shadow-lg hover:shadow-txSecond' : 'opacity-50 cursor-not-allowed'}`}
+            pending={pending}
         >
             {pending ? 'Loading...' : 'Create'}
         </AdminButton>

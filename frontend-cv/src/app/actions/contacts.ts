@@ -1,6 +1,8 @@
 'use server'
 import { CreateContactInput} from "@/gql/graphql"
-import { createContact } from "@/query/contact.query"
+import { createContact } from "@/query/contact.query";
+import { Resource, resourceConfig } from "@/variables/admin/resource";
+import { uploadFile } from "@/query/upload.http";
 
 export type ContactFormState = {
     message?: string;
@@ -15,23 +17,22 @@ export async function createContactAction(prevState: ContactFormState| undefined
     ;
 
     try {
-        // const result = await createContact(
-        //     {
-        //         createContactInput:
-        //             {
-        //                 contactLink: formData.get('contactLink') as string,
-        //                 contactName: formData.get('contactName') as string,
-        //                 contactSvg: null
-        //             }
-        //     }
-        // )
         console.log(formData);
+        const result = await createContact(
+            {
+                createContactInput:
+                    {
+                        contactLink: formData.get('contactLink') as string,
+                        contactName: formData.get('contactName') as string,
+                    }
+            }
+        );
+        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, 'contactSvg', result.id);
         
         return {
             success: true,
-            message: 'Signup successful!',
-            id: null
-            // id: result.id
+            message: 'Contact created successfully!',
+            id: result.id
         };
     } catch (error) {
         console.error('Signup error:', error);
