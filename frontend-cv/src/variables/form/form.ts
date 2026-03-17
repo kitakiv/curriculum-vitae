@@ -110,6 +110,29 @@ const form = {
         name: "Contacts",
         id: "contact-admin",
     },
+    certificatesForm: {
+        initialValues: { certificateTitle: "", certificateCompany: "", certificateDescription: "", certificateLink: "", certificateImage: "", certificatePeriodStart: new Date(), certificatePeriodEnd: new Date() },
+        inputsAdd: [
+            { id: "certificateTitle", label: "Certificate Title", name: "certificateTitle", placeholder: "Certificate Title", type: "text" },
+            { id: "certificateCompany", label: "Certificate Company", name: "certificateCompany", placeholder: "Certificate Company", type: "text" },
+            { id: "certificateDescription", label: "Certificate Description", name: "certificateDescription", placeholder: "Certificate Description", type: "text", as: "textarea" },
+            { id: "certificateLink", label: "Certificate Link", name: "certificateLink", placeholder: "Certificate Link", type: "text" },
+            { id: "certificateImage", label: "Certificate Image", name: "certificateImage", placeholder: "Certificate Image", type: "file" },
+            { id: "certificatePeriodStart", label: "Certificate Period Start", name: "certificatePeriodStart", placeholder: "Certificate Period Start", type: "date" },
+            { id: "certificatePeriodEnd", label: "Certificate Period End", name: "certificatePeriodEnd", placeholder: "Certificate Period End", type: "date" },
+        ],
+        inputsEdit: [
+            { id: "certificateTitle", label: "Certificate Title", name: "certificateTitle", placeholder: "Certificate Title", type: "text" },
+            { id: "certificateCompany", label: "Certificate Company", name: "certificateCompany", placeholder: "Certificate Company", type: "text" },
+            { id: "certificateDescription", label: "Certificate Description", name: "certificateDescription", placeholder: "Certificate Description", type: "text", as: "textarea" },
+            { id: "certificateLink", label: "Certificate Link", name: "certificateLink", placeholder: "Certificate Link", type: "text" },
+            { id: "certificatePeriodStart", label: "Certificate Period Start", name: "certificatePeriodStart", placeholder: "Certificate Period Start", type: "date" },
+            { id: "certificatePeriodEnd", label: "Certificate Period End", name: "certificatePeriodEnd", placeholder: "Certificate Period End", type: "date" },
+        ],
+        inputsEditImage: [
+            { id: "certificateImage", label: "Certificate Image", name: "certificateImage", placeholder: "Certificate Image", type: "file" },
+        ],
+    },
     mainImageForm: {
         initialValues: { mainImage: "" },
         inputs: [

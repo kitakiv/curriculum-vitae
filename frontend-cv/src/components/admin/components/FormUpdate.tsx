@@ -17,8 +17,9 @@ interface FormElementProps<V> {
     title: string;
 }
 
-export default function FormCreate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title}: FormElementProps<V>) {
+export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title}: FormElementProps<V>) {
     const [state, action, pending] = useActionState((prevState: PrevState<V> | undefined, formData: FormData) => actionForm(formData), undefined);
+    const [readonly, setReadonly] = React.useState(true);
 
     return (
         <Formik 
@@ -36,8 +37,8 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({setFieldValue}) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg`}>
+            {({setFieldValue, resetForm}) => (
+                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
                         <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
@@ -49,11 +50,23 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                             key={input.id}
                             inputData={input as InputType}
                             setFieldValue={setFieldValue}
+                            readonly={readonly}
                         />
                     ))}
-                    <SubmitButton pending={pending} >
-                        {title}
-                    </SubmitButton>
+                   {!readonly && (
+                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
+                            <SubmitButton pending={pending}>{title}</SubmitButton>
+                            <Button click={() => {
+                                setReadonly(true)
+                                resetForm();
+                            }}>Cancel</Button>
+                       </div>
+                   )}
+                   {readonly && (
+                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
+                            <Button click={() => setReadonly(false)}>Edit</Button>
+                        </div>
+                   )}
                 </Form>
             )}
         </Formik>
@@ -70,6 +83,15 @@ function SubmitButton({ pending, children }: { pending: boolean, children: React
             pending={pending}
         >
             {pending ? 'Loading...' : children}
+        </AdminButton>
+    );
+}
+
+function Button({ children, click }: { children: React.ReactNode, click: () => void }) {
+    return (
+        <AdminButton type="button" click={click}
+        >
+            {children}
         </AdminButton>
     );
 }

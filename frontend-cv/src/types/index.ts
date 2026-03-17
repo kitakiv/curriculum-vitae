@@ -36,7 +36,7 @@ class InputType {
     name: string = "";
     placeholder: string = "";
     type: string = "";
-    as?: "input" | "textarea" | "select" = "input";
+    as?: string = "";
     readonly?: boolean = false
 }
 

@@ -65,7 +65,7 @@ const projectDescription = Yup.string().required("Project description is require
 const image = Yup.mixed().required("Contact image is required")
 .test("fileSize", `File size must be less than 1MB`,
     (value) => value && (value as File).size <= 1024 * 1024 * 1)
-.test("fileType", "Invalid file type",
+.test("fileType", "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
     (value) => value && [
   "image/jpeg",
   "image/png",
@@ -77,7 +77,7 @@ const image = Yup.mixed().required("Contact image is required")
   "image/tiff",
   "image/x-icon",
   "image/svg"
-].includes((value as File).type));
+].includes((value as File).type.toLowerCase()));
 
 
 const projectGithubLink = Yup.string().required("Github link is required")
@@ -97,10 +97,31 @@ const contactName = Yup.string().required("Contact name is required")
 //     (value) => value && (value as File).size <= 1024 * 1024 * 100)
 // .test("fileType", "Invalid file type",
 //     (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
-
+const certificateCompany = Yup.string().required("Certificate company is required")
+.min(3, "Certificate company must be at least 3 characters long")
+.max(50, "Certificate company must be at most 50 characters long");
 const contactLink = Yup.string().required("Contact link is required")
 .url("Invalid contact link format")
 .matches(/^(https?:\/\/)/, "Invalid contact link format");
+
+const certificateTitle = Yup.string().required("Certificate name is required")
+.min(3, "Certificate name must be at least 3 characters long")
+.max(50, "Certificate name must be at most 50 characters long");
+
+const certificateDescription = Yup.string().required("Certificate description is required")
+.min(10, "Certificate description must be at least 10 characters long")
+.max(1000, "Certificate description must be at most 1000 characters long");
+
+const certificateLink = Yup.string().optional().required("Certificate link is required")
+.url("Invalid certificate link format")
+.matches(/^(https?:\/\/)/, "Invalid certificate link format");
+
+const certificatePeriodStart = Yup.date().required("Certificate period start date is required")
+.max(new Date(), "Certificate period start date must be in the past")
+.min(new Date('1900-01-01'), "Certificate period start date must be at least 1900-01-01");
+const certificatePeriodEnd = Yup.date().required("Certificate period end date is required")
+.min(new Date(), "Certificate period end date must be in the future")
+.max(new Date(Date.now()), "Certificate period end date must be in the past");
 
 const schema = {
     custom : Yup.object().shape({
@@ -167,6 +188,28 @@ const schema = {
         }),
         contactEditImage: Yup.object().shape({
             contactSvg: image
+        }),
+    },
+    certificate: {
+        certificateEdit: Yup.object().shape({
+            certificateTitle,
+            certificateDescription,
+            certificateLink,
+            certificatePeriodStart,
+            certificatePeriodEnd,
+            certificateCompany,
+        }),
+        certificateAdd: Yup.object().shape({
+            certificateTitle,
+            certificateDescription,
+            certificateLink,
+            certificatePeriodStart,
+            certificatePeriodEnd,
+            certificateCompany,
+            certificateImage: image
+        }),
+        certificateEditImage: Yup.object().shape({
+            certificateImage: image
         }),
     }
 }

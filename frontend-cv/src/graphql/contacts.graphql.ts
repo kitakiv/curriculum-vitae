@@ -11,6 +11,18 @@ const CONTACT_GET_QUERY = gql`
     }
 `;
 
+const CONTACT_GET_ONE_QUERY = gql`
+    query GetContact($id: ID!) {
+      contact(id: $id) {
+        contactLink
+        contactName
+        contactSvg
+        id
+        }
+    }
+`;
+
+
 const CONTACT_CREATE_MUTATION = gql`
     mutation CreateContact($createContactInput: CreateContactInput!) {
       createContact(createContactInput: $createContactInput) {
@@ -22,4 +34,21 @@ const CONTACT_CREATE_MUTATION = gql`
     }
 `;
 
-export { CONTACT_GET_QUERY, CONTACT_CREATE_MUTATION };
+const CONTACT_REMOVE_MUTATION = gql`
+    mutation RemoveContact($id: ID!) {
+      removeContact(id: $id)
+    }
+`;
+
+const CONTACT_UPDATE_MUTATION = gql`
+    mutation UpdateContact($updateContactInput: UpdateContactInput!) {
+      updateContact(updateContactInput: $updateContactInput) {
+        contactLink
+        contactName
+        contactSvg
+        id
+      }
+    }
+`;
+
+export { CONTACT_GET_QUERY, CONTACT_CREATE_MUTATION, CONTACT_UPDATE_MUTATION, CONTACT_GET_ONE_QUERY, CONTACT_REMOVE_MUTATION };

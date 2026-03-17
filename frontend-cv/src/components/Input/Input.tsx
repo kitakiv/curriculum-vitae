@@ -3,8 +3,8 @@ import { InputType } from "@/types/index";
 import { useState, useEffect } from "react"
 import MiddleText from "../text/MiddleText";
 
-export default function InputElement({ inputData, setFieldValue }: { inputData: InputType, setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object> }) {
-    const { id, label, name, placeholder, type, readonly, as } = inputData;
+export default function InputElement({ inputData, setFieldValue, readonly = false }: { inputData: InputType, setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object>, readonly?: boolean }) {
+    const { id, label, name, placeholder, type, as } = inputData;
     const [hasError, setHasError] = useState<boolean>(false)
     const { errors, touched } = useFormikContext<any>();
     console.log(errors);
@@ -52,8 +52,8 @@ export default function InputElement({ inputData, setFieldValue }: { inputData: 
                         {label}
                     </MiddleText>
                 </label>
-                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${hasError ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
-                <span className={`${hasError ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
+                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
+                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
             </>
         )
     }

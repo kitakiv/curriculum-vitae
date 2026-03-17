@@ -1,18 +1,24 @@
-import { create } from "domain";
 import form from "../form/form";
 import schema from "@/validation/schemaValidation";
-import { createContactAction } from "@/app/actions/contacts";
+import { createContactAction, updateContactAction, updateContactImageAction } from "@/app/actions/contacts";
 import { UPLOADSERVICE } from "@/variables/upload/upload";
+import { createSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
+import table from "../table/table";
 
 export enum Resource {
-  PROJECT = 'project',
-  SLIDER = 'slider',
-  CERTIFICATE = 'certificate',
-  CONTACT = 'contact',
-  TECHSTACK = 'techstack',
   USER = 'user',
+  CONTACT = 'contact',
+  PROJECT = 'project',
+  TECHSTACK = 'techstack',
+  SLIDER = 'slider',
   PROFILE = 'profile',
+  ROLE = 'role',
+  IMAGE = 'image',
+  REFRESH = 'refresh',
+  CATEGORY = 'category',
+  CERTIFICATE = 'certificate',
 }
+
 
 export enum Action {
   CREATE = 'create',
@@ -24,6 +30,7 @@ export enum Action {
 const adminVariables = {
   searchParamResourse: 'resource',
   pathAdminPage: '/admin/dashboard',
+  pathAdminEdit: '/update'
 }
 
 const resourceConfig = {
@@ -31,13 +38,13 @@ const resourceConfig = {
     id: 'admin-project',
     title: 'Projects',
     icon: '/svg/project.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.PROJECT}`,
+    path: `${adminVariables.pathAdminPage}/${Resource.PROJECT}`,
     editForm: form.projectForm,
     createForm: {
       inputs: form.projectForm.inputsAdd,
       initialValues: form.projectForm.initialValues,
       action: null,
-      schema: schema.project,
+      schemaKey: 'project.projectAdd',
       title: 'Create project',
       uploadConfig: UPLOADSERVICE.PROJECTS
     },
@@ -49,49 +56,100 @@ const resourceConfig = {
     id: 'admin-slider',
     title: 'Sliders',
     icon: '/svg/slider.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.SLIDER}`,
-    editForm: form.sliderForm,
+    path: `${adminVariables.pathAdminPage}/${Resource.SLIDER}`,
+    table: {
+      table: table.sliderTable
+    },
     createForm: {
       inputs: form.sliderForm.inputsAdd,
       initialValues: form.sliderForm.initialValues,
-      action: null,
-      schema: schema.slider,
+      action: createSliderAction,
+      schema: schema.slider.sliderAdd,
       title: 'Create slider',
+      uploadConfig: UPLOADSERVICE.SLIDERS,
+      link: `${adminVariables.pathAdminPage}/${Resource.SLIDER}/${Action.CREATE}`,
+    },
+    editFrom: {
+      inputs: form.sliderForm.inputsEdit,
+      initialValues: form.sliderForm.initialValues,
+      action: updateSliderAction,
+      schema: schema.slider.sliderEdit,
+      title: 'Edit slider',
+    },
+    editFormImage: {
+      inputs: form.sliderForm.inputsEditImage,
+      initialValues: form.sliderForm.initialValues,
+      action: updateSliderImageAction,
+      schema: schema.slider.sliderImage,
+      title: 'Edit slider image',
     },
     validationSchema: schema.slider,
     form: form.sliderForm,
-    actionCreate: null
   },
   [Resource.CERTIFICATE]: {
     id: 'admin-certificates',
     title: 'Certificates',
     icon: '/svg/certificate.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.CERTIFICATE}`,
-    editForm: null,
-    createForm: {
-      inputs: null,
-      initialValues: null,
-      action: null,
-      schema: null,
-      title: 'Create certificate',
+    path: `${adminVariables.pathAdminPage}/${Resource.CERTIFICATE}`,
+    table: {
+      table: table.certificateTable
     },
-    validationSchema: null,
-    form: null,
-    actionCreate: null
+    createForm: {
+      inputs: form.certificatesForm.inputsAdd,
+      initialValues: form.certificatesForm.initialValues,
+      action: createContactAction,
+      schema: schema.certificate.certificateAdd,
+      title: 'Create Certificate',
+      uploadConfig: UPLOADSERVICE.CERTIFICATE,
+      link: `${adminVariables.pathAdminPage}/${Resource.CERTIFICATE}/${Action.CREATE}`,
+    },
+    editFrom: {
+      inputs: form.certificatesForm.inputsEdit,
+      initialValues: form.certificatesForm.initialValues,
+      action: updateContactAction,
+      schema: schema.certificate.certificateEdit,
+      title: 'Edit Certificate',
+    },
+    editFormImage: {
+      inputs: form.certificatesForm.inputsEditImage,
+      initialValues: form.certificatesForm.initialValues,
+      action: updateContactImageAction,
+      schema: schema.certificate.certificateEditImage,
+      title: 'Edit Certificate file',
+    },
+    validationSchema: schema.certificate,
+    form: form.certificatesForm,
   },
   [Resource.CONTACT]: {
     id: 'admin-contacts',
     title: 'Contacts',
     icon: '/svg/contact.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.CONTACT}`,
-    editForm: form.contactsForm,
+    path: `${adminVariables.pathAdminPage}/${Resource.CONTACT}`,
+    table: {
+      table: table.contactTable
+    },
     createForm: {
       inputs: form.contactsForm.inputsAdd,
       initialValues: form.contactsForm.initialValues,
       action: createContactAction,
       schema: schema.contact.contactAdd,
       title: 'Create contact',
-      uploadConfig: UPLOADSERVICE.CONTACTS
+      uploadConfig: UPLOADSERVICE.CONTACTS,
+      link: `${adminVariables.pathAdminPage}/${Resource.CONTACT}/${Action.CREATE}`,
+    },
+    editFrom: {
+      inputs: form.contactsForm.inputsEdit,
+      initialValues: form.contactsForm.initialValues,
+      action: updateContactAction,
+      schema: schema.contact.contactEdit,
+      title: 'Edit contact',
+    },
+    editFormImage: {
+      inputs: form.contactsForm.inputsEditImage,
+      initialValues: form.contactsForm.initialValues,
+      action: updateContactImageAction,
+      schema: schema.contact.contactEditImage,
+      title: 'Edit contact image',
     },
     validationSchema: schema.contact,
     form: form.contactsForm,
@@ -100,7 +158,7 @@ const resourceConfig = {
     id: 'admin-techstack',
     title: 'Tech Stack',
     icon: '/svg/tech.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.TECHSTACK}`,
+    path: `${adminVariables.pathAdminPage}/${Resource.TECHSTACK}`,
     editForm: null,
     createForm: {
       inputs: null,
@@ -117,7 +175,7 @@ const resourceConfig = {
     id: 'admin-users',
     title: 'Users',
     icon: '/svg/user.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.USER}`,
+    path: `${adminVariables.pathAdminPage}/${Resource.USER}`,
     editForm: null,
     createForm: null,
     validationSchema: null,
@@ -128,7 +186,7 @@ const resourceConfig = {
     id: 'admin-profile',
     title: 'Profile',
     icon: '/svg/profile.svg',
-    path: `${adminVariables.pathAdminPage}?${adminVariables.searchParamResourse}=${Resource.PROFILE}`,
+    path: `${adminVariables.pathAdminPage}/${Resource.PROFILE}`,
     editForm: form.profileForm,
     createForm: null,
     validationSchema: schema.profile,
