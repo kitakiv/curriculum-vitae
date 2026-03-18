@@ -4,7 +4,11 @@ import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContact
 import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
 import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
 import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
-import { Contact, Slider } from "@/gql/graphql";
+import { Contact, Profile, Slider } from "@/gql/graphql";
+import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
+import { Certificate } from "crypto";
+import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
+import UpdateFormProfile from "../profile/UpdateFormProfile";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -27,7 +31,19 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
                     <UpdateFormSliderImage initialValues={resource as Slider} resourceId={resourceId}/>
                 </>
             )
-
+        case Resource.CERTIFICATE:
+            return (
+                <>
+                    <UpdateFormCertificate initialValues={resource as Certificate} resourceId={resourceId} />
+                    <UpdateFormCertificateImage initialValues={resource as Certificate} resourceId={resourceId} />
+                </>
+            )
+        case Resource.PROFILE:
+            return (
+                <>
+                    <UpdateFormProfile initialValues={resource as Profile} resourceId={resourceId}/>
+                </>
+            )
         default:
             return null; 
     }

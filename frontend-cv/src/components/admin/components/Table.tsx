@@ -32,7 +32,7 @@ export default function Table({
 }: Props) {
   if (!canRead) return null;
   if (!canUpdate) {
-    columns.pop();
+    columns.shift()
   }
   const createResource = resourceConfig[resource].createForm;
   return (
@@ -44,12 +44,13 @@ export default function Table({
       }
       <Paper sx={{ height: '100%', width: '100%', minHeight: 500 }}>
         <DataGrid
+          className="bg-adminGr100 text-adminTx"
           rows={rows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20]}
           checkboxSelection
-          sx={{ border: 0 }}
+          sx={{border: 0}}
         />
       </Paper>
     </>

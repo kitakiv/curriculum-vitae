@@ -7,7 +7,7 @@ import { CONTACT_UPDATE_MUTATION, CONTACT_CREATE_MUTATION } from "@/graphql/cont
 import { PrevState } from "./action.type";
 
 
-
+const CONTACT_SVG = 'contactSvg';
 export async function createContactAction(prevState: PrevState<CreateContactInput>| undefined, formData: FormData):
  Promise<PrevState<CreateContactInput>> {
 
@@ -23,7 +23,7 @@ export async function createContactAction(prevState: PrevState<CreateContactInpu
                     }
             }
         );
-        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, 'contactSvg', result.createContact.id);
+        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, CONTACT_SVG, result.createContact.id);
         
         return {
             success: true,
@@ -42,18 +42,16 @@ export async function createContactAction(prevState: PrevState<CreateContactInpu
 
 export async function updateContactAction(prevState: PrevState<CreateContactInput>| undefined, formData: FormData, intitalValues: CreateContactInput, id: string):
  Promise<PrevState<CreateContactInput>> {
-    console.log(formData);
-    console.log(intitalValues);
 
     const updateInput: UpdateContactInput = {
         id: id,
     };
 
     Object.entries(intitalValues).forEach(([key, value]) => {
-        if (formData.get(key) !== value) {
+        if (formData.get(key) !== value && key !== CONTACT_SVG) {
             updateInput[key as keyof UpdateContactInput] = formData.get(key);
         }
-    })
+        })
     try {
         const res = await queryGraphQL<UpdateContactMutation, UpdateContactMutationVariables>
         (CONTACT_UPDATE_MUTATION, {
@@ -80,7 +78,7 @@ export async function updateContactAction(prevState: PrevState<CreateContactInpu
 export async function updateContactImageAction(prevState: PrevState<CreateContactInput>| undefined, formData: FormData, id: string):
  Promise<PrevState<CreateContactInput>> {
     try {
-        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, 'contactSvg', id);
+        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, CONTACT_SVG, id);
         
         return {
             success: true,

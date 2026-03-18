@@ -1,9 +1,11 @@
 import form from "../form/form";
 import schema from "@/validation/schemaValidation";
 import { createContactAction, updateContactAction, updateContactImageAction } from "@/app/actions/contacts";
+import { createCertificateAction, updateCertificateAction, updateCertificateImageAction } from "@/app/actions/certificate";
 import { UPLOADSERVICE } from "@/variables/upload/upload";
 import { createSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
 import table from "../table/table";
+import { updateProfileAction, updateProfileImageAction } from "@/app/actions/profile";
 
 export enum Resource {
   USER = 'user',
@@ -97,7 +99,7 @@ const resourceConfig = {
     createForm: {
       inputs: form.certificatesForm.inputsAdd,
       initialValues: form.certificatesForm.initialValues,
-      action: createContactAction,
+      action: createCertificateAction,
       schema: schema.certificate.certificateAdd,
       title: 'Create Certificate',
       uploadConfig: UPLOADSERVICE.CERTIFICATE,
@@ -106,14 +108,14 @@ const resourceConfig = {
     editFrom: {
       inputs: form.certificatesForm.inputsEdit,
       initialValues: form.certificatesForm.initialValues,
-      action: updateContactAction,
+      action: updateCertificateAction,
       schema: schema.certificate.certificateEdit,
       title: 'Edit Certificate',
     },
     editFormImage: {
       inputs: form.certificatesForm.inputsEditImage,
       initialValues: form.certificatesForm.initialValues,
-      action: updateContactImageAction,
+      action: updateCertificateImageAction,
       schema: schema.certificate.certificateEditImage,
       title: 'Edit Certificate file',
     },
@@ -187,11 +189,27 @@ const resourceConfig = {
     title: 'Profile',
     icon: '/svg/profile.svg',
     path: `${adminVariables.pathAdminPage}/${Resource.PROFILE}`,
-    editForm: form.profileForm,
+    table: {
+      table: table.profileTable
+    },
     createForm: null,
-    validationSchema: schema.profile,
-    form: form.profileForm,
-    actionCreate: null
+    editFrom: {
+      inputs: form.profileForm.inputsEdit,
+      initialValues: form.profileForm.initialValues,
+      action: updateProfileAction,
+      schema: schema.profile.profileEdit,
+      title: 'Edit Profile',
+    },
+    editFormImage: {
+      inputs: form.profileForm.inputsEditImage,
+      initialValues: form.profileForm.initialValues,
+      action: updateProfileImageAction,
+      schema: schema.profile.profileEditImage,
+      title: 'Edit Profile photos',
+      uploadConfig: UPLOADSERVICE.PROFILE
+    },
+    validationSchema: schema.slider,
+    form: form.sliderForm,
   },
 };
 

@@ -1,3 +1,4 @@
+import { mul } from "three/tsl";
 
 
 
@@ -39,13 +40,19 @@ const form = {
     profileForm: {
         type: "oneElement",
         initialValues: { name: "", surname: "", typingText: "", email: "", phone: "", location: "" },
-        inputs: [
+        inputsEdit: [
             { id: "name", label: "Name", name: "name", placeholder: "Name", type: "text" },
             { id: "surname", label: "Surname", name: "surname", placeholder: "Surname", type: "text" },
             { id: "typingText", label: "Typing Text", name: "typingText", placeholder: "Typing Text", type: "text" },
             { id: "email", label: "Email", name: "email", placeholder: "Email", type: "email" },
             { id: "phone", label: "Phone", name: "phone", placeholder: "Phone", type: "tel" },
             { id: "location", label: "Location", name: "location", placeholder: "Location", type: "text" },
+        ],
+        inputsEditImage: [
+            { id: "profilePhotos", label: "Profile Photos", name: "profilePhoto", placeholder: "Profile Photo", type: "file"},
+        ],
+        inputsEditImages: [
+            { id: "profilePhotos", label: "Profile Photos", name: "profilePhotos", placeholder: "Profile Photos", type: "files", multi: true},
         ],
         title: "Profile settings",
         name: "Profile",

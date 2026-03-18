@@ -148,7 +148,7 @@ type Mutation {
   login(loginInput: LoginInput!): CookiesData!
   logout: Boolean!
   refreshTheTokens: CookiesData!
-  removeCertificate(id: ID!): Certificate!
+  removeCertificate(id: ID!): ID!
   removeContact(id: ID!): ID!
   removeProject(id: ID!): ID!
   removeRole(id: ID!): ID!
@@ -361,7 +361,7 @@ input UpdateProfileInput {
   location: String
   name: String
   phone: String
-  profilePhoto: [String!]
+  profilePhotos: [String!]
   surname: String
   typingText: String
 }

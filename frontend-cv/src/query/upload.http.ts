@@ -17,4 +17,15 @@ function uploadFile(resource: UPLOADSERVICE, body: FormData, filesId: string, id
     throw new Error('File not found');
 }
 
-export { uploadFile };
+function uploadFiles(resource: UPLOADSERVICE, body: FormData, filesId: string, id: string) {
+    const bodyForm = new FormData();
+    const files = body.get(filesId);
+    const filesArray = Array.isArray(files) ? files : [files];
+
+    for (let i = 0; i < filesArray.length; i++) {
+        bodyForm.append(UPLOADTYPE.FILES, filesArray[i]);
+    }
+    return apiClient.uploadFiles(resource, bodyForm, id);
+}
+
+export { uploadFile, uploadFiles };

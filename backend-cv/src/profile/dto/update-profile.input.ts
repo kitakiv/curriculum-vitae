@@ -50,5 +50,5 @@ export class UpdateProfileInput {
   @IsOptional()
   @IsArray()
   @Field(() => [String], { nullable: true })
-  profilePhoto?: string[];
+  profilePhotos?: string[];
 }

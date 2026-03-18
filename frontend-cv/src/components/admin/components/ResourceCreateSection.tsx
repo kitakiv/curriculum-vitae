@@ -4,6 +4,7 @@ import { hasPermission } from "@/query/permissions";
 import { Action, Resource} from "@/variables/admin/resource";
 import CreateFormContact from "../contact/CreateFormContact";
 import CreateFormSlider from "../slider/CreateFormSlider";
+import CreateFormCertificate from "../certificates/CreateFormCertificate";
 
 
 export default function ResourceCreateSection({user, currentResource}: {user: GetUserMutation['getUser'], currentResource: Resource}) {
@@ -14,6 +15,8 @@ export default function ResourceCreateSection({user, currentResource}: {user: Ge
             return <CreateFormContact />
         case Resource.SLIDER:
             return <CreateFormSlider />
+        case Resource.CERTIFICATE:
+            return <CreateFormCertificate />
         default:
             return null; 
     }

@@ -64,7 +64,7 @@ export default function Cards({ certificates }: { certificates: GetCertificatesQ
                 <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={certificate.id} href={`/${certificate.id}`} passHref>
                     <ProgressRounds tailwind="timeline-round" colorRound={colorRound} />
                     <ArrowWrapper tailwind="grid col-span-1">
-                        <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={`/image/${certificate.certificateImage}`} alt={certificate.certificateTitle} />
+                        <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={certificate.certificateImage} alt={certificate.certificateTitle} />
                     </ArrowWrapper>
                     <CardWrapper tailwind="col-span-2 grid grid-rows-6 padding-elements liquid-glass-burger">
                     <MainText tailwind="row-span-1">{certificate.certificateTitle}</MainText>

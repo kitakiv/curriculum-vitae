@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 interface Props {
     params: {
-        value: string
+        value: string | null
     }
 }
 

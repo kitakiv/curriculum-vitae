@@ -1,4 +1,5 @@
 
+import { profile } from "console";
 import { sign } from "crypto";
 import * as Yup from "yup";
 // const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -62,6 +63,26 @@ const projectDescription = Yup.string().required("Project description is require
 //  return validFileExtensions[fileTypeKey as keyof typeof validFileExtensions].includes(fileType);
 // }
 
+const images = Yup.mixed().required("Image are required")
+  .test("fileSize", `File size must be less than 1MB`,
+    (value: File[]) => {
+      return value?.map((file: File) => {
+        if (file.size > 1024 * 1024 * 1) {
+          return false;
+        }
+        return true;
+      }).every(Boolean);
+    })
+  .test("fileType", "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
+    (value: File[]) => {
+      return value?.map((file: File) => {
+        if (!["image/jpeg", "image/png", "image/webp", "image/svg+xml", "image/gif", "image/avif", "image/bmp", "image/tiff", "image/x-icon", "image/svg"].includes(file.type.toLowerCase())) {
+          return false;
+        }
+        return true;
+      }).every(Boolean);
+    });
+
 const image = Yup.mixed().required("Contact image is required")
 .test("fileSize", `File size must be less than 1MB`,
     (value) => value && (value as File).size <= 1024 * 1024 * 1)
@@ -120,7 +141,7 @@ const certificatePeriodStart = Yup.date().required("Certificate period start dat
 .max(new Date(), "Certificate period start date must be in the past")
 .min(new Date('1900-01-01'), "Certificate period start date must be at least 1900-01-01");
 const certificatePeriodEnd = Yup.date().required("Certificate period end date is required")
-.min(new Date(), "Certificate period end date must be in the future")
+.min(new Date('1900-01-01'), "Certificate period end date must be in the future")
 .max(new Date(Date.now()), "Certificate period end date must be in the past");
 
 const schema = {
@@ -133,14 +154,19 @@ const schema = {
         name,
         password
     }),
-    profile: Yup.object().shape({
-        name,
-        surname,
-        typingText,
-        email,
-        phone,
-        location
-    }),
+    profile: {
+        profileEdit: Yup.object().shape({
+            name,
+            surname,
+            typingText,
+            email,
+            phone,
+            location
+        }),
+        profileEditImage: Yup.object().shape({
+            profilePhotos: images
+        })
+    },
     mainImage: Yup.object().shape({
         mainImage: image
     }),

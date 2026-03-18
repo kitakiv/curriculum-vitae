@@ -47,7 +47,7 @@ export async function updateSliderAction(prevState: PrevState<CreateSliderInput>
     };
 
     Object.entries(intitalValues).forEach(([key, value]) => {
-        if (formData.get(key) !== value) {
+        if (formData.get(key) !== value && key !== SLIDER_IMAGE) {
             updateInput[key as keyof UpdateSliderInput] = formData.get(key)?.toString() as string;
         }
     })

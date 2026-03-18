@@ -63,7 +63,7 @@ export class CertificateResolver {
   @PermissionGuard([
     { resource: Resource.CERTIFICATE, actions: [Action.DELETE] },
   ])
-  @Mutation(() => Certificate)
+  @Mutation(() => ID)
   async removeCertificate(@Args('id', { type: () => ID }) id: string) {
     try {
       const key = await this.certificateImageService.getImageKey(id);

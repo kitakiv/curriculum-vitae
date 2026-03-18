@@ -297,6 +297,11 @@ class ServerApi extends RequestClient {
         return await this.fetchHttp({ method: HTTPMETHOD.POST, body, url });
     }
 
+    async uploadFiles(resource: UPLOADSERVICE, body: FormData, id: string) {
+        const url = this.createUrl(resource, id)
+        return await this.fetchHttp({ method: HTTPMETHOD.POST, body, url });
+    }
+
     private createUrl(resource: UPLOADSERVICE, id: string, index?: number) {
         if (index) {
             return `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}-${index}`;

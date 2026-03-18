@@ -1,7 +1,8 @@
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from '@mui/x-data-grid';
 import TableImage from "@/components/admin/components/TableImage";
 import { Resource } from '../admin/resource';
 import EditAdminButton from "@/components/admin/components/EditAdminButton";
+import Table from '@/components/admin/components/Table';
 interface Table {
     [key: string]: {
         columns: GridColDef[]
@@ -20,6 +21,13 @@ const table: Table = {
 
     contactsTable: {
         columns: [
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 100,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CONTACT} />),
+            },
             {
                 field: 'id', headerName: 'ID', width: 70,
                 type: 'string',
@@ -48,17 +56,19 @@ const table: Table = {
                 sortable: false,
                 renderCell: (params) => (<TableImage params={params || null} />),
             },
-            {
-                field: 'edit',
-                headerName: 'Edit',
-                width: 100,
-                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CONTACT} />),
-            }
+
 
         ]
     },
     sliderTable: {
-         columns: [
+        columns: [
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 100,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.SLIDER} />),
+            },
             {
                 field: 'id', headerName: 'ID', width: 70,
                 type: 'string',
@@ -77,7 +87,7 @@ const table: Table = {
                 headerName: 'Descripstion of slider',
                 width: 300,
                 sortable: true,
-                type: 'string',
+                type: 'longText',
             },
             {
                 field: 'sliderImage',
@@ -87,17 +97,18 @@ const table: Table = {
                 sortable: false,
                 renderCell: (params) => (<TableImage params={params || null} />),
             },
+
+        ]
+    },
+    certificateTable: {
+        columns: [
             {
                 field: 'edit',
                 headerName: 'Edit',
                 width: 100,
-                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.SLIDER} />),
-            }
-
-         ]
-    },
-    certificateTable: {
-        columns: [
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
+            },
             {
                 field: 'id', headerName: 'ID', width: 70,
                 type: 'string',
@@ -124,7 +135,7 @@ const table: Table = {
                 width: 300,
                 filterable: true,
                 sortable: true,
-                type: 'string',
+                type: 'longText',
             },
             {
                 field: 'certificateLink',
@@ -138,7 +149,7 @@ const table: Table = {
                 width: 150,
                 sortable: true,
                 filterable: true,
-                type: 'date',
+                type: 'string',
             },
             {
                 field: 'certificatePeriodEnd',
@@ -146,7 +157,7 @@ const table: Table = {
                 width: 150,
                 sortable: true,
                 filterable: true,
-                type: 'date',
+                type: 'string',
             },
             {
                 field: 'certificateImage',
@@ -154,11 +165,86 @@ const table: Table = {
                 width: 150,
                 renderCell: (params) => (<TableImage params={params || null} />),
             },
+        ]
+    },
+    profileTable: {
+        columns: [
             {
                 field: 'edit',
                 headerName: 'Edit',
                 width: 100,
-                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.PROFILE} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 70,
+                type: 'string',
+            },
+            {
+                field: 'name',
+                headerName: 'Name',
+                width: 150,
+                type: 'string',
+            },
+            {
+                field: 'surname',
+                headerName: 'Surname',
+                width: 150,
+                type: 'string',
+            },
+            {
+                field: 'email',
+                headerName: 'Email',
+                width: 200,
+                sortable: true,
+                filterable: true,
+                type: 'string',
+            },
+            {
+                field: 'phone',
+                headerName: 'Phone',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                valueFormatter: (params: { value: string }) => {
+                    const phone = params.value || '';
+                    return phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                },
+                type: 'string',
+            },
+            {
+                field: 'typingText',
+                headerName: 'Text on the main page',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                type: 'longText',
+            },
+            {
+                field: 'location',
+                headerName: 'Location',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                type: 'string',
+            },
+            {
+                field: 'profilePhotos',
+                headerName: 'Profile photos',
+                width: 150,
+                renderCell: (params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>) => {
+                    const value = params.value as string[];
+                    if (!value || value.length === 0) {
+                        return <TableImage params={{ value: null }} />
+                    }
+                    return (
+                        <>
+                        {
+                            value.map((photo: string) => 
+                            <TableImage key={photo.at(-1)} params={{ value: photo }} />
+                        )}
+                        </>
+                    )
+                }
             }
         ]
     }
