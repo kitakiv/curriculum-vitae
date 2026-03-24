@@ -6,6 +6,7 @@ import AdminButton from '@/components/button/AdminButton';
 import React, { useActionState, startTransition } from 'react';
 import SmallText from '@/components/text/SmallText';
 import { PrevState } from '@/app/actions/action.type';
+import CustomizedSnackbars from '@/components/animation/Alert';
 
 interface FormElementProps<V> {
     children?: React.ReactNode;
@@ -17,12 +18,12 @@ interface FormElementProps<V> {
     title: string;
 }
 
-export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title}: FormElementProps<V>) {
+export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
     const [state, action, pending] = useActionState((prevState: PrevState<V> | undefined, formData: FormData) => actionForm(formData), undefined);
     const [readonly, setReadonly] = React.useState(true);
 
     return (
-        <Formik 
+        <Formik
             initialValues={intialValues}
             validationSchema={schema}
             onSubmit={async (values) => {
@@ -37,13 +38,19 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({setFieldValue, resetForm}) => (
+            {({ setFieldValue, resetForm }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
-                        <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
-                            {state.message}
-                        </SmallText>
+                        <>
+                            <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
+                                {state.message}
+                            </SmallText>
+                            <CustomizedSnackbars open={true} success={state?.success || false}>
+                                {state.message}
+                            </CustomizedSnackbars>
+                        </>
+
                     )}
                     {inputs.map((input) => (
                         <InputElement
@@ -53,20 +60,20 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                             readonly={readonly}
                         />
                     ))}
-                   {!readonly && (
+                    {!readonly && (
                         <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
                             <SubmitButton pending={pending}>{title}</SubmitButton>
                             <Button click={() => {
                                 setReadonly(true)
                                 resetForm();
                             }}>Cancel</Button>
-                       </div>
-                   )}
-                   {readonly && (
+                        </div>
+                    )}
+                    {readonly && (
                         <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
                             <Button click={() => setReadonly(false)}>Edit</Button>
                         </div>
-                   )}
+                    )}
                 </Form>
             )}
         </Formik>

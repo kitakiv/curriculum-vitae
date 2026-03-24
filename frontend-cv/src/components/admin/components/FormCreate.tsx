@@ -6,6 +6,7 @@ import AdminButton from '@/components/button/AdminButton';
 import React, { useActionState, startTransition } from 'react';
 import SmallText from '@/components/text/SmallText';
 import { PrevState } from '@/app/actions/action.type';
+import CustomizedSnackbars from '@/components/animation/Alert';
 
 interface FormElementProps<V> {
     children?: React.ReactNode;
@@ -17,11 +18,11 @@ interface FormElementProps<V> {
     title: string;
 }
 
-export default function FormCreate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title}: FormElementProps<V>) {
+export default function FormCreate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
     const [state, action, pending] = useActionState((prevState: PrevState<V> | undefined, formData: FormData) => actionForm(formData), undefined);
 
     return (
-        <Formik 
+        <Formik
             initialValues={intialValues}
             validationSchema={schema}
             onSubmit={async (values) => {
@@ -36,13 +37,19 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({setFieldValue}) => (
+            {({ setFieldValue }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg`}>
                     {children}
                     {state?.message && (
-                        <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
-                            {state.message}
-                        </SmallText>
+                        <>
+                            <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
+                                {state.message}
+                            </SmallText>
+                            <CustomizedSnackbars open={true} success={state?.success || false}>
+                                {state.message}
+                            </CustomizedSnackbars>
+                        </>
+
                     )}
                     {inputs.map((input) => (
                         <InputElement

@@ -1,37 +1,36 @@
 import { Field, ErrorMessage as Error, useFormikContext } from "formik";
 import { InputType } from "@/types/index";
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import MiddleText from "../text/MiddleText";
+import { useDropzone } from 'react-dropzone'
+import SmallText from "../text/SmallText";
 
 export default function InputElement({ inputData, setFieldValue, readonly = false }: { inputData: InputType, setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object>, readonly?: boolean }) {
     const { id, label, name, placeholder, type, as } = inputData;
     const [hasError, setHasError] = useState<boolean>(false)
-    const { errors, touched } = useFormikContext<any>();
-    console.log(errors);
-    useEffect(() => {
-        if (errors[name] && touched[name]) {
-            setHasError(true);
-        } else {
-            setHasError(false);
-        }
-    }, [errors, touched, name]);
-    
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        if (type === "file") {
-            const file = event.target.files?.[0];
-            if (file) {
+    const { errors } = useFormikContext<any>();
+    const [fileImages, setFileImages] = useState<{ file: File; preview: string; }[]>([]);
+    const onDrop = useCallback((acceptedFiles: File[]) => {
+        const file = acceptedFiles[0];
+        if (file) {
+            if (file instanceof File) {
                 setFieldValue(name, file);
                 if (!errors[name]) {
                     setHasError(false);
+                    console.log('file', file);
+                    const fileWithPreview = {
+                        file,
+                        preview: URL.createObjectURL(file),
+                    };
+                    setFileImages([fileWithPreview]);
+
                 } else {
                     setHasError(true);
                 }
             }
         }
-        if (type === "files") {
-            console.log(event.target.files);
-        }
-    }
+    }, [])
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
     function handleError(error: string | undefined) {
         if (error) {
@@ -56,11 +55,12 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                     </MiddleText>
                 </label>
                 <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={"file"} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
-                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
+                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string)}</span>
             </>
         )
     }
     else if (type === "file" && !readonly) {
+
         return (
             <>
                 <label htmlFor={id}>
@@ -68,8 +68,24 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                         {label}
                     </MiddleText>
                 </label>
-                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} multiple onChange={handleChange} />
-                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
+                <div className={`w-full min-h-40 transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer border-dashed focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} {...getRootProps()}>
+                    <input name={name} id={id}  {...getInputProps()} />
+                    {
+
+                        isDragActive ?
+                            <SmallText tailwind="text-footerTx">Drop the files here ...</SmallText> :
+                            <SmallText tailwind="text-footerTx">Drag &apos;n&apos; drop some files here, or click to select files</SmallText>
+                    }
+                    {!errors[name] && fileImages.length > 0 &&
+                    fileImages.map((file, index) => (
+                        <div key={`file-${name}-${index}`}>
+                            <SmallText tailwind="text-footerTx">{file.file.name}</SmallText>
+                        </div>
+                    ))
+                }
+
+                </div>
+                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string)}</span>
             </>
         )
     }
