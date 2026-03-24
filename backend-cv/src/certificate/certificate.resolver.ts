@@ -75,8 +75,6 @@ export class CertificateResolver {
         cause: error,
       });
     }
-    return {
-      id,
-    };
+    return id;
   }
 }

@@ -1,12 +1,13 @@
 'use client'
 import {
-  Resource, resourceConfig
+  Resource
 } from "@/variables/admin/resource"
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import { GridColDef } from '@mui/x-data-grid';
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import HelpButtons from "./HelpButtons";
+
 
 interface Props {
   canCreate: boolean,
@@ -30,29 +31,47 @@ export default function Table({
   resource,
   paginationModel = { page: 0, pageSize: 10 }
 }: Props) {
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set<GridRowId>([]),
+  });
+
+  const [columnModel, setColumnModel] = useState<GridColDef[]>(columns);
+  useEffect(() => {
+    if (!canUpdate) {
+      setColumnModel((prev) => {
+        return prev.filter((col) => col.field !== 'edit');
+      })
+    }
+    if (!canDelete) {
+      setColumnModel((prev) => {
+        return prev.filter((col) => col.field !== 'delete');
+      })
+    }
+  }, [canDelete, canCreate, canUpdate, canRead]);
+
+
   if (!canRead) return null;
-  if (!canUpdate) {
-    columns.shift()
-  }
-  const createResource = resourceConfig[resource].createForm;
   return (
-    <>
-      {canCreate &&
-        <Link href={createResource?.link || ''}>
-          <Button variant="contained">{createResource?.title || ''}</Button>
-        </Link>
-      }
-      <Paper sx={{ height: '100%', width: '100%', minHeight: 500 }}>
+    <div className="w-full h-full">
+      <HelpButtons canDelete={canDelete} canCreate={canCreate} ids={rowSelectionModel.ids} resource={resource} />
+      <Paper sx={{ width: '100%'}}>
         <DataGrid
           className="bg-adminGr100 text-adminTx"
           rows={rows}
-          columns={columns}
+          columns={columnModel}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20]}
           checkboxSelection
-          sx={{border: 0}}
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
+            console.log(newRowSelectionModel);
+          }}
+          showToolbar
+          rowSelectionModel={rowSelectionModel}
+          sx={{ border: 0, height: '100%', width: '100%', minHeight: '100%' }}
         />
       </Paper>
-    </>
+    </div>
   )
 }

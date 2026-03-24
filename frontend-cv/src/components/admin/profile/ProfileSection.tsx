@@ -14,9 +14,9 @@ interface Props {
 export default function ProfileSection({ user, rows }: Props) {
     const resource = Resource.PROFILE;
     const canRead = hasPermission(user, resource, [Action.READ]);
-    const canCreate = hasPermission(user, resource, [Action.CREATE]);
+    const canCreate = false;
     const canUpdate = hasPermission(user, resource, [Action.UPDATE]);
-    const canDelete = hasPermission(user, resource, [Action.DELETE]);
+    const canDelete = false;
     const columns = resourceConfig[Resource.PROFILE].table.table.columns;
     return (
         <>

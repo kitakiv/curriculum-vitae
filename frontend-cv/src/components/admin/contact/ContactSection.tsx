@@ -8,48 +8,32 @@ import MainText from "@/components/text/MainText";
 import FromUpdate from "@/components/admin/components/FormUpdate";
 import { Contact, CreateContactInput, GetContactsQuery, GetUserMutation } from "@/gql/graphql"
 import { hasPermission } from "@/query/permissions"
-import { DataGrid} from '@mui/x-data-grid';
-import Paper from '@mui/material/Paper';
 import table from "@/variables/table/table";
-import Button from '@mui/material/Button';
-
-import Link from "next/link"
+import Table from "../components/Table";
 interface Props {
     user: GetUserMutation['getUser'],
     rows: GetContactsQuery['contacts'][]
 }
 const columns = table.contactsTable.columns;
-const createContact = resourceConfig[Resource.CONTACT].createForm
-const paginationModel = { page: 0, pageSize: 5 }
 
 export default function ContactSection({ user, rows }: Props) {
     const canRead = hasPermission(user, Resource.CONTACT, [Action.READ]);
     const canCreate = hasPermission(user, Resource.CONTACT, [Action.CREATE]);
     const canUpdate = hasPermission(user, Resource.CONTACT, [Action.UPDATE]);
     const canDelete = hasPermission(user, Resource.CONTACT, [Action.DELETE]);
-    if (!canRead) return null;
-    if (!canUpdate) {
-        columns.pop();
-    }
     return (
         <>
-        {canCreate &&
-        <Link  href={createContact.link}>
-            <Button variant="contained">{createContact.title}</Button>
-
-        </Link>
-        }
-    <Paper sx={{ height: '100%', width: '100%', minHeight: 500 }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
-      />
-    </Paper>
-    </>
+            <Table
+                canCreate={canCreate}
+                canRead={canRead}
+                canUpdate={canUpdate}
+                resource={Resource.CONTACT}
+                rows={rows}
+                columns={columns}
+                resouce={Resource.CONTACT}
+                canDelete={canDelete}
+            />
+        </>
   )
 }
 

@@ -64,21 +64,22 @@ export async function updateProfileImageAction(prevState: PrevState<Profile>| un
 
 export async function updateProfileImagesAction(prevState: PrevState<Profile>| undefined, formData: FormData, id: string):
  Promise<PrevState<Profile>> {
-    try {
-        await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
+    console.log(formData);
+    // try {
+    //     await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
         
-        return {
-            success: true,
-            message: 'Profile images updated successfully!',
-            id: id
-        }
-    } catch (error) {
-        console.error('Update error', error);
-        return {
-            success: false,
-            message: error instanceof Error ? error.message : 'Profile images update failed',
-            id: null
-        }
-    }
+    //     return {
+    //         success: true,
+    //         message: 'Profile images updated successfully!',
+    //         id: id
+    //     }
+    // } catch (error) {
+    //     console.error('Update error', error);
+    //     return {
+    //         success: false,
+    //         message: error instanceof Error ? error.message : 'Profile images update failed',
+    //         id: null
+    //     }
+    // }
 }
 

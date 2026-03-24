@@ -4,9 +4,9 @@ import {
     resourceConfig
 } from "@/variables/admin/resource"
 import { GetCertificatesQuery, GetUserMutation } from "@/gql/graphql"
-import { hasPermission } from "@/query/permissions"
-import Table from "@/components/admin/components/Table";
-import { start } from "repl";
+import { hasPermission } from "@/query/permissions";
+import Table from "../components/Table";
+
 interface Props {
     user: GetUserMutation['getUser'],
     rows: GetCertificatesQuery['certificates'][]
@@ -19,18 +19,18 @@ export default function CertificateSection({ user, rows }: Props) {
     const canUpdate = hasPermission(user, resource, [Action.UPDATE]);
     const canDelete = hasPermission(user, resource, [Action.DELETE]);
     const columns = resourceConfig[Resource.CERTIFICATE].table.table.columns;
+
     return (
-        <>
-            <Table
-                canCreate={canCreate}
-                canRead={canRead}
-                canUpdate={canUpdate}
-                resource={resource}
-                rows={rows}
-                columns={columns}
-                resouce={Resource.CERTIFICATE}
-                canDelete={canDelete}
-            />
-        </>
+       <Table 
+       canCreate={canCreate}
+       canRead={canRead}
+       canUpdate={canUpdate}
+       resource={resource}
+       rows={rows}
+       columns={columns}
+       resouce={Resource.CERTIFICATE}
+       canDelete={canDelete} />
     )
 }
+
+

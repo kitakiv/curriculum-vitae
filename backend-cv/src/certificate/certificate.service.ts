@@ -89,6 +89,5 @@ export class CertificateService {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Certificate'));
     }
-
   }
 }

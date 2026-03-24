@@ -28,6 +28,9 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                 }
             }
         }
+        if (type === "files") {
+            console.log(event.target.files);
+        }
     }
 
     function handleError(error: string | undefined) {
@@ -42,8 +45,21 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
     }
     // type file and readonly
     if (type === "file" && readonly) return null;
-
+    if (type === "files" && readonly) return null;
     // type file and !readonly
+    if (type === "files" && !readonly) {
+        return (
+            <>
+                <label htmlFor={id}>
+                    <MiddleText tailwind="text-footerTx">
+                        {label}
+                    </MiddleText>
+                </label>
+                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={"file"} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
+                <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
+            </>
+        )
+    }
     else if (type === "file" && !readonly) {
         return (
             <>
@@ -52,7 +68,7 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                         {label}
                     </MiddleText>
                 </label>
-                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} onChange={handleChange} />
+                <input className={`w-full transition-all duration-300 ease-in-out border-2 rounded-xl px-2 py-3 bg-adminGr0 cursor-pointer focus:outline-none ${errors[name] ? 'border-red-500 placeholder-red-500 hover:border-red-600 focus:border-red-600' : 'border-gray-300 text-footerTx hover:border-bg33 hover:bg-bg33 focus:bg-bg33 focus:border-bg0'}`} type={type} name={name} id={id} placeholder={placeholder} readOnly={readonly} multiple onChange={handleChange} />
                 <span className={`${errors[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string) }</span>
             </>
         )

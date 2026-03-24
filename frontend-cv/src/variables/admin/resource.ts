@@ -1,11 +1,12 @@
 import form from "../form/form";
 import schema from "@/validation/schemaValidation";
 import { createContactAction, updateContactAction, updateContactImageAction } from "@/app/actions/contacts";
-import { createCertificateAction, updateCertificateAction, updateCertificateImageAction } from "@/app/actions/certificate";
+import { createCertificateAction, updateCertificateAction, updateCertificateImageAction, deleteCertificateAction } from "@/app/actions/certificate";
 import { UPLOADSERVICE } from "@/variables/upload/upload";
-import { createSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
+import { createSliderAction, deleteSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
 import table from "../table/table";
-import { updateProfileAction, updateProfileImageAction } from "@/app/actions/profile";
+import { updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
+import { deleteContactAction } from "@/app/actions/contacts";
 
 export enum Resource {
   USER = 'user',
@@ -31,8 +32,30 @@ export enum Action {
 
 const adminVariables = {
   searchParamResourse: 'resource',
+  dashBoard: 'Dashboard',
   pathAdminPage: '/admin/dashboard',
-  pathAdminEdit: '/update'
+  edit: {
+    button: 'Edit',
+    title: 'Edit',
+    path: 'update'
+
+  },
+  delete: {
+    button: 'Delete',
+    title: 'Delete',
+    path: 'delete'
+  },
+  view: {
+    button: 'View',
+    title: 'View',
+    path: 'view'
+  }
+  ,
+  create: {
+    button: 'Create',
+    title: 'Create',
+    path: 'create',
+  }
 }
 
 const resourceConfig = {
@@ -70,6 +93,13 @@ const resourceConfig = {
       title: 'Create slider',
       uploadConfig: UPLOADSERVICE.SLIDERS,
       link: `${adminVariables.pathAdminPage}/${Resource.SLIDER}/${Action.CREATE}`,
+    },
+    deleteForm: {
+      title: 'Delete slider',
+      action: deleteSliderAction,
+      schema: schema.slider.sliderDelete,
+      inputs: form.sliderForm.inputsDelete,
+      initialValues: form.sliderForm.initialValuesDelete
     },
     editFrom: {
       inputs: form.sliderForm.inputsEdit,
@@ -119,6 +149,13 @@ const resourceConfig = {
       schema: schema.certificate.certificateEditImage,
       title: 'Edit Certificate file',
     },
+    deleteForm: {
+      inputs: form.certificatesForm.inputsDelete,
+      initialValues: form.certificatesForm.initialValuesDelete,
+      action: deleteCertificateAction,
+      schema: schema.certificate.certificateDelete,
+      title: 'Delete Certificate',
+    },
     validationSchema: schema.certificate,
     form: form.certificatesForm,
   },
@@ -152,6 +189,13 @@ const resourceConfig = {
       action: updateContactImageAction,
       schema: schema.contact.contactEditImage,
       title: 'Edit contact image',
+    },
+    deleteForm: {
+      inputs: form.contactsForm.inputsDelete,
+      initialValues: form.contactsForm.initialValuesDelete,
+      action: deleteContactAction,
+      schema: schema.contact.contactDelete,
+      title: 'Delete contact',
     },
     validationSchema: schema.contact,
     form: form.contactsForm,
@@ -202,10 +246,18 @@ const resourceConfig = {
     },
     editFormImage: {
       inputs: form.profileForm.inputsEditImage,
-      initialValues: form.profileForm.initialValues,
+      initialValues: form.profileForm.initialValuesImage,
       action: updateProfileImageAction,
       schema: schema.profile.profileEditImage,
-      title: 'Edit Profile photos',
+      title: 'Change the Profile photo',
+      uploadConfig: UPLOADSERVICE.PROFILE
+    },
+    editFormImages: {
+      inputs: form.profileForm.inputsEditImages,
+      initialValues: form.profileForm.initialValues,
+      action: updateProfileImagesAction,
+      schema: schema.profile.profileEditImages,
+      title: 'Upload new Profile photos',
       uploadConfig: UPLOADSERVICE.PROFILE
     },
     validationSchema: schema.slider,

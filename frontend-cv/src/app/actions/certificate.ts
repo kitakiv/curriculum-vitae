@@ -1,10 +1,11 @@
 'use server'
-import {  CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
+import {  CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, RemoveCertificateMutation, RemoveContactMutation, RemoveContactMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
-import { CERTIFICATE_CREATE_MUTATION, CERTIFICATE_UPDATE_MUTATION } from "@/graphql/certificate.graphql";
+import { CERTIFICATE_CREATE_MUTATION, CERTIFICATE_UPDATE_MUTATION, CERTIFICATE_REMOVE_MUTATION } from "@/graphql/certificate.graphql";
 import { PrevState } from "./action.type";
+
 
 const CERTIFICATE_IMAGE = 'certificateImage';
 export async function createCertificateAction(prevState: PrevState<CreateCertificateInput>| undefined, formData: FormData):
@@ -97,4 +98,31 @@ export async function updateCertificateImageAction(prevState: PrevState<CreateCe
         };
     }
 }
+
+export async function deleteCertificateAction(prevState: PrevState<CreateCertificateInput>| undefined, formData: FormData,  initialValues: UpdateCertificateInput, id: string)
+:Promise<PrevState<CreateCertificateInput>> {
+    const certificateId = formData.get('id')?.toString() as string;
+    try {
+       if (initialValues.id !== certificateId || id !== initialValues.id) throw Error("The id incorrect");
+        const res = await queryGraphQL<RemoveCertificateMutation, RemoveContactMutationVariables>
+        (CERTIFICATE_REMOVE_MUTATION, {
+            id: id,
+        });
+        return {
+            success: true,
+            message: `Certificate with id ${id} deleted successfully`,
+            id: res.removeCertificate
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Certificate deletion failed',
+            id: null
+        };
+    }
+}
+
+
+
 

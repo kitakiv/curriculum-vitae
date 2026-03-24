@@ -1,4 +1,4 @@
-import { mul } from "three/tsl";
+
 
 
 
@@ -36,10 +36,10 @@ const form = {
         metadataDesctiption: "SingUp Form",
         signUpFormLoading: "Creating Account..."
     },
-    
     profileForm: {
         type: "oneElement",
-        initialValues: { name: "", surname: "", typingText: "", email: "", phone: "", location: "" },
+        initialValuesImage: { profilePhoto: "" },
+        initialValues: { name: "", surname: "", typingText: "", email: "", phone: "", location: "", profilePhotos: [] },
         inputsEdit: [
             { id: "name", label: "Name", name: "name", placeholder: "Name", type: "text" },
             { id: "surname", label: "Surname", name: "surname", placeholder: "Surname", type: "text" },
@@ -49,10 +49,13 @@ const form = {
             { id: "location", label: "Location", name: "location", placeholder: "Location", type: "text" },
         ],
         inputsEditImage: [
-            { id: "profilePhotos", label: "Profile Photos", name: "profilePhoto", placeholder: "Profile Photo", type: "file"},
+            { id: "profilePhoto", label: "Profile Photo", name: "profilePhoto", placeholder: "Profile Photo", type: "file"},
         ],
         inputsEditImages: [
-            { id: "profilePhotos", label: "Profile Photos", name: "profilePhotos", placeholder: "Profile Photos", type: "files", multi: true},
+            { id: "profilePhotos", label: "Profile Photos", name: "profilePhotos", placeholder: "Profile Photos", type: "files", multiple: true},
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         title: "Profile settings",
         name: "Profile",
@@ -61,6 +64,7 @@ const form = {
     sliderForm: {
         type: "add",
         initialValues: { sliderName: "", sliderText: "", sliderImage: "" },
+        initialValuesDelete: { id: "" },
         inputsAdd: [
             { id: "sliderName", label: "Slider Name", name: "sliderName", placeholder: "Slider Name", type: "text" },
             { id: "sliderText", label: "Slider Text", name: "sliderText", placeholder: "Slider Text", type: "text", as: "textarea" },
@@ -72,6 +76,9 @@ const form = {
         ],
         inputsEditImage: [
             { id: "sliderImage", label: "Slider Image", name: "sliderImage", placeholder: "Slider Image", type: "file" },
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         title: "Slider settings",
         name: "Slider",
@@ -100,6 +107,7 @@ const form = {
         id: "project-admin",
     },
     contactsForm: {
+        initialValuesDelete: { id: "" },
         initialValues: { contactName: "", contactSvg: "", contactLink: "" },
         inputsAdd:[
             { id: "contactName", label: "Contact Name", name: "contactName", placeholder: "Contact Name", type: "text" },
@@ -113,11 +121,15 @@ const form = {
         inputsEditImage: [
             { id: "contactSvg", label: "Contact Svg", name: "contactSvg", placeholder: "Contact Svg", type: "file" },
         ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ],
         title: "Contact settings",
         name: "Contacts",
         id: "contact-admin",
     },
     certificatesForm: {
+        initialValuesDelete: { id: "" },
         initialValues: { certificateTitle: "", certificateCompany: "", certificateDescription: "", certificateLink: "", certificateImage: "", certificatePeriodStart: new Date(), certificatePeriodEnd: new Date() },
         inputsAdd: [
             { id: "certificateTitle", label: "Certificate Title", name: "certificateTitle", placeholder: "Certificate Title", type: "text" },
@@ -138,6 +150,9 @@ const form = {
         ],
         inputsEditImage: [
             { id: "certificateImage", label: "Certificate Image", name: "certificateImage", placeholder: "Certificate Image", type: "file" },
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
     },
     mainImageForm: {

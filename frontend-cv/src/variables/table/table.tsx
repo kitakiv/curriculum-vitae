@@ -1,7 +1,8 @@
 import { GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from '@mui/x-data-grid';
 import TableImage from "@/components/admin/components/TableImage";
+import Link from "next/link";
 import { Resource } from '../admin/resource';
-import EditAdminButton from "@/components/admin/components/EditAdminButton";
+import { EditAdminButton, DeleteAdminButton, ViewAdminButton } from "@/components/admin/components/ActionAdminButton";
 import Table from '@/components/admin/components/Table';
 interface Table {
     [key: string]: {
@@ -9,12 +10,6 @@ interface Table {
     }
 }
 
-export const editColumns = (resource: Resource): GridColDef => ({
-    field: 'edit',
-    headerName: 'Edit',
-    width: 100,
-    renderCell: (params) => (<EditAdminButton params={params || null} resource={resource} />),
-})
 
 
 const table: Table = {
@@ -22,11 +17,25 @@ const table: Table = {
     contactsTable: {
         columns: [
             {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.CONTACT} />),
+            },
+            {
                 field: 'edit',
                 headerName: 'Edit',
-                width: 100,
+                width: 70,
                 type: 'actions',
                 renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CONTACT} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CONTACT} />),
             },
             {
                 field: 'id', headerName: 'ID', width: 70,
@@ -62,12 +71,26 @@ const table: Table = {
     },
     sliderTable: {
         columns: [
+             {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.SLIDER} />),
+            },
             {
                 field: 'edit',
                 headerName: 'Edit',
-                width: 100,
+                width: 70,
                 type: 'actions',
                 renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.SLIDER} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.SLIDER} />),
             },
             {
                 field: 'id', headerName: 'ID', width: 70,
@@ -103,11 +126,25 @@ const table: Table = {
     certificateTable: {
         columns: [
             {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
+            },
+            {
                 field: 'edit',
                 headerName: 'Edit',
-                width: 100,
+                width: 70,
                 type: 'actions',
                 renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
             },
             {
                 field: 'id', headerName: 'ID', width: 70,
@@ -131,7 +168,7 @@ const table: Table = {
             },
             {
                 field: 'certificateDescription',
-                headerName: 'Start date',
+                headerName: 'Certificate description',
                 width: 300,
                 filterable: true,
                 sortable: true,
@@ -169,10 +206,18 @@ const table: Table = {
     },
     profileTable: {
         columns: [
+             {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.PROFILE} />),
+            },
             {
                 field: 'edit',
                 headerName: 'Edit',
-                width: 100,
+                width: 70,
+                type: 'actions',
                 renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.PROFILE} />),
             },
             {

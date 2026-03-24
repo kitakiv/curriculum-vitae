@@ -9,6 +9,7 @@ import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
 import { Certificate } from "crypto";
 import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
 import UpdateFormProfile from "../profile/UpdateFormProfile";
+import UpdateFormProfileImages from "../profile/UpdadteFormProfileImages";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -42,6 +43,7 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
             return (
                 <>
                     <UpdateFormProfile initialValues={resource as Profile} resourceId={resourceId}/>
+                    <UpdateFormProfileImages initialValues={resource as Profile} resourceId={resourceId}/>
                 </>
             )
         default:

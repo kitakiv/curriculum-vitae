@@ -11,20 +11,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  sidebar
+  sidebar,
+  breadcrumbs,
 }: {
   children: React.ReactNode
   sidebar?: React.ReactNode
+  breadcrumbs?: React.ReactNode
 }) {
   return (
-    <> 
+    <div className="bg-adminGr100 w-full h-full min-h-screen px-0 py-0 pt-20"> 
        <HeaderAdmin/>
-              <main className="bg-adminGr100 w-full min-h-screen grid grid-cols-12">
-                  <div className="col-span-2 padding">{sidebar}</div>
-                <div className="col-span-10 w-full px-5 py-10 mt-20"> 
+              <main className="grid grid-cols-12 h-full">
+                  <div className="col-span-2 h-full">{sidebar}</div>
+                <div className="col-span-10 w-full flex-col gap-4 "> 
+                  {breadcrumbs}
                   {children}
                 </div>
               </main>
-  </>
+  </div>
   )
 }

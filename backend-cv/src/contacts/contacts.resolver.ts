@@ -70,8 +70,6 @@ export class ContactsResolver {
         cause: error,
       });
     }
-    return {
-      id,
-    };
+    return id;
   }
 }
