@@ -8,6 +8,7 @@ import SmallText from '@/components/text/SmallText';
 import { PrevState } from '@/app/actions/action.type';
 import CustomizedSnackbars from '@/components/animation/Alert';
 
+
 interface FormElementProps<V> {
     children?: React.ReactNode;
     tailwind?: string;
@@ -28,7 +29,13 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
             onSubmit={async (values) => {
                 const formData = new FormData();
                 Object.entries(values).forEach(([key, value]) => {
-                    formData.append(key, value);
+                    if (value instanceof Array) {
+                        value.forEach((item) => {
+                            formData.append(key, item);
+                        });
+                    } else {
+                        formData.append(key, value);
+                    }
                 });
                 startTransition(() => {
                     if (action) {

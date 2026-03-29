@@ -75,6 +75,8 @@ export class AuthResolver {
       req,
       this.refreshTokenName,
     );
+    console.log(req);
+    console.log(refreshToken);
     if (!refreshToken)
       throw new BadRequestException(errors.NOT_FOUND('Refresh token'));
     const result = await this.authService.refreshToken(refreshToken);

@@ -29,7 +29,13 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
             onSubmit={async (values) => {
                 const formData = new FormData();
                 Object.entries(values).forEach(([key, value]) => {
-                    formData.append(key, value);
+                    if (value instanceof Array) {
+                        value.forEach((item) => {
+                            formData.append(key, item);
+                        });
+                    } else {
+                        formData.append(key, value);
+                    }
                 });
                 startTransition(() => {
                     if (action) {

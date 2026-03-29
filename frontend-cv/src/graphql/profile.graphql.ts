@@ -15,6 +15,7 @@ const PROFILE_GET_QUERY = gql`
     }
 `;
 
+
 const PROFILE_UPDATE_MUTATION = gql`
     mutation UpdateProfile($updateProfileInput: UpdateProfileInput!) {
         updateProfile(updateProfileInput: $updateProfileInput) {

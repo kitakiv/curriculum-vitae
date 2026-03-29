@@ -1,3 +1,4 @@
+import techStack from "../techstack/techstack";
 
 
 
@@ -85,22 +86,32 @@ const form = {
         id: "slider-admin",
     },
     projectForm: {
-        initialValues: { projectTitle: "", projectDescription: "", projectImage: "", projectGithubLink: "", projectDemoLink: "" },
+        initialValuesDelete: { id: "" },
+        initialValues: { projectTitle: "", projectDescription: "", projectImages: [], projectGithubLink: "", projectDemoLink: "" , techStacks: [] },
         inputsAdd: [
             { id: "projectTitle", label: "Title", name: "projectTitle", placeholder: "Title", type: "text" },
             { id: "projectDescription", label: "Description", name: "projectDescription", placeholder: "Description", type: "text", as: "textarea" },
-            { id: "projectImage", label: "Image", name: "projectImage", placeholder: "Image", type: "file" },
-            { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "text" },
-            { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "text" },
+            { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "url" },
+            { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "url" },
+            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [] },
+            { id: "projectImages", label: "Project Images", name: "projectImages", placeholder: "Project Images", type: "files" },
+            
         ],
         inputsEdit: [
             { id: "projectTitle", label: "Title", name: "projectTitle", placeholder: "Title", type: "text" },
             { id: "projectDescription", label: "Description", name: "projectDescription", placeholder: "Description", type: "text", as: "textarea" },
-            { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "text" },
-            { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "text" },
+            { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "url" },
+            { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "url" },
+            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [] },
         ],
         inputsEditImage: [
             { id: "projectImage", label: "Image", name: "projectImage", placeholder: "Image", type: "file" },
+        ],
+        inputsEditImages: [
+            { id: "projectImages", label: "Project Images", name: "projectImages", placeholder: "Project Images", type: "files" },
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         title: "Project settings",
         name: "Project",

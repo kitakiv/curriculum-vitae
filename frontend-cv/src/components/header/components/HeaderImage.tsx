@@ -1,5 +1,4 @@
 'use client';
-import FadeInSection from "@/components/animation/FadeInSection";
 import header from "@/variables/header/header";
 import { useState, useEffect, useRef } from "react";
 

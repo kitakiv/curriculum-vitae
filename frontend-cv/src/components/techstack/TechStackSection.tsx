@@ -19,7 +19,6 @@ export default async function TechStackSection({selectedCategoryId = techStack.a
     <TextGray tailwind="text-center w-full text-wrap">{techStack.text}</TextGray>
     </FadeInSection>
     <CategoryButtons categories={techCategories} />
-    <TechStacksComponent categoryId={selectedCategoryId || techStack.all}/>
-    
+    <TechStacksComponent categoryId={selectedCategoryId || techStack.all}/>  
 </section>
 }

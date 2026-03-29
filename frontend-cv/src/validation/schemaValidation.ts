@@ -1,10 +1,21 @@
 
+import { techStacks } from "@/variables/techstack/techstack";
 import { profile } from "console";
 import { sign } from "crypto";
 import * as Yup from "yup";
-// const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
-// const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
-
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1mb
+const FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+  "image/gif",
+  "image/avif",
+  "image/bmp",
+  "image/tiff",
+  "image/x-icon",
+  "image/svg"
+];
 
 const login = Yup.string().required("Login is required")
     .min(3, "Login must be at least 3 characters long")
@@ -58,47 +69,28 @@ const projectDescription = Yup.string().required("Project description is require
 
 
 
-// function isValidFileType(fileName: string, fileTypeKey: string) {
-//   const fileType= fileName.split('.'). pop() || '';
-//  return validFileExtensions[fileTypeKey as keyof typeof validFileExtensions].includes(fileType);
-// }
-
-// const images = Yup.mixed().required("Image are required")
-//   .test("fileSize", `File size must be less than 1MB`,
-//     (value: File[]) => {
-//       return value?.map((file: File) => {
-//         if (file.size > 1024 * 1024 * 1) {
-//           return false;
-//         }
-//         return true;
-//       }).every(Boolean);
-//     })
-//   .test("fileType", "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
-//     (value: File[]) => {
-//       return value?.map((file: File) => {
-//         if (!["image/jpeg", "image/png", "image/webp", "image/svg+xml", "image/gif", "image/avif", "image/bmp", "image/tiff", "image/x-icon", "image/svg"].includes(file.type.toLowerCase())) {
-//           return false;
-//         }
-//         return true;
-//       }).every(Boolean);
-//     });
+const images = Yup.array()
+    .min(1, 'Upload at least one file')
+    .max(10, 'Maximum 5 files allowed')
+    .of(
+      Yup.mixed()
+        .test(
+          'fileSize',
+          'File too large (max 1MB)',
+          (value) => value && (value as File).size <= MAX_FILE_SIZE
+        )
+        .test(
+          'fileType',
+          "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
+          (value) => value && FILE_TYPES.includes((value as File).type.toLowerCase())
+        )
+    )
 
 const image = Yup.mixed().required("Contact image is required")
 .test("fileSize", `File size must be less than 1MB`,
-    (value) => value && (value as File).size <= 1024 * 1024 * 1)
+    (value) => value && (value as File).size <= MAX_FILE_SIZE)
 .test("fileType", "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
-    (value) => value && [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/svg+xml",
-  "image/gif",
-  "image/avif",
-  "image/bmp",
-  "image/tiff",
-  "image/x-icon",
-  "image/svg"
-].includes((value as File).type.toLowerCase()));
+    (value) => value && FILE_TYPES.includes((value as File).type.toLowerCase()));
 
 const deleteSchema = (expectedId: string) =>
   Yup.object({
@@ -120,11 +112,6 @@ const contactName = Yup.string().required("Contact name is required")
 .min(3, "Contact name must be at least 3 characters long")
 .max(20, "Contact name must be at most 20 characters long");
 
-// const contactSvg = Yup.mixed().required("Contact image is required")
-// .test("fileSize", `File size must be less than 1MB`,
-//     (value) => value && (value as File).size <= 1024 * 1024 * 100)
-// .test("fileType", "Invalid file type",
-//     (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
 const certificateCompany = Yup.string().required("Certificate company is required")
 .min(3, "Certificate company must be at least 3 characters long")
 .max(50, "Certificate company must be at most 50 characters long");
@@ -151,6 +138,11 @@ const certificatePeriodEnd = Yup.date().required("Certificate period end date is
 .min(new Date('1900-01-01'), "Certificate period end date must be in the future")
 .max(new Date(Date.now()), "Certificate period end date must be in the past");
 
+const chekcbox  = Yup.array()
+    .of(Yup.string())
+    .min(1, 'Select at least one ') 
+    .required('Required');
+
 const schema = {
     custom : Yup.object().shape({
         login: email,
@@ -174,7 +166,7 @@ const schema = {
             profilePhoto: image
         }),
         profileEditImages: Yup.object().shape({
-            profilePhotos: image
+            profilePhotos: images
         })
     },
     mainImage: Yup.object().shape({
@@ -200,18 +192,24 @@ const schema = {
             projectTitle,
             projectDescription,
             projectGithubLink,
-            projectDemoLink
+            projectDemoLink,
+            techStacks: chekcbox,
         }),
         projectAdd: Yup.object().shape({
             projectTitle,
             projectDescription,
-            projectImage: image,
             projectGithubLink,
-            projectDemoLink
+            projectDemoLink,
+            techStacks: chekcbox,
+            projectImages: images,
+        }),
+        projectEditImages: Yup.object().shape({
+            projectImages: images
         }),
         projectEditImage: Yup.object().shape({
             projectImage: image
         }),
+        projectDelete: deleteSchema
     },
     contact: {
         contactEdit: Yup.object().shape({

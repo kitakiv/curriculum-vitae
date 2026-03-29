@@ -18,10 +18,8 @@ import FadeInSection from "../animation/FadeInSection";
 import HeaderModel from "./components/HeaderModel";
 import { getProfileCached } from "@/query/profile.query";
 import { GetProfileQuery, GetUserMutation } from "@/gql/graphql";
-import { getMe } from "@/query/auth.query";
 import HeaderAuth from "@/components/header/components/HeaderAuth";
-export default async function Header() {
-    const user: GetUserMutation['getUser'] | false = await getMe()
+export default async function Header({user}: {user: GetUserMutation["getUser"] | false}) {
     const profile: GetProfileQuery["profile"] = await getProfileCached();
     return (
         <header className=" w-full h-screen relative top-0 gradient-box overflow-hidden" id={header.id}>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { setAccessToken, getAccessToken } from "@/lib/auth"
+import { getMe } from './query/auth.query'
  
 const protectedRoutes = ['/admin']
 const authRoutes = ['/login', '/signup']
@@ -10,7 +11,6 @@ export default async function middleware(req: NextRequest) {
   if (tokenFromQuery) {
     const token = tokenFromQuery;
     await setAccessToken(token);
-    
     return NextResponse.redirect(new URL('/', req.nextUrl))
   }
   

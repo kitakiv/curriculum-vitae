@@ -1,9 +1,12 @@
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import { getAccessToken, setAccessToken } from './auth';
+import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from './auth';
 import ErrorHandler from "@/lib/errors";
 import { GraphQLResponse } from "./errors";
 import { UPLOADTYPE, UPLOADSERVICE, HTTPMETHOD, uploadVariables } from "@/variables/upload/upload";
-import { update } from "three/examples/jsm/libs/tween.module.js";
+import { queryGraphQL } from "@/query/graphql";
+import { RefreshTheTokensMutation, RefreshTheTokensMutationVariables } from "@/gql/graphql";
+import { REFRESH_TOKEN_QUERY } from "@/graphql/auth.graphql";
+import { refreshTokens } from "@/query/auth.query";
 
 
 interface ApiConfig {
@@ -93,8 +96,10 @@ class RequestClient {
             const res = await fetch(url, {
                 ...requestOptions,
                 signal: controller.signal,
+                credentials: 'include',
             });
-
+           const refreshToken = res.headers.get('set-cookie');
+            if (refreshToken) this.setRefreshToken(refreshToken);
 
             clearTimeout(timeoutId);
 
@@ -108,8 +113,11 @@ class RequestClient {
 
             const data = await this.parseResponse<TResult>(res);
             const errors = (data as  GraphQLResponse).errors;
+
             if (errors?.length) {
-                this.handleError(data)
+                
+                this.handleError(data as GraphQLResponse);
+
             }
             return {
                 data,
@@ -150,6 +158,7 @@ class RequestClient {
             const res = await fetch(checkUrl, {
                 ...requestOptions,
                 signal: controller.signal,
+                credentials: 'include',
             });
             clearTimeout(timeoutId);
             if (!res.ok) {
@@ -179,6 +188,34 @@ class RequestClient {
                 throw new ApiError(error instanceof Error ? error.message : 'Unknown error', 500);
             }
         }
+    }
+
+     async refreshToken() {
+            const cookies = await getRefreshToken();
+            const response = await fetch(this.buildUrl(this.config.baseUrl), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cookie": `${cookies}`
+                },
+                body: JSON.stringify({
+                    query: REFRESH_TOKEN_QUERY.loc?.source.body,
+                }),
+                cache: this.config.cache,
+                credentials: 'include',
+            });
+
+            const data = await this.parseResponse<{data: RefreshTheTokensMutation}>(response);
+            console.log('refresh token response', data.data);
+            const errors = (data as  GraphQLResponse).errors;
+            if (errors?.length) {
+                return false;
+            }
+            await setAccessToken(data.data.refreshTheTokens.tokens.accessToken || '');
+            console.log('new access token set');  
+            const refreshToken = response.headers.get('set-cookie');
+            if (refreshToken) this.setRefreshToken(refreshToken);
+            return true;
     }
 
     private async parseResponse<T>(response: Response): Promise<T> {
@@ -242,7 +279,10 @@ class RequestClient {
         }): Promise<RequestInit> {
 
         const headers = await this.AuthHeader({
-            headers: options?.headers || this.config.defaultHeaders,
+            headers: {
+                ...this.config.defaultHeaders,
+                ...options?.headers,
+            }
         });
 
         return {
@@ -263,26 +303,32 @@ class RequestClient {
         return `${config?.baseUrl || this.config.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
     }
 
-    setAuthTokens(authConfig: AuthConfig) {
+   async setAuthTokens(authConfig: AuthConfig) {
         if (authConfig.tokenProvider) {
-            setAccessToken(authConfig.tokenProvider as string);
+             await setAccessToken(authConfig.tokenProvider as string);
         }
     }
 
-    private handleError(data: GraphQLResponse, statusCode: number) {
+    private handleError(data: GraphQLResponse) {
        
             const errorMessage = this.errorHandler.handleApiError(data);
             if (errorMessage.errors && errorMessage.errors.length > 0) {
                 console.error(`GraphQL Error: ${errorMessage.message}`, errorMessage.errors);
                 throw new ApiError(`GraphQL Error: ${errorMessage.message}
-                    ${errorMessage.errors.join('\n')}`, statusCode)
+                    ${errorMessage.errors.join('\n')}`, errorMessage.statusCode? errorMessage.statusCode: 500);
             } else {
-                throw new ApiError(`GraphQL Error: ${errorMessage.message}`, statusCode)
+                throw new ApiError(`GraphQL Error: ${errorMessage.message}`, errorMessage.statusCode ? errorMessage.statusCode : 500);
             }
     }
 
     private handleErrorHttp(data: ResponseHttp, statusCode: number) {
         throw new ApiError(`Http Error: ${data.error}`, statusCode)
+    }
+
+    private async setRefreshToken(cookies: string) {
+       if (cookies.startsWith('refresh_token')) {
+            await setRefreshToken(cookies);
+       }
     }
 }
 
@@ -303,8 +349,8 @@ class ServerApi extends RequestClient {
     }
 
     private createUrl(resource: UPLOADSERVICE, id: string, index?: number) {
-        if (index) {
-            return `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}-${index}`;
+        if (index || index === 0) {
+            return `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}/${index}`;
         } else {
            return uploadVariables[resource].multiFile ? `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}` : `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}`
         }

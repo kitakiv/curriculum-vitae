@@ -7,7 +7,8 @@ import {  } from "@/graphql/profile.graphql";
 import { PrevState } from "./action.type";
 import {PROFILE_UPDATE_MUTATION} from "@/graphql/profile.graphql";
 
-const PROFILE_PHOTOS = 'certificateImage';
+const PROFILE_PHOTOS = 'profilePhotos';
+const PROFILE_PHOTO = 'profilePhoto';
 
 export async function updateProfileAction(prevState: PrevState<Profile>| undefined, formData: FormData, intitalValues: Profile, id: string):
  Promise<PrevState<Profile>> {
@@ -45,7 +46,7 @@ export async function updateProfileAction(prevState: PrevState<Profile>| undefin
 export async function updateProfileImageAction(prevState: PrevState<Profile>| undefined, formData: FormData, id: string, index: number):
  Promise<PrevState<Profile>> {
     try {
-        await uploadFile(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id, index);
+        await uploadFile(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTO, id, index);
         
         return {
             success: true,
@@ -64,22 +65,21 @@ export async function updateProfileImageAction(prevState: PrevState<Profile>| un
 
 export async function updateProfileImagesAction(prevState: PrevState<Profile>| undefined, formData: FormData, id: string):
  Promise<PrevState<Profile>> {
-    console.log(formData);
-    // try {
-    //     await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
+    try {
+        await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
         
-    //     return {
-    //         success: true,
-    //         message: 'Profile images updated successfully!',
-    //         id: id
-    //     }
-    // } catch (error) {
-    //     console.error('Update error', error);
-    //     return {
-    //         success: false,
-    //         message: error instanceof Error ? error.message : 'Profile images update failed',
-    //         id: null
-    //     }
-    // }
+        return {
+            success: true,
+            message: 'Profile images updated successfully!',
+            id: id
+        }
+    } catch (error) {
+        console.error('Update error', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Profile images update failed',
+            id: null
+        }
+    }
 }
 

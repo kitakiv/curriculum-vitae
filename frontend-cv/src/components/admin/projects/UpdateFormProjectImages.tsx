@@ -1,30 +1,30 @@
-import { CreateContactInput, Profile } from "@/gql/graphql";
+import { Project } from "@/gql/graphql";
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import FormUpdate from "../components/FormUpdate";
 import MiddleText from "@/components/text/MiddleText";
 
 
 interface Props {
-    initialValues: Profile,
+    initialValues: Project,
     resourceId: string,
 }
 
-export default function UpdateFormProfileImages({ initialValues, resourceId }: Props) {
-    const profileUpdateImage = resourceConfig[Resource.PROFILE].editFormImages;
+export default function UpdateFormProjectImages({ initialValues, resourceId }: Props) {
+    const projectUpdateImage = resourceConfig[Resource.PROJECT].editFormImages;
     return (
-        <FormUpdate<Profile>
-            inputs={profileUpdateImage.inputs}
+        <FormUpdate<Project>
+            inputs={projectUpdateImage.inputs}
             tailwind="flex flex-col items-center"
             intialValues={initialValues}
             actionForm={(formData) =>
-                profileUpdateImage.action(
+                projectUpdateImage.action(
                     undefined,
                     formData,
                     resourceId
                 )
             }
-            schema={profileUpdateImage.schema}
-            title={profileUpdateImage.title}
+            schema={projectUpdateImage.schema}
+            title={projectUpdateImage.title}
         >
             <MiddleText  tailwind="color-adminTx">
                !!!Important all previos images will be deleted

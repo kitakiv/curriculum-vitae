@@ -292,7 +292,76 @@ const table: Table = {
                 }
             }
         ]
-    }
+    },
+    projectsTable: {
+        columns: [
+            {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.PROJECT} />),
+            },
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.PROJECT} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.PROJECT} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 70,
+                type: 'string',
+            },
+            {
+                field: 'projectTitle',
+                headerName: 'Project name',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'projectDescription',
+                headerName: 'Project description',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'longText',
+            },
+            {
+                field: 'projectLink',
+                headerName: 'Project link',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                type: 'string',
+            },
+            {
+                field: 'techStacks',
+                headerName: 'Project stack',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                type: 'string',
+            },
+            {
+                field: 'projectImages',
+                headerName: 'Project images',
+                width: 150,
+                sortable: false,
+                renderCell: (params) => (<TableImage params={params || null} />),
+            },
+        ]
+    },
+
 
 }
 export default table;

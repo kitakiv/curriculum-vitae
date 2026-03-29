@@ -1,3 +1,5 @@
+
+
 interface GraphQLError {
     message: string;
     locations?: Array<{ line: number; column: number }>;
@@ -15,13 +17,13 @@ interface GraphQLError {
     errors?: GraphQLError[];
 }
 
-export interface ErrorOutPut { message: string; errors?: string[] }
+export interface ErrorOutPut { message: string; errors?: string[], statusCode?: number }
 
 export default class ErrorHandler {
-    handleApiError(error: unknown): ErrorOutPut {
+    handleApiError(data: unknown): ErrorOutPut {
         // Check if it's a GraphQL error response
-        if (this.isGraphQLError(error)) {
-            const graphqlError = (error as any).errors?.[0];
+        if (this.isGraphQLError(data)) {
+            const graphqlError = (data as GraphQLResponse).errors?.[0];
             const originalError = graphqlError?.extensions?.originalError;
             
             if (originalError) {
@@ -31,7 +33,8 @@ export default class ErrorHandler {
                 
                 return {
                     message: originalError.error || 'Bad Request',
-                    errors: messages
+                    errors: messages,
+                    statusCode: originalError.statusCode
                 };
             }
             
@@ -40,14 +43,14 @@ export default class ErrorHandler {
             };
         }
 
-        if (error instanceof Error) {
-            return { message: error.message };
+        if (data instanceof Error) {
+            return { message: data.message };
         }
 
         return { message: 'An unexpected error occurred' };
     }
 
-    private isGraphQLError(error: unknown): boolean {
-        return typeof error === 'object' && error !== null && 'errors' in error;
+    private isGraphQLError(data: unknown): boolean {
+        return typeof data === 'object' && data !== null && 'errors' in data;
     }
 }

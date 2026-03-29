@@ -6,6 +6,16 @@ const SIGNUP_AUTH_QUERY = gql`
 }
 `;
 
+const REFRESH_TOKEN_QUERY = gql`
+mutation RefreshTheTokens {
+    refreshTheTokens {
+        tokens {
+            accessToken
+        }
+    }
+}
+`;
+
 
 const LOGIN_AUTH_QUERY = gql`
     mutation Login($loginInput: LoginInput!) {
@@ -37,4 +47,4 @@ const GET_ME_USER = gql`
     }
 }`
 
-export { SIGNUP_AUTH_QUERY, LOGIN_AUTH_QUERY, GET_ME_USER};
+export { SIGNUP_AUTH_QUERY, LOGIN_AUTH_QUERY, GET_ME_USER, REFRESH_TOKEN_QUERY};

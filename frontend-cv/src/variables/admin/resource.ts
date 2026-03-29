@@ -7,6 +7,7 @@ import { createSliderAction, deleteSliderAction, updateSliderAction, updateSlide
 import table from "../table/table";
 import { updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
 import { deleteContactAction } from "@/app/actions/contacts";
+import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
 
 export enum Resource {
   USER = 'user',
@@ -64,14 +65,46 @@ const resourceConfig = {
     title: 'Projects',
     icon: '/svg/project.svg',
     path: `${adminVariables.pathAdminPage}/${Resource.PROJECT}`,
-    editForm: form.projectForm,
+    table: {
+      table: table.projectsTable
+    },
     createForm: {
       inputs: form.projectForm.inputsAdd,
       initialValues: form.projectForm.initialValues,
-      action: null,
-      schemaKey: 'project.projectAdd',
+      action: createProjectAction,
+      schema: schema.project.projectAdd,
       title: 'Create project',
       uploadConfig: UPLOADSERVICE.PROJECTS
+    },
+    editForm: {
+      inputs: form.projectForm.inputsEdit,
+      initialValues: form.projectForm.initialValues,
+      action: updateProjectAction,
+      schema: schema.project.projectEdit,
+      title: 'Edit project',
+    },
+    editFormImage: {
+      inputs: form.projectForm.inputsEditImage,
+      initialValues: form.projectForm.initialValues,
+      action: updateProjectImageAction,
+      schema: schema.project.projectEditImage,
+      title: 'Edit project photo',
+      uploadConfig: UPLOADSERVICE.PROJECTS
+    },
+    editFormImages: {
+      inputs: form.projectForm.inputsEditImages,
+      initialValues: form.projectForm.initialValues,
+      action: updateProjectImagesAction,
+      schema: schema.project.projectEditImages,
+      title: 'Edit project images',
+      uploadConfig: UPLOADSERVICE.PROJECTS
+    },
+    deleteForm: {
+      title: 'Delete project',
+      action: deleteProjectAction,
+      schema: schema.project.projectDelete,
+      inputs: form.projectForm.inputsDelete,
+      initialValues: form.projectForm.initialValuesDelete
     },
     validationSchema: schema.project,
     form: form.projectForm,
@@ -249,7 +282,7 @@ const resourceConfig = {
       initialValues: form.profileForm.initialValuesImage,
       action: updateProfileImageAction,
       schema: schema.profile.profileEditImage,
-      title: 'Change the Profile photo',
+      title: 'Edit Profile Photo',
       uploadConfig: UPLOADSERVICE.PROFILE
     },
     editFormImages: {

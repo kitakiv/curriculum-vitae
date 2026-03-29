@@ -10,7 +10,6 @@ import { getCertificatesCached } from '@/query/certificate.query'
 import { GetCertificatesQuery } from '@/gql/graphql'
 export default async function ExperienceSection() {
     const certificates: GetCertificatesQuery["certificates"] = await getCertificatesCached()
-    console.log('certificates', certificates);
     return <section className='flex flex-col w-full items-center justify-center padding gap-4 relative' id={experiences.id}>
         <FadeInSection>
             <TextPortfolio tailwind="text-center">{experiences.portfolio}</TextPortfolio>

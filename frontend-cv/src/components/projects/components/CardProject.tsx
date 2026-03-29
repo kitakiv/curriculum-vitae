@@ -22,7 +22,7 @@ export default function CardProject({project}: {project: GetProjectsByTechStackQ
     const random2 = colours[Math.floor(Math.random() * colours.length)];
   return (
     <div className="w-auto h-full bg-projectBg rounded-b-xl shadow-xl flex flex-col justify-between">
-        <ProjectSlider images={projectImages} random={random} random2={random2} />
+        <ProjectSlider images={project.projectImages ? project.projectImages : projectImages} random={random} random2={random2} />
         <div className="flex flex-col lg:gap-6 md:gap-5 sm:gap-4 gap-4 lg:p-7 md:p-6 sm:p-4 p-2 items-start justify-end h-auto">
           <TextWhite>{project.projectTitle}</TextWhite>
           <TextGray>{project.projectDescription}</TextGray>

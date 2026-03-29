@@ -37,7 +37,8 @@ class InputType {
     placeholder: string = "";
     type: string = "";
     as?: string = "";
-    readonly?: boolean = false
+    readonly?: boolean = false;
+    options?: Array<{value: string, label: string}> = [];
 }
 
 class MenuType {

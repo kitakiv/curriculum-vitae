@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n": typeof types.SignupDocument,
+    "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n": typeof types.RefreshTheTokensDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": typeof types.LoginDocument,
     "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": typeof types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": typeof types.GetCertificatesDocument,
@@ -30,6 +31,10 @@ type Documents = {
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.GetProfileDocument,
     "\n    mutation UpdateProfile($updateProfileInput: UpdateProfileInput!) {\n        updateProfile(updateProfileInput: $updateProfileInput) {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": typeof types.UpdateProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectsDocument,
+    "\n    query GetProject($id: ID!) {\n        project(id: $id) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.GetProjectDocument,
+    "\n    mutation UpdateProject($updateProjectInput: UpdateProjectInput!) {\n        updateProject(updateProjectInput: $updateProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.UpdateProjectDocument,
+    "\n    mutation RemoveProject($id: ID!) {\n        removeProject(id: $id)\n    }\n": typeof types.RemoveProjectDocument,
+    "\n    mutation CreateProject($createProjectInput: CreateProjectInput!) {\n        createProject(createProjectInput: $createProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": typeof types.CreateProjectDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": typeof types.GetSlidersDocument,
     "\n    query GetSlider($id: ID!) {\n      slider(id: $id) {\n        id\n        sliderImage\n        sliderName\n        sliderText\n        }\n    }\n": typeof types.GetSliderDocument,
     "\n    mutation CreateSlider($createSliderInput: CreateSliderInput!) {\n      createSlider(createSliderInput: $createSliderInput) {\n        id\n        sliderImage\n        sliderName\n        sliderText\n      }\n    }\n": typeof types.CreateSliderDocument,
@@ -42,6 +47,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n": types.SignupDocument,
+    "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n": types.RefreshTheTokensDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": types.LoginDocument,
     "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": types.GetUserDocument,
     "\n    query GetCertificates {\n    certificates {\n        certificateDescription\n        certificateImage\n        certificateLink\n        certificatePeriodEnd\n        certificatePeriodStart\n        certificateTitle\n        certificateCompany\n        id\n    }\n}\n": types.GetCertificatesDocument,
@@ -57,6 +63,10 @@ const documents: Documents = {
     "\n    query GetProfile {\n        profile {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.GetProfileDocument,
     "\n    mutation UpdateProfile($updateProfileInput: UpdateProfileInput!) {\n        updateProfile(updateProfileInput: $updateProfileInput) {\n            id\n            name\n            surname\n            profilePhotos\n            typingText\n            email\n            phone\n            location\n        }\n    }\n": types.UpdateProfileDocument,
     "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectsDocument,
+    "\n    query GetProject($id: ID!) {\n        project(id: $id) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.GetProjectDocument,
+    "\n    mutation UpdateProject($updateProjectInput: UpdateProjectInput!) {\n        updateProject(updateProjectInput: $updateProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.UpdateProjectDocument,
+    "\n    mutation RemoveProject($id: ID!) {\n        removeProject(id: $id)\n    }\n": types.RemoveProjectDocument,
+    "\n    mutation CreateProject($createProjectInput: CreateProjectInput!) {\n        createProject(createProjectInput: $createProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n": types.CreateProjectDocument,
     "\n    query GetSliders {\n    sliders {\n        id\n        sliderImage\n        sliderName\n        sliderText\n    }\n}\n": types.GetSlidersDocument,
     "\n    query GetSlider($id: ID!) {\n      slider(id: $id) {\n        id\n        sliderImage\n        sliderName\n        sliderText\n        }\n    }\n": types.GetSliderDocument,
     "\n    mutation CreateSlider($createSliderInput: CreateSliderInput!) {\n      createSlider(createSliderInput: $createSliderInput) {\n        id\n        sliderImage\n        sliderName\n        sliderText\n      }\n    }\n": types.CreateSliderDocument,
@@ -86,6 +96,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n"): (typeof documents)["\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput)\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n"): (typeof documents)["\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -146,6 +160,22 @@ export function graphql(source: "\n    mutation UpdateProfile($updateProfileInpu
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    query GetProjects {\n        projects {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query GetProject($id: ID!) {\n        project(id: $id) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    query GetProject($id: ID!) {\n        project(id: $id) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation UpdateProject($updateProjectInput: UpdateProjectInput!) {\n        updateProject(updateProjectInput: $updateProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    mutation UpdateProject($updateProjectInput: UpdateProjectInput!) {\n        updateProject(updateProjectInput: $updateProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation RemoveProject($id: ID!) {\n        removeProject(id: $id)\n    }\n"): (typeof documents)["\n    mutation RemoveProject($id: ID!) {\n        removeProject(id: $id)\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation CreateProject($createProjectInput: CreateProjectInput!) {\n        createProject(createProjectInput: $createProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"): (typeof documents)["\n    mutation CreateProject($createProjectInput: CreateProjectInput!) {\n        createProject(createProjectInput: $createProjectInput) {\n            id\n            projectDemoLink\n            projectDescription\n            projectGithubLink\n            projectImages\n            projectTitle\n            techStacks {\n                id\n                techName\n                techSvg\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
