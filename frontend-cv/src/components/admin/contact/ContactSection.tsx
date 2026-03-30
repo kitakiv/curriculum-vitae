@@ -12,7 +12,7 @@ import table from "@/variables/table/table";
 import Table from "../components/Table";
 interface Props {
     user: GetUserMutation['getUser'],
-    rows: GetContactsQuery['contacts'][]
+    rows: GetContactsQuery['contacts']
 }
 const columns = table.contactsTable.columns;
 

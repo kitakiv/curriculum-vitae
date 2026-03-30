@@ -3,14 +3,13 @@
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { queryGraphQL } from "./graphql";
 import { CONTACT_GET_ONE_QUERY } from "@/graphql/contacts.graphql";
-import { CreateProjectInput, GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables } from "@/gql/graphql";
+import { CreateProjectInput, GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables } from "@/gql/graphql";
 import { SLIDER_GET_ONE_QUERY } from "@/graphql/slider.graphql";
 import { CERTIFICATE_GET_ONE_QUERY } from "@/graphql/certificate.graphql";
 import { PROFILE_GET_QUERY } from "@/graphql/profile.graphql";
-import { TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
+import { TECHSTACK_GET_ONE_QUERY, TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
 import { InputType } from "../types";
 import { PROJECT_GET_ONE_QUERY } from "@/graphql/project.graphql";
-
 export async function getResourceById(resource: Resource, resourceId: string) {
     switch (resource) {
         case Resource.CONTACT:
@@ -23,6 +22,8 @@ export async function getResourceById(resource: Resource, resourceId: string) {
             return ((await queryGraphQL<GetProfileQuery>(PROFILE_GET_QUERY)).profile);
         case Resource.PROJECT:
             return (await queryGraphQL<GetProjectQuery, GetProjectQueryVariables>(PROJECT_GET_ONE_QUERY, { id: resourceId })).project;
+        case Resource.TECHSTACK:
+            return ((await queryGraphQL<GetTechStackQuery, GetTechStackQueryVariables>(TECHSTACK_GET_ONE_QUERY, { id: resourceId })).techstack);
         default:
             return null;
     }

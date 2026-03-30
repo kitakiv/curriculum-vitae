@@ -123,6 +123,67 @@ const table: Table = {
 
         ]
     },
+    techStackTable: {
+        columns: [
+           {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.TECHSTACK} />),
+            },
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.TECHSTACK} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.TECHSTACK} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 70,
+                type: 'string',
+            },
+            {
+                field: 'techName',
+                headerName: 'Tech stack name',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'projects',
+                headerName: 'Projects using this stack',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string', 
+                renderCell: (params) => {
+                    const projects = params.value as { projectTitle: string }[];
+                    return projects.map(project => project.projectTitle).join(', ');
+                },
+            },
+            {
+                field: 'techCategories',
+                headerName: 'Tech stack categories',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+                renderCell: (params) => {
+                    const categories = params.value as { categoryName: string }[];
+                    return categories.map(category => category.categoryName).join(', ');
+                }
+            }
+        ]
+    },
     certificateTable: {
         columns: [
             {
@@ -351,6 +412,10 @@ const table: Table = {
                 sortable: true,
                 filterable: true,
                 type: 'string',
+                renderCell: (params) => {
+                    const techStacks = params.value as { techName: string }[];
+                    return techStacks.map(techStack => techStack.techName).join(', ');
+                }
             },
             {
                 field: 'projectImages',

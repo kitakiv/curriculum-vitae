@@ -1,5 +1,5 @@
 
-import { GetCertificatesQuery, GetContactsQuery, GetProfileQuery, GetProjectsQuery, GetSlidersQuery, GetUserMutation } from "@/gql/graphql";
+import { GetCertificatesQuery, GetContactsQuery, GetProfileQuery, GetProjectsQuery, GetSlidersQuery, GetTechStacksQuery, GetUserMutation } from "@/gql/graphql";
 import { Resource } from "@/variables/admin/resource";
 import ContactSection from "@/components/admin/contact/ContactSection";
 import { queryGraphQL } from "@/query/graphql";
@@ -12,6 +12,8 @@ import { PROFILE_GET_QUERY } from "@/graphql/profile.graphql";
 import ProfileSection from "../profile/ProfileSection";
 import ProjectSection from "@/components/admin/projects/ProjectSection";
 import { PROJECTS_GET_QUERY } from "@/graphql/project.graphql";
+import { TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
+import TechStackSection from "../techstack/TechStackSection";
 
 interface ResourceSectionProps {
     user: GetUserMutation['getUser'];
@@ -35,6 +37,9 @@ export default async function ResourceSection({user, currentResource}: ResourceS
         case Resource.PROJECT:
           const projects = await queryGraphQL<GetProjectsQuery>(PROJECTS_GET_QUERY);
           return <ProjectSection user={user} rows={projects.projects} />;
+        case Resource.TECHSTACK:
+          const techStacks = await queryGraphQL<GetTechStacksQuery>(TECHSTACKS_GET_QUERY);
+          return <TechStackSection user={user} rows={techStacks.techstacks} />;
         default:
           return null;
       }

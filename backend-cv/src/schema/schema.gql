@@ -143,7 +143,7 @@ type Mutation {
   createRole(createRoleInput: CreateRoleInput!): Role!
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechCategory(createTechCategoryInput: CreateTechCategoryInput!): TechCategory!
-  createTechStack(CreateTechStackInput: CreateTechStackInput!): TechStack!
+  createTechStack(createTechStackInput: CreateTechStackInput!): TechStack!
   getUser: User!
   login(loginInput: LoginInput!): CookiesData!
   logout: Boolean!
@@ -165,7 +165,7 @@ type Mutation {
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
   updateTechCategory(updateTechCategoryInput: UpdateTechCategoryInput!): TechCategory!
-  updateTechStack(UpdateTechStackInput: UpdateTechStackInput!): TechStack!
+  updateTechStack(updateTechStackInput: UpdateTechStackInput!): TechStack!
 }
 
 type Permission {

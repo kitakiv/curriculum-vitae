@@ -9,7 +9,7 @@ import Table from "../components/Table";
 
 interface Props {
     user: GetUserMutation['getUser'],
-    rows: GetCertificatesQuery['certificates'][]
+    rows: GetCertificatesQuery['certificates']
 }
 
 export default function CertificateSection({ user, rows }: Props) {

@@ -3,22 +3,21 @@ import {
     Action, Resource,
     resourceConfig
 } from "@/variables/admin/resource"
-import { GetProfileQuery, GetProjectsQuery, GetUserMutation } from "@/gql/graphql"
+import {  GetTechStacksQuery, GetUserMutation } from "@/gql/graphql"
 import { hasPermission } from "@/query/permissions"
 import Table from "@/components/admin/components/Table";
 interface Props {
     user: GetUserMutation['getUser'],
-    rows: GetProjectsQuery['projects']
+    rows: GetTechStacksQuery['techstacks']
 }
 
-export default function ProjectSection({ user, rows }: Props) {
-    const resource = Resource.PROJECT;
+export default function TechStackSection({ user, rows }: Props) {
+    const resource = Resource.TECHSTACK;
     const canRead = hasPermission(user, resource, [Action.READ]);
     const canCreate = hasPermission(user, resource, [Action.CREATE]);
     const canUpdate = hasPermission(user, resource, [Action.UPDATE]);
     const canDelete = hasPermission(user, resource, [Action.DELETE]);
-    const columns = resourceConfig[Resource.PROJECT].table.table.columns;
-
+    const columns = resourceConfig[Resource.TECHSTACK].table.table.columns;
     return (
         <>
             <Table
@@ -28,7 +27,7 @@ export default function ProjectSection({ user, rows }: Props) {
                 resource={resource}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.PROJECT}
+                resouce={Resource.TECHSTACK}
                 canDelete={canDelete}
             />
         </>

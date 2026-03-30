@@ -8,6 +8,7 @@ import table from "../table/table";
 import { updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
 import { deleteContactAction } from "@/app/actions/contacts";
 import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
+import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
 
 export enum Resource {
   USER = 'user',
@@ -238,13 +239,39 @@ const resourceConfig = {
     title: 'Tech Stack',
     icon: '/svg/tech.svg',
     path: `${adminVariables.pathAdminPage}/${Resource.TECHSTACK}`,
-    editForm: null,
+    table: {
+        table: table.techStackTable
+    },
     createForm: {
-      inputs: null,
-      initialValues: null,
-      action: null,
-      schema: null,
-      title: 'Create techstack',
+      inputs: form.techStackForm.inputsAdd,
+      initialValues: form.techStackForm.initialValues,
+      action: createTechStackAciton,
+      schema: schema.techStack.techStackAdd,
+      title: 'Create tech stack',
+      uploadConfig: UPLOADSERVICE.TECHSTACK,
+      link: `${adminVariables.pathAdminPage}/${Resource.TECHSTACK}/${Action.CREATE}`,
+    },
+    editFrom: {
+      inputs: form.techStackForm.inputsEdit,
+      initialValues: form.techStackForm.initialValues,
+      action: updateTechStackAction,
+      schema: schema.techStack.techStackEdit,
+      title: 'Edit tech stack',
+    },
+    editFormImage: {
+      inputs: form.techStackForm.inputsEditImage,
+      initialValues: form.techStackForm.initialValues,
+      action: updateTechStackImageAction,
+      schema: schema.techStack.techStackEditImage,
+      title: 'Edit tech stack image',
+      uploadConfig: UPLOADSERVICE.TECHSTACK
+    },
+    deleteForm: {
+      inputs: form.techStackForm.inputsDelete,
+      initialValues: form.techStackForm.initialValuesDelete,
+      action: deleteTechStackAciton,
+      schema: schema.techStack.techStackDelete,
+      title: 'Delete tech stack',
     },
     validationSchema: null,
     form: null,

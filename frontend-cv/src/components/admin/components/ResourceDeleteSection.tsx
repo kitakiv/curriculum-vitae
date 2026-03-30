@@ -5,6 +5,7 @@ import DeleteFormSlider from "@/components/admin/slider/DeleteFormSlider";
 import DeleteFormContact from "@/components/admin/contact/DeleteFormContact";
 import DeleteFormCertificate from "../certificates/DeleteFormCertificate";
 import DeleteFormProject from "../projects/DeleteFormProject";
+import DeleteFormTechStack from "../techstack/DeleteFormTechStack";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -40,6 +41,12 @@ export default function ResourceDeleteSection<R>({currentResource, resourceId, r
                 <>
                     <DeleteFormProject resource={project} resourceId={resourceId} />
                 </>);
+        case Resource.TECHSTACK:
+             return (
+                <>
+                    <DeleteFormTechStack resourceId={resourceId} resource={resource} />
+                </>
+             ) 
         default:
             return null; 
     }

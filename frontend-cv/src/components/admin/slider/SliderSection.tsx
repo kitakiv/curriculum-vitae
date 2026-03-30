@@ -8,7 +8,7 @@ import { hasPermission } from "@/query/permissions"
 import Table from "@/components/admin/components/Table";
 interface Props {
     user: GetUserMutation['getUser'],
-    rows: GetSlidersQuery['sliders'][]
+    rows: GetSlidersQuery['sliders']
 }
 
 export default function SliderSection({ user, rows }: Props) {

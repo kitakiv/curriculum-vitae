@@ -37,7 +37,7 @@ export class TechStackResolver {
   @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.CREATE] }])
   @Mutation(() => TechStack)
   async createTechStack(
-    @Args('CreateTechStackInput', { type: () => CreateTechStackInput })
+    @Args('createTechStackInput', { type: () => CreateTechStackInput })
     createTechStackInput: CreateTechStackInput,
   ) {
     return await this.techStackService.create(createTechStackInput);
@@ -72,7 +72,7 @@ export class TechStackResolver {
   @PermissionGuard([{ resource: Resource.TECHSTACK, actions: [Action.UPDATE] }])
   @Mutation(() => TechStack)
   async updateTechStack(
-    @Args('UpdateTechStackInput', { type: () => UpdateTechStackInput })
+    @Args('updateTechStackInput', { type: () => UpdateTechStackInput })
     updateTechStackInput: UpdateTechStackInput,
   ) {
     return await this.techStackService.update(

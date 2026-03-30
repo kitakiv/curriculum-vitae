@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { setAccessToken, getAccessToken } from "@/lib/auth"
-import { getMe } from './query/auth.query'
  
 const protectedRoutes = ['/admin']
 const authRoutes = ['/login', '/signup']

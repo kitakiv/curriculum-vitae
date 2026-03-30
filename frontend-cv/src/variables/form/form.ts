@@ -85,6 +85,30 @@ const form = {
         name: "Slider",
         id: "slider-admin",
     },
+    techStackForm: {
+        initialValues: { techName: "", techSvg: "", projects: [], techCategories: [] },
+        initialValuesDelete: { id: "" },
+        inputsAdd: [
+            { id: "techName", label: "Tech Stack Name", name: "techName", placeholder: "Tech Stack Name", type: "text" },
+            { id: "techSvg", label: "Tech Stack Svg", name: "techSvg", placeholder: "Tech Stack Svg", type: "file" },
+            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [] },
+            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [] },
+        ],
+        inputsEdit: [
+            { id: "techName", label: "Tech Stack Name", name: "techName", placeholder: "Tech Stack Name", type: "text" },
+            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [] },
+            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [] },
+        ],
+        inputsEditImage: [
+            { id: "techSvg", label: "Tech Stack Svg", name: "techSvg", placeholder: "Tech Stack Svg", type: "file" },
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ],
+        title: "Tech Stack settings",
+        name: "Tech Stack",
+        id: "techstack-admin",
+    },
     projectForm: {
         initialValuesDelete: { id: "" },
         initialValues: { projectTitle: "", projectDescription: "", projectImages: [], projectGithubLink: "", projectDemoLink: "" , techStacks: [] },

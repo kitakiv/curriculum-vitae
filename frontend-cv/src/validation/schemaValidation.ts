@@ -1,5 +1,5 @@
 
-import { techStacks } from "@/variables/techstack/techstack";
+import techStack, { techStacks } from "@/variables/techstack/techstack";
 import { profile } from "console";
 import { sign } from "crypto";
 import * as Yup from "yup";
@@ -138,6 +138,11 @@ const certificatePeriodEnd = Yup.date().required("Certificate period end date is
 .min(new Date('1900-01-01'), "Certificate period end date must be in the future")
 .max(new Date(Date.now()), "Certificate period end date must be in the past");
 
+const techName = Yup.string().required("Tech stack name is required")
+.min(3, "Tech stack name must be at least 3 characters long")
+.max(50, "Tech stack name must be at most 50 characters long");
+
+
 const chekcbox  = Yup.array()
     .of(Yup.string())
     .min(1, 'Select at least one ') 
@@ -225,6 +230,23 @@ const schema = {
             contactSvg: image
         }),
         contactDelete: deleteSchema
+    },
+    techStack: {
+        techStackAdd: Yup.object().shape({
+            techName: contactName,
+            techSvg: image,
+            projects: chekcbox,
+            techCategories: chekcbox,
+        }),
+        techStackEdit: Yup.object().shape({
+            techName: contactName,
+            projects: chekcbox,
+            techCategories: chekcbox,
+        }),
+        techStackEditImage: Yup.object().shape({
+            techSvg: image
+        }),
+        techStackDelete: deleteSchema
     },
     certificate: {
         certificateEdit: Yup.object().shape({
