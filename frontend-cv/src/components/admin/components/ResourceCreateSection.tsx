@@ -8,6 +8,7 @@ import CreateFormCertificate from "../certificates/CreateFormCertificate";
 import CreateFormProject from "../projects/CreateFormProject";
 import { InputType } from "@/types/index";
 import CreateFormTechStack from "../techstack/CreateFormTechStack";
+import CreateFormTechCategory from "../techcategory/CreateFormTechCategory";
 
 interface Props {
     user: GetUserMutation['getUser'];
@@ -30,6 +31,8 @@ export default function ResourceCreateSection({user, currentResource, inputs}: P
             return <CreateFormProject inputs={inputs} />
         case Resource.TECHSTACK:
             return <CreateFormTechStack inputs={inputs} />
+        case Resource.CATEGORY:
+            return <CreateFormTechCategory inputs={inputs} />
         default:
             return null; 
     }

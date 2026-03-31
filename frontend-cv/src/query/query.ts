@@ -3,14 +3,14 @@
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { queryGraphQL } from "./graphql";
 import { CONTACT_GET_ONE_QUERY } from "@/graphql/contacts.graphql";
-import { CreateProjectInput, GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables } from "@/gql/graphql";
+import { GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechCategoryQuery, GetTechCategoryQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables } from "@/gql/graphql";
 import { SLIDER_GET_ONE_QUERY } from "@/graphql/slider.graphql";
 import { CERTIFICATE_GET_ONE_QUERY } from "@/graphql/certificate.graphql";
 import { PROFILE_GET_QUERY } from "@/graphql/profile.graphql";
 import { TECHSTACK_GET_ONE_QUERY, TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
 import { InputType } from "../types";
 import { PROJECT_GET_ONE_QUERY, PROJECTS_GET_QUERY } from "@/graphql/project.graphql";
-import { TECHCATEGORIES_GET_QUERY } from "@/graphql/techCategory.graphql";
+import { TECHCATEGORIES_GET_QUERY, TECHCATEGORY_GET_ONE_QUERY, TECHCATEGORY_TECHSTACK_QUERY } from "@/graphql/techCategory.graphql";
 export async function getResourceById(resource: Resource, resourceId: string) {
     switch (resource) {
         case Resource.CONTACT:
@@ -25,6 +25,8 @@ export async function getResourceById(resource: Resource, resourceId: string) {
             return (await queryGraphQL<GetProjectQuery, GetProjectQueryVariables>(PROJECT_GET_ONE_QUERY, { id: resourceId })).project;
         case Resource.TECHSTACK:
             return ((await queryGraphQL<GetTechStackQuery, GetTechStackQueryVariables>(TECHSTACK_GET_ONE_QUERY, { id: resourceId })).techstack);
+        case Resource.CATEGORY:
+            return ((await queryGraphQL<GetTechCategoryQuery, GetTechCategoryQueryVariables>(TECHCATEGORY_GET_ONE_QUERY, { id: resourceId })).techCategory);
         default:
             return null;
     }
@@ -54,6 +56,14 @@ export async function getInputsValues(resource: Resource) {
             }
             return input;
         });
+        case Resource.CATEGORY:
+            const techStacksAll = (await queryGraphQL<GetTechStacksQuery, GetTechStacksQueryVariables>(TECHSTACKS_GET_QUERY)).techstacks.map(techstack => ({ value: techstack.id, label: techstack.techName }));
+            return resourceConfig[Resource.CATEGORY].createForm.inputs.map((input: InputType) => {
+                if (input.name === 'techStacks') {
+                    input.options = techStacksAll;
+                }
+                return input;
+            });
        default:
        return null;
     }
@@ -76,7 +86,7 @@ export async function getResouseInputsEdit(resource: Resource) {
             const intputsEdit = resourceConfig[Resource.TECHSTACK].editForm;
         const techCategories = (await queryGraphQL<GetTechCategoriesQuery, GetTechCategoriesQueryVariables>(TECHCATEGORIES_GET_QUERY)).techCategories.map(category => ({ value: category.id, label: category.categoryName }));
         const projects = (await queryGraphQL<GetProjectsQuery, GetProjectsQueryVariables>(PROJECTS_GET_QUERY)).projects.map(project => ({ value: project.id, label: project.projectTitle }));
-        return resourceConfig[Resource.TECHSTACK].editForm.inputs.map((input: InputType) => {
+        return intputsEdit.inputs.map((input: InputType) => {
             if (input.name === 'techCategories') {
                 input.options = techCategories;
             }
@@ -85,6 +95,15 @@ export async function getResouseInputsEdit(resource: Resource) {
             }
             return input;
         });
+        case Resource.CATEGORY: 
+            const inputsEditCategory = resourceConfig[Resource.CATEGORY].editForm;
+            const techStacksAll = (await queryGraphQL<GetTechStacksQuery, GetTechStacksQueryVariables>(TECHSTACKS_GET_QUERY)).techstacks.map(techstack => ({ value: techstack.id, label: techstack.techName }));
+            return inputsEditCategory.inputs.map((input: InputType) => {
+                if (input.name === 'techStacks') {
+                    input.options = techStacksAll;
+                }
+                return input;
+            });
        default:
        return null;
     }

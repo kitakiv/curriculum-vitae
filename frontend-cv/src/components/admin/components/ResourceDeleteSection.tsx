@@ -1,11 +1,12 @@
 "use client";
 import { Resource } from "@/variables/admin/resource";
-import { Slider, Contact, Certificate, Project } from "@/gql/graphql";
+import { Slider, Contact, Certificate, Project, TechStack, TechCategory } from "@/gql/graphql";
 import DeleteFormSlider from "@/components/admin/slider/DeleteFormSlider";
 import DeleteFormContact from "@/components/admin/contact/DeleteFormContact";
 import DeleteFormCertificate from "../certificates/DeleteFormCertificate";
 import DeleteFormProject from "../projects/DeleteFormProject";
 import DeleteFormTechStack from "../techstack/DeleteFormTechStack";
+import DeleteFormTechCategory from "../techcategory/DeleteFormTechCategory";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -42,11 +43,19 @@ export default function ResourceDeleteSection<R>({currentResource, resourceId, r
                     <DeleteFormProject resource={project} resourceId={resourceId} />
                 </>);
         case Resource.TECHSTACK:
+            const techStack = resource as TechStack;
              return (
                 <>
-                    <DeleteFormTechStack resourceId={resourceId} resource={resource} />
+                    <DeleteFormTechStack resourceId={resourceId} resource={techStack} />
                 </>
              ) 
+        case Resource.CATEGORY:
+             const category = resource as TechCategory;
+             return (
+                <>
+                    <DeleteFormTechCategory resourceId={resourceId} resource={category} />
+                </>
+             )
         default:
             return null; 
     }

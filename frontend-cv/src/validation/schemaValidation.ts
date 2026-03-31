@@ -270,6 +270,13 @@ const schema = {
             certificateImage: image
         }),
         certificateDelete: deleteSchema
+    },
+    category: {
+        category: Yup.object().shape({
+            categoryName: contactName,
+            techStacks: chekcbox,
+        }),
+        categoryDelete: deleteSchema
     }
 }
 export { deleteSchema };

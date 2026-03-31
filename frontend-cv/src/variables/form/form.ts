@@ -1,3 +1,4 @@
+import { init } from "@graphql-codegen/cli";
 import techStack from "../techstack/techstack";
 
 
@@ -204,6 +205,17 @@ const form = {
         buttonSave: "Save",
         buttonAdd: "Add",
         buttonDelete: "Delete",
+    },
+    categoryForm: {
+        initialValuesDelete: { id: "" },
+        initialValues: { categoryName: "", techStacks: [] },
+        inputs: [
+            { id: "categoryName", label: "Category Name", name: "categoryName", placeholder: "Category Name", type: "text" },
+            { id: "techStacks", label: "Tech Stacks", name: "techStacks", placeholder: "Tech Stacks", type: "checkbox", options: [] },
+        ],
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ],
     }
 }
 export default form;

@@ -434,6 +434,55 @@ const table: Table = {
             },
         ]
     },
+    categoryTable: {
+        columns: [
+            {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.CATEGORY} />),
+            },
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.CATEGORY} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CATEGORY} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 70,
+                type: 'string',
+            },
+            {
+                field: 'categoryName',
+                headerName: 'Category name',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'techStacks',
+                headerName: 'Tech stacks in this category',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+                renderCell: (params) => {
+                    const techStacks = params.value as { techName: string }[];
+                    return techStacks.map(techStack => techStack.techName).join(', ');
+                }
+            }
+        ]
+    }
 
 
 }

@@ -9,6 +9,7 @@ import { updateProfileAction, updateProfileImageAction, updateProfileImagesActio
 import { deleteContactAction } from "@/app/actions/contacts";
 import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
 import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
+import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
 
 export enum Resource {
   USER = 'user',
@@ -323,6 +324,43 @@ const resourceConfig = {
     validationSchema: schema.slider,
     form: form.sliderForm,
   },
+  [Resource.CATEGORY]: {
+    id: 'admin-category',
+    title: 'Tech Stack Categories',
+    icon: '/svg/category.svg',
+    path: `${adminVariables.pathAdminPage}/${Resource.CATEGORY}`,
+    table: {
+      table: table.categoryTable
+    },
+    createForm : {
+      inputs: form.categoryForm.inputs,
+      initialValues: form.categoryForm.initialValues,
+      action: createTechCategoryAction,
+      schema: schema.category.category,
+      title: 'Create Tech Stack Category',
+      link: `${adminVariables.pathAdminPage}/${Resource.CATEGORY}/${Action.CREATE}`,
+    },
+    editForm: {
+      inputs: form.categoryForm.inputs,
+      initialValues: form.categoryForm.initialValues,
+      action: updateTechCategoryAction,
+      schema: schema.category.category,
+      title: 'Edit Tech Stack Category',
+    },
+    deleteForm: {
+      inputs: form.categoryForm.inputsDelete,
+      initialValues: form.categoryForm.initialValuesDelete,
+      action: deleteTechCategoryAction,
+      schema: schema.category.categoryDelete,
+      title: 'Delete Tech Stack Category',
+    },
+  },
+  [Resource.ROLE]: {
+    id: 'admin-roles',
+    title: 'User Roles',
+    icon: '/svg/role.svg',
+    path: `${adminVariables.pathAdminPage}/${Resource.ROLE}`,
+  }
 };
 
 
