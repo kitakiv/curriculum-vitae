@@ -2,7 +2,7 @@ import ResourceCreateSection from "@/components/admin/components/ResourceCreateS
 import { GetUserMutation } from "@/gql/graphql";
 import { getMe } from "@/query/auth.query";
 import { hasPermission } from "@/query/permissions";
-import { getInitialValues, getInputsValues } from "@/query/query";
+import {getInputsValues } from "@/query/query";
 import { Resource, Action } from "@/variables/admin/resource";
 
 type Props = {

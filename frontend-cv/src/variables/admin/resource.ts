@@ -251,7 +251,7 @@ const resourceConfig = {
       uploadConfig: UPLOADSERVICE.TECHSTACK,
       link: `${adminVariables.pathAdminPage}/${Resource.TECHSTACK}/${Action.CREATE}`,
     },
-    editFrom: {
+    editForm: {
       inputs: form.techStackForm.inputsEdit,
       initialValues: form.techStackForm.initialValues,
       action: updateTechStackAction,

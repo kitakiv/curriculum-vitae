@@ -181,7 +181,15 @@ const table: Table = {
                     const categories = params.value as { categoryName: string }[];
                     return categories.map(category => category.categoryName).join(', ');
                 }
-            }
+            },
+             {
+                field: 'techSvg',
+                filterable: true,
+                headerName: 'Tech Stack Image',
+                width: 150,
+                sortable: false,
+                renderCell: (params) => (<TableImage params={params || null} />),
+            },
         ]
     },
     certificateTable: {

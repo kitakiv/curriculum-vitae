@@ -4,7 +4,7 @@ import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContact
 import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
 import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
 import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
-import { Contact, Profile, Project, Slider } from "@/gql/graphql";
+import { Contact, Profile, Project, Slider, TechStack } from "@/gql/graphql";
 import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
 import { Certificate } from "crypto";
 import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
@@ -15,6 +15,8 @@ import UpdateFormProject from "../projects/UpdateFormProject";
 import UpdateFormProjectImage from "../projects/UpdateFormProjectImage";
 import UpdateFormProjectImages from "../projects/UpdateFormProjectImages";
 import { InputType } from "@/types/index";
+import UpdateFormTechStack from "../techstack/UpdateFormTechStack";
+import UpdateFormTechStackImage from "../techstack/UpdateTechStackImage";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -59,6 +61,13 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
                     <UpdateFormProject initialValues={resource as Project} resourceId={resourceId} inputs={inputs}/>
                     <UpdateFormProjectImage initialValues={resource as Project} resourceId={resourceId}/>
                     <UpdateFormProjectImages initialValues={resource as Project} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.TECHSTACK:
+            return (
+                <>
+                    <UpdateFormTechStack initialValues={resource as TechStack} resourceId={resourceId} inputs={inputs}/>
+                    <UpdateFormTechStackImage initialValues={resource as TechStack} resourceId={resourceId}/>
                 </>
             )
         default:

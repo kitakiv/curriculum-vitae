@@ -1,11 +1,10 @@
 'use server'
-import { CreateProjectInput, CreateTechStackInput, CreateTechStackMutation, CreateTechStackMutationVariables, DeleteTechStackMutation, DeleteTechStackMutationVariables, TechStack, UpdateTechStackInput, UpdateTechStackMutation, UpdateTechStackMutationVariables } from "@/gql/graphql"
+import { CreateTechStackInput, CreateTechStackMutation, CreateTechStackMutationVariables, DeleteTechStackMutation, DeleteTechStackMutationVariables, TechStack, UpdateTechStackInput, UpdateTechStackMutation, UpdateTechStackMutationVariables } from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState } from "./action.type";
 import { TECHSTACK_CREATE_MUTATION, TECHSTACK_DELETE_MUTATION, TECHSTACK_UPDATE_MUTATION } from "@/graphql/techStack.graphql";
-import { StringifyOptions } from "querystring";
 
 const TECHSTACK_SVG = 'techSvg';
 
@@ -73,7 +72,7 @@ export async function updateTechStackImageAction(prevState: PrevState<CreateTech
 
 
 export async function createTechStackAciton(prevState: PrevState<CreateTechStackInput>| undefined, formData: FormData):
- Promise<PrevState<CreateProjectInput>> {
+ Promise<PrevState<CreateTechStackInput>> {
 
     try {
         const result = await queryGraphQL<CreateTechStackMutation, CreateTechStackMutationVariables>(
