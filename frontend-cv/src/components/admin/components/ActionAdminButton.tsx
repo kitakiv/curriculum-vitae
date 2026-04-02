@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import IconButton from "@mui/material/IconButton";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 interface Props {
     params: {
@@ -16,7 +17,7 @@ interface Props {
 }
 export function EditAdminButton({ params, resource }: Props) {
     return (
-        <Link href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.edit.path}/${params.row.id}`}>
+        <Link title="Edit" href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.edit.path}/${params.row.id}`}>
             <IconButton aria-label="edit" color="primary">
                 <EditIcon />
             </IconButton>
@@ -26,7 +27,7 @@ export function EditAdminButton({ params, resource }: Props) {
 
 export function DeleteAdminButton({ params, resource }: Props) {
     return (
-        <Link href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.delete.path}/${params.row.id}`}>
+        <Link title={adminVariables.delete.title} href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.delete.path}/${params.row.id}`}>
             <IconButton aria-label="delete" color="error">
                 <DeleteIcon />
             </IconButton>
@@ -36,9 +37,19 @@ export function DeleteAdminButton({ params, resource }: Props) {
 
 export function ViewAdminButton({ params, resource }: Props) {
     return (
-        <Link href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.view.path}/${params.row.id}`}>
+        <Link title={adminVariables.view.title} href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.view.path}/${params.row.id}`}>
             <IconButton color="primary">
                 <PreviewIcon />
+            </IconButton >
+        </Link>
+    )
+}
+
+export function AttachRoleAdminButton({ params, resource }: Props) {
+    return (
+        <Link title={adminVariables.attachRole.title} href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.attachRole.path}/${params.row.id}`}>
+            <IconButton color="primary">
+                <PersonAddIcon />
             </IconButton >
         </Link>
     )

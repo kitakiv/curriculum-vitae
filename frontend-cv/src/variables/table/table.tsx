@@ -1,9 +1,10 @@
 import { GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from '@mui/x-data-grid';
 import TableImage from "@/components/admin/components/TableImage";
 import Link from "next/link";
-import { Resource } from '../admin/resource';
-import { EditAdminButton, DeleteAdminButton, ViewAdminButton } from "@/components/admin/components/ActionAdminButton";
+import { adminVariables, Resource } from '../admin/resource';
+import { EditAdminButton, DeleteAdminButton, ViewAdminButton, AttachRoleAdminButton } from "@/components/admin/components/ActionAdminButton";
 import Table from '@/components/admin/components/Table';
+import { GetRoleQuery, Permission, Role } from '@/gql/graphql';
 interface Table {
     [key: string]: {
         columns: GridColDef[]
@@ -38,7 +39,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CONTACT} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -71,7 +72,7 @@ const table: Table = {
     },
     sliderTable: {
         columns: [
-             {
+            {
                 field: 'view',
                 headerName: 'View',
                 width: 70,
@@ -93,7 +94,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.SLIDER} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -125,7 +126,7 @@ const table: Table = {
     },
     techStackTable: {
         columns: [
-           {
+            {
                 field: 'view',
                 headerName: 'View',
                 width: 70,
@@ -147,7 +148,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.TECHSTACK} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -164,7 +165,7 @@ const table: Table = {
                 width: 150,
                 filterable: true,
                 sortable: true,
-                type: 'string', 
+                type: 'string',
                 renderCell: (params) => {
                     const projects = params.value as { projectTitle: string }[];
                     return projects.map(project => project.projectTitle).join(', ');
@@ -182,7 +183,7 @@ const table: Table = {
                     return categories.map(category => category.categoryName).join(', ');
                 }
             },
-             {
+            {
                 field: 'techSvg',
                 filterable: true,
                 headerName: 'Tech Stack Image',
@@ -216,7 +217,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CERTIFICATE} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -275,7 +276,7 @@ const table: Table = {
     },
     profileTable: {
         columns: [
-             {
+            {
                 field: 'view',
                 headerName: 'View',
                 width: 70,
@@ -290,7 +291,7 @@ const table: Table = {
                 renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.PROFILE} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -345,20 +346,20 @@ const table: Table = {
                 field: 'profilePhotos',
                 headerName: 'Profile photos',
                 width: 150,
-                renderCell: (params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>) => {
-                    const value = params.value as string[];
-                    if (!value || value.length === 0) {
-                        return <TableImage params={{ value: null }} />
-                    }
-                    return (
-                        <>
-                        {
-                            value.map((photo: string) => 
-                            <TableImage key={photo.at(-1)} params={{ value: photo }} />
-                        )}
-                        </>
-                    )
-                }
+                sortable: false,
+                renderCell: (params) => {
+                return (
+                    <div style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                whiteSpace: 'normal',
+                                lineHeight: 1.6,
+                            }}>
+                                <TableImage params={params || null} />
+                    </div>
+                )
+                },
+          
             }
         ]
     },
@@ -386,7 +387,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.PROJECT} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -430,7 +431,18 @@ const table: Table = {
                 headerName: 'Project images',
                 width: 150,
                 sortable: false,
-                renderCell: (params) => (<TableImage params={params || null} />),
+                renderCell: (params) => {
+                return (
+                    <div style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                whiteSpace: 'normal',
+                                lineHeight: 1.6,
+                            }}>
+                                <TableImage params={params || null} />
+                    </div>
+                )
+            },
             },
         ]
     },
@@ -458,7 +470,7 @@ const table: Table = {
                 renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.CATEGORY} />),
             },
             {
-                field: 'id', headerName: 'ID', width: 70,
+                field: 'id', headerName: 'ID', width: 150,
                 type: 'string',
             },
             {
@@ -479,6 +491,166 @@ const table: Table = {
                 renderCell: (params) => {
                     const techStacks = params.value as { techName: string }[];
                     return techStacks.map(techStack => techStack.techName).join(', ');
+                }
+            }
+        ]
+    },
+    userTable: {
+        columns: [
+            {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.USER} />),
+            },
+            {
+                field: 'edit',
+                headerName: 'Attach Role',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<AttachRoleAdminButton params={params || null} resource={Resource.USER} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.USER} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 150,
+                type: 'string',
+            },
+            {
+                field: 'avatarPhoto',
+                headerName: 'Profile photo',
+                width: 150,
+                type: 'string',
+                renderCell: (params) => (<TableImage tailwind="rounded-full" params={params || null} />),
+            },
+            {
+                field: 'isEmailVerified',
+                headerName: 'Email verified',
+                width: 150,
+                sortable: true,
+                filterable: true,
+                type: 'boolean',
+            },
+            {
+                field: 'name',
+                headerName: 'Username',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'login',
+                headerName: 'Email',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'role',
+                headerName: 'Role',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+                renderCell: (params) => {
+                    return (<Link href={`${adminVariables.pathAdminPage}/${Resource.ROLE}/${adminVariables.view.path}/${(params.value as Role)?.id}`}>
+                        {params.value.name}
+                    </Link>)
+                }
+            }
+
+        ]
+    },
+
+    roleTable: {
+        columns: [
+            {
+                field: 'view',
+                headerName: 'View',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<ViewAdminButton params={params || null} resource={Resource.ROLE} />),
+            },
+            {
+                field: 'edit',
+                headerName: 'Edit',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<EditAdminButton params={params || null} resource={Resource.ROLE} />),
+            },
+            {
+                field: 'delete',
+                headerName: 'Delete',
+                width: 70,
+                type: 'actions',
+                renderCell: (params) => (<DeleteAdminButton params={params || null} resource={Resource.ROLE} />),
+            },
+            {
+                field: 'id', headerName: 'ID', width: 150,
+            },
+            {
+                field: 'name',
+                headerName: 'Role name',
+                width: 150,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+            },
+            {
+                field: 'permissions',
+                headerName: 'Permissions',
+                width: 200,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+                renderCell: (params) => {
+                    const permissions = params.value as Permission[];
+                    console.log(permissions, 'permissions');
+                    return (
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                whiteSpace: 'normal',
+                                lineHeight: 1.6,
+                            }}
+                        >
+                            {permissions.map((permission) => (
+                                <div key={permission.resource}>
+                                    <strong>{permission.resource}:</strong> {permission.actions.join(' ')}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                }
+            },
+            {
+                field: 'users',
+                headerName: 'Users with this role',
+                width: 200,
+                filterable: true,
+                sortable: true,
+                type: 'string',
+                renderCell: (params) => {
+                    const users = params.value as GetRoleQuery['role']['users'];
+                    if (!users || users.length === 0) {
+                        return 'No users'
+                    }
+                    return (
+                        users.map(user => {
+                            return (<Link key={user.login} href={`${adminVariables.pathAdminPage}/${Resource.USER}/${adminVariables.view.path}/${user.id}`}>
+                                {user.login}
+                            </Link>)
+                        })
+                    )
                 }
             }
         ]

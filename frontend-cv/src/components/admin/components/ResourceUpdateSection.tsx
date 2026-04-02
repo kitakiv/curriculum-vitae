@@ -4,7 +4,7 @@ import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContact
 import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
 import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
 import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
-import { Contact, Profile, Project, Slider, TechCategory, TechStack } from "@/gql/graphql";
+import { Contact, Profile, Project, Slider, TechCategory, TechStack, User } from "@/gql/graphql";
 import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
 import { Certificate } from "crypto";
 import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
@@ -18,6 +18,7 @@ import { InputType } from "@/types/index";
 import UpdateFormTechStack from "../techstack/UpdateFormTechStack";
 import UpdateFormTechStackImage from "../techstack/UpdateTechStackImage";
 import UpdateFormTechCategory from "../techcategory/UpdateFormTechCategory";
+import AttachFormRoleUser from "../user/AttachFormRoleUser";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
@@ -75,6 +76,12 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
             return (
                 <>
                     <UpdateFormTechCategory initialValues={resource as TechCategory} resourceId={resourceId} inputs={inputs}/>
+                </>
+            )
+        case Resource.USER:
+             return (
+                <>
+                    <AttachFormRoleUser initialValues={resource as User} resourceId={resourceId}/>
                 </>
             )
         default:

@@ -10,6 +10,7 @@ import { deleteContactAction } from "@/app/actions/contacts";
 import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
 import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
 import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
+import { attachRoleToUserAction, deleteUserAction } from "@/app/actions/auth";
 
 export enum Resource {
   USER = 'user',
@@ -58,6 +59,11 @@ const adminVariables = {
     button: 'Create',
     title: 'Create',
     path: 'create',
+  },
+  attachRole: {
+    button: 'Attach Role',
+    title: 'Attach Role to user',
+    path: 'update'
   }
 }
 
@@ -283,8 +289,23 @@ const resourceConfig = {
     title: 'Users',
     icon: '/svg/user.svg',
     path: `${adminVariables.pathAdminPage}/${Resource.USER}`,
-    editForm: null,
-    createForm: null,
+    table: {
+      table: table.userTable
+    },
+    attachRole: {
+      inputs: form.userForm.inputs,
+      initialValues: form.userForm.initialValues,
+      action: attachRoleToUserAction,
+      schema: schema.user.attachRole,
+      title: 'Attach Role to user',
+    },
+    deleteForm: {
+      inputs: form.userForm.inputsDelete,
+      initialValues: form.userForm.initialValuesDelete,
+      action: deleteUserAction,
+      schema: schema.user.userDelete,
+      title: 'Delete user',
+    },
     validationSchema: null,
     form: null,
     actionCreate: null,
@@ -360,6 +381,17 @@ const resourceConfig = {
     title: 'User Roles',
     icon: '/svg/role.svg',
     path: `${adminVariables.pathAdminPage}/${Resource.ROLE}`,
+    table: {
+      table: table.roleTable
+    },
+    // createForm: {
+    //   inputs: form.roleForm.inputs,
+    //   initialValues: form.roleForm.initialValues,
+    //   action: createRoleAction,
+    //   schema: schema.role.role,
+    //   title: 'Create User Role',
+    //   link: `${adminVariables.pathAdminPage}/${Resource.ROLE}/${Action.CREATE}`,
+    // }
   }
 };
 

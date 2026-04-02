@@ -63,13 +63,14 @@ export default function Table({
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20]}
           checkboxSelection
+          getRowHeight={() => 'auto'}
           onRowSelectionModelChange={(newRowSelectionModel) => {
             setRowSelectionModel(newRowSelectionModel);
             console.log(newRowSelectionModel);
           }}
           showToolbar
           rowSelectionModel={rowSelectionModel}
-          sx={{ border: 0, height: '100%', width: '100%', minHeight: '100%' }}
+          sx={{ border: 0, height: '100%', width: '100%'}}
         />
       </Paper>
     </div>

@@ -1,5 +1,6 @@
 
 import techStack, { techStacks } from "@/variables/techstack/techstack";
+import { attach } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { profile } from "console";
 import { sign } from "crypto";
 import * as Yup from "yup";
@@ -100,6 +101,7 @@ const deleteSchema = (expectedId: string) =>
   });
 
 
+
 const projectGithubLink = Yup.string().required("Github link is required")
 .url("Invalid Github link format")
 .matches(/^(https?:\/\/)/, "Invalid Demo link format");
@@ -142,11 +144,24 @@ const techName = Yup.string().required("Tech stack name is required")
 .min(3, "Tech stack name must be at least 3 characters long")
 .max(50, "Tech stack name must be at most 50 characters long");
 
+const uuid = Yup.string().required("ID is required")
+.uuid("Invalid ID format");
+
 
 const chekcbox  = Yup.array()
     .of(Yup.string())
     .min(1, 'Select at least one ') 
     .required('Required');
+
+const attachRoleSchema = (expectedId: string) =>
+  Yup.object({
+    userId: Yup.string()
+      .required("User ID is required")
+      .oneOf([expectedId], `User ID must be ${expectedId}`),
+
+    roleId: uuid,
+  });
+
 
 const schema = {
     custom : Yup.object().shape({
@@ -277,6 +292,10 @@ const schema = {
             techStacks: chekcbox,
         }),
         categoryDelete: deleteSchema
+    },
+    user: {
+        attachRole: attachRoleSchema,
+        userDelete: deleteSchema
     }
 }
 export { deleteSchema };

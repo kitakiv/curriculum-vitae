@@ -1,5 +1,5 @@
 
-import { GetCertificatesQuery, GetContactsQuery, GetProfileQuery, GetProjectsQuery, GetSlidersQuery, GetTechCategoriesQuery, GetTechStacksQuery, GetUserMutation } from "@/gql/graphql";
+import { GetCertificatesQuery, GetContactsQuery, GetProfileQuery, GetProjectsQuery, GetRolesQuery, GetSlidersQuery, GetTechCategoriesQuery, GetTechStacksQuery, GetUserMutation, GetUsersQuery } from "@/gql/graphql";
 import { Resource } from "@/variables/admin/resource";
 import ContactSection from "@/components/admin/contact/ContactSection";
 import { queryGraphQL } from "@/query/graphql";
@@ -13,9 +13,13 @@ import ProfileSection from "../profile/ProfileSection";
 import ProjectSection from "@/components/admin/projects/ProjectSection";
 import { PROJECTS_GET_QUERY } from "@/graphql/project.graphql";
 import { TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
+import { USERS_GET_QUERY } from "@/graphql/auth.graphql";
 import TechStackSection from "../techstack/TechStackSection";
 import { TECHCATEGORIES_GET_QUERY } from "@/graphql/techCategory.graphql";
 import TechCategorySection from "../techcategory/TechCategorySection";
+import UserSection from "../user/UserSection";
+import { ROLES_GET_QUERY } from "@/graphql/role.graphql";
+import RoleSection from "../roles/RoleSection";
 
 interface ResourceSectionProps {
     user: GetUserMutation['getUser'];
@@ -45,6 +49,12 @@ export default async function ResourceSection({user, currentResource}: ResourceS
         case Resource.CATEGORY:
           const techCategories = await queryGraphQL<GetTechCategoriesQuery>(TECHCATEGORIES_GET_QUERY);
           return <TechCategorySection user={user} rows={techCategories.techCategories} />;
+        case Resource.USER:
+          const users = await queryGraphQL<GetUsersQuery>(USERS_GET_QUERY);
+          return <UserSection user={user} rows={users.users} />;
+        case Resource.ROLE:
+          const roles = await queryGraphQL<GetRolesQuery>(ROLES_GET_QUERY);
+          return <RoleSection user={user} rows={roles.roles} />;
         default:
           return null;
       }

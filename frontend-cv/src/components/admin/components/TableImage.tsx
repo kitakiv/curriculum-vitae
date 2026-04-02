@@ -3,10 +3,11 @@ interface Props {
     params: {
         value: string | null | string[]
     }
+    tailwind?: string
 }
 
 
-export default function TableImage({params}: Props) {
+export default function TableImage({params, tailwind}: Props) {
     if (!params.value) return null
     if (Array.isArray(params.value)) {
       return (
@@ -15,7 +16,7 @@ export default function TableImage({params}: Props) {
           key={index}
           src={image}
           alt="Image of resource"
-          className="w-10 h-10 object-cover"
+          className={`w-10 h-10 object-cover ${tailwind || ''}`}
         />
        ))
       )
@@ -26,7 +27,7 @@ export default function TableImage({params}: Props) {
           <img
             src={params.value}
             alt="Image of resource"
-            className="h-full w-fit object-cover"
+            className={`w-10 h-10 object-cover ${tailwind || ''}`}
           />
         ) : (
           <span className="text-gray-500">No Image</span>
