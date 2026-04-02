@@ -17,6 +17,7 @@ import { User } from '../auth/entities/user.entity';
 import { Action } from './enums/action.enum';
 import { Resource } from './enums/resource.enum';
 import { ConfigService } from '@nestjs/config';
+import { allPermission } from './entities/allPermission.entity';
 
 @Injectable()
 export class RolesService implements OnModuleInit {
@@ -154,4 +155,14 @@ export class RolesService implements OnModuleInit {
       this.logger.error(error);
     }
   }
+
+  findPermissions(): allPermission[] {
+    const resources = Object.values(Resource);
+    const actions = Object.values(Action);
+    return resources.map((resource) => ({
+      resource,
+      actions,
+    }));
+  }
+
 }

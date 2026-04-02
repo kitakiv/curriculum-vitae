@@ -234,6 +234,7 @@ type Query {
   certificates: [Certificate!]!
   contact(id: ID!): Contact!
   contacts: [Contact!]!
+  permissions: [allPermission!]!
   profile: Profile!
   project(id: ID!): Project!
   projects: [Project!]!
@@ -246,6 +247,7 @@ type Query {
   techstack(id: ID!): TechStack!
   techstacks: [TechStack!]!
   user(login: String!): User!
+  userById(id: ID!): User!
   users: [User!]!
 }
 
@@ -447,4 +449,12 @@ enum UserProvider {
   BOTH
   GOOGLE
   LOCAL
+}
+
+type allPermission {
+  """Permission actions example: [create, read, update, delete]"""
+  actions: [String!]!
+
+  """Permission resource example: user"""
+  resource: String!
 }

@@ -20,6 +20,7 @@ import { Permission } from './entities/permission.entity';
 import { User } from '../auth/entities/user.entity';
 import { CurrentUserId } from '../decorators/currentuserid.decorator';
 import { AuthService } from '../auth/auth.service';
+import { allPermission } from './entities/allPermission.entity';
 
 
 @UseGuards(AuthorizationGuard)
@@ -98,5 +99,11 @@ export class RolesResolver {
   @Mutation(() => ID)
   async removeRole(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.remove(id);
+  }
+
+  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
+  @Query(() => [allPermission], { name: 'permissions' })
+  async findPermissions() {
+    return this.rolesService.findPermissions();
   }
 }

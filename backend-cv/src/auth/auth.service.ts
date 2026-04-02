@@ -250,6 +250,9 @@ export class AuthService implements OnModuleInit {
     return user;
   }
 
+  
+
+
   async findAllRoles(userId: string) {
     return this.dataSource.getRepository(Role).findOne({
       where: {
@@ -303,6 +306,12 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException(errors.NOT_UPDATED('User'));
     }
     return await this.findUserById(userId);
+  }
+
+  async findOneById(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(errors.NOT_FOUND(`User with id ${id}`));
+    return user;
   }
 
   private async findUserById(userId: string) {

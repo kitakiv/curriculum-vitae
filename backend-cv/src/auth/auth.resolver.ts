@@ -198,4 +198,11 @@ export class AuthResolver {
   async findOne(@Args('login', { type: () => String }) login: string) {
     return await this.authService.findOne(login);
   }
+
+
+  @PermissionGuard([{ resource: Resource.USER, actions: [Action.READ] }])
+  @Query(() => User, { name: 'userById' })
+  async findOneById(@Args('id', { type: () => ID }) id: string) {
+    return await this.authService.findOneById(id);
+  }
 }
