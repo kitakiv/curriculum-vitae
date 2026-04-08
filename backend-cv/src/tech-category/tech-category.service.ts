@@ -32,6 +32,10 @@ export class TechCategoryService {
     private readonly logger: Logger = new Logger(TechCategoryService.name),
     private readonly redisCacheService: RedisCacheService,
   ) { }
+
+  private async deleteCache() {
+    await this.redisCacheService.del(this.TECH_CATEGORY_CACHE_KEY);
+  }
   async create(createTechCategoryInput: CreateTechCategoryInput) {
     // check if category with the same name already exists
     const existTechStack = await this.techCategoryRepository.findOne({
@@ -50,7 +54,7 @@ export class TechCategoryService {
       'Tech stacks',
     )
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const createdTechCategory = await this.dataSource.transaction(async (manager) => {
         const techCategory = await manager.create(TechCategory, {
           ...createTechCategoryInput,
           techStacks: techCategoryEntity,
@@ -58,6 +62,8 @@ export class TechCategoryService {
         await manager.save(TechCategory, techCategory);
         return techCategory;
       });
+      await this.deleteCache();
+      return createdTechCategory;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Tech category'));
@@ -168,7 +174,7 @@ export class TechCategoryService {
       )
       : techCategory.techStacks)
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const updatedTechCategory = await this.dataSource.transaction(async (manager) => {
         const preloadedTechCategory = await manager.preload(TechCategory, {
           id,
           ...updateTechCategoryInput,
@@ -177,6 +183,8 @@ export class TechCategoryService {
         await manager.save(TechCategory, preloadedTechCategory);
         return preloadedTechCategory;
       });
+      await this.deleteCache();
+      return updatedTechCategory;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('Tech category'));
@@ -199,6 +207,7 @@ export class TechCategoryService {
           .execute();
         await manager.delete(TechCategory, id);
       });
+      await this.deleteCache();
       return id;
     } catch (error) {
       this.logger.error(error);

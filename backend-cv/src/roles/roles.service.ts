@@ -41,7 +41,7 @@ export class RolesService implements OnModuleInit {
           Role,
           new Role({ name, permissions: permission }),
         );
-        await this.roleRepository.save(role);
+        await manager.save(Role, role);
         return role;
       });
     } catch (error) {
@@ -75,8 +75,15 @@ export class RolesService implements OnModuleInit {
   }
 
   async update(id: string, updateRoleInput: UpdateRoleInput): Promise<Role> {
-    const role = await this.roleRepository.findOneBy({ id });
+    const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) throw new NotFoundException('Role not found');
+    if (updateRoleInput.name) {
+      const roleExist = await this.roleRepository.findOneBy({
+        name: updateRoleInput.name,
+      });
+      if (roleExist.id !== id)
+        throw new BadRequestException('Role with this name already exist');
+    }
     if (updateRoleInput.permissions) {
       const permissions = updateRoleInput.permissions.map(
         (permission) => new Permission(permission),

@@ -11,10 +11,12 @@ import { PermissionGuard } from '../decorators/permission.decorator';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
+import uploadVariables from 'src/variables/upload.variables';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Contact)
 export class ContactsResolver {
+  private readonly serviceName = uploadVariables.contacts.name;
   constructor(
     private readonly contactsService: ContactsService,
     private readonly s3Service: S3Service,
@@ -59,11 +61,11 @@ export class ContactsResolver {
   async removeContact(@Args('id', { type: () => ID }) id: string) {
     try {
       // some images exist on s3 bucket
-      const key = await this.contactsImageService.getImageKey(id);
+      const url = await this.contactsImageService.getImageKey(id);
       // remove contact
       await this.contactsService.remove(id);
       // delete images from s3 with id of deleted contact
-      if (key) await this.s3Service.deleteFile(key);
+      if (url) await this.s3Service.deleteFile(url, this.serviceName, id);
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Error deleting contact', {

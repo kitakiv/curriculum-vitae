@@ -11,7 +11,7 @@ export class Permission extends AbstractEntity<Permission> {
   id: string;
 
   @Field(() => String, { description: 'Permission resource example: user' })
-  @Column('enum', { enum: Resource, unique: true })
+  @Column('enum', { enum: Resource})
   resource: string;
 
   @Field(() => [String], {

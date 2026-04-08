@@ -23,14 +23,20 @@ export class SlidersService {
     private readonly redisCacheService: RedisCacheService,
     private readonly dataSource: DataSource,
   ) {}
+
+  private async deleteCache() {
+    await this.redisCacheService.del(this.SLIDER_CACHE_KEY);
+  }
   async create(createSliderInput: CreateSliderInput) {
     const slider = new Slider(createSliderInput);
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const createdSlider = await this.dataSource.transaction(async (manager) => {
         const createdSlider = await manager.create(Slider, slider);
         await manager.save(Slider, createdSlider);
         return createdSlider;
       })
+      await this.deleteCache();
+      return createdSlider;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Slider'));
@@ -60,6 +66,7 @@ export class SlidersService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Slider'));
     try {
       await this.slidersRepository.update(id, updateSliderInput);
+      await this.deleteCache();
       return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
@@ -72,6 +79,7 @@ export class SlidersService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Slider'));
     try {
       await this.slidersRepository.delete(id);
+      await this.deleteCache();
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Slider'));

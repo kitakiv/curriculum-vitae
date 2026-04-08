@@ -448,7 +448,6 @@ export class AuthService implements OnModuleInit {
   }
 
   async createOrUpdateGoogleUser(googleUserInput: SignUpGoogleInput) {
-    console.log(googleUserInput)
     const user = await this.userRepository.findOne({
       where: {
         login: googleUserInput.login,

@@ -31,6 +31,10 @@ export class TechStackService {
     private readonly logger: Logger = new Logger(TechStackService.name),
     private readonly redisCacheService: RedisCacheService,
   ) { }
+
+   private async deleteCache() {
+    await this.redisCacheService.del(this.TECHSTACK_CACHE_KEY);
+  }
   async create(createTechStackInput: CreateTechStackInput) {
     const projects = await this.checkEntitiesExistence(
       this.projectRepository,
@@ -43,7 +47,7 @@ export class TechStackService {
       'TechCategories',
     );
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const createdTechStack = await this.dataSource.transaction(async (manager) => {
         const techStack = await manager.create(TechStack, {
           ...createTechStackInput,
           projects,
@@ -52,6 +56,8 @@ export class TechStackService {
         await manager.save(TechStack, techStack);
         return techStack;
       });
+      await this.deleteCache();
+      return createdTechStack;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('TechStack'));
@@ -132,7 +138,7 @@ export class TechStackService {
       )
       : (techStack as TechStack).techCategories)
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const updatedTechStack = await this.dataSource.transaction(async (manager) => {
         const preloadedTechStack = await manager.preload(TechStack, {
           id,
           ...updateTechStackInput,
@@ -142,6 +148,8 @@ export class TechStackService {
         await manager.save(preloadedTechStack);
         return preloadedTechStack as TechStack;
       });
+      await this.deleteCache();
+      return updatedTechStack;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('TechStack'));
@@ -185,7 +193,7 @@ export class TechStackService {
   }
   async remove(
     id: string,
-  ): Promise<void | NotFoundException | BadRequestException> {
+  ): Promise<{ id: string } | NotFoundException | BadRequestException> {
     const exist = await this.techStackRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     try {
@@ -209,6 +217,8 @@ export class TechStackService {
           .where('id = :id', { id })
           .execute();
       });
+      await this.deleteCache(); 
+      return { id };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('TechStack'));

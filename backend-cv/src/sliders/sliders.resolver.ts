@@ -12,11 +12,14 @@ import { PermissionGuard } from '../decorators/permission.decorator';
 import { Action } from '../roles/enums/action.enum';
 import { Public } from '../decorators/public.decorator';
 import { errors } from '../errors/errors.config';
+import uploadVariables from 'src/variables/upload.variables';
 
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Slider)
 export class SlidersResolver {
+
+  private readonly serviceName = uploadVariables.sliders.name
   constructor(
     private readonly slidersService: SlidersService,
     private readonly sliderImageService: SliderImageService,
@@ -59,9 +62,9 @@ export class SlidersResolver {
   @Mutation(() => ID)
   async removeSlider(@Args('id', { type: () => ID }) id: string) {
     try {
-      const key = await this.sliderImageService.getImageKey(id);
+      const url = await this.sliderImageService.getImageKey(id);
       await this.slidersService.remove(id);
-      if (key) await this.s3Service.deleteFile(key);
+      if (url) await this.s3Service.deleteFile(url, this.serviceName, id);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_DELETED('Slider'), {

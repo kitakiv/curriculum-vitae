@@ -12,11 +12,14 @@ import { Public } from '../decorators/public.decorator';
 import { S3Service } from '../s3/s3.service';
 import { CertificateImageService } from './certificateImage.service';
 import { errors } from 'src/errors/errors.config';
+import uploadVariables from 'src/variables/upload.variables';
 
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Certificate)
 export class CertificateResolver {
+
+  private readonly serviceName = uploadVariables.certificate.name
   constructor(
     private readonly certificateService: CertificateService,
     private readonly certificateImageService: CertificateImageService,
@@ -66,9 +69,9 @@ export class CertificateResolver {
   @Mutation(() => ID)
   async removeCertificate(@Args('id', { type: () => ID }) id: string) {
     try {
-      const key = await this.certificateImageService.getImageKey(id);
+      const url = await this.certificateImageService.getImageKey(id);
       await this.certificateService.remove(id);
-      if (key) await this.s3Service.deleteFile(key);
+      if (url) await this.s3Service.deleteFile(url, this.serviceName, id);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_DELETED('Certificate'), {

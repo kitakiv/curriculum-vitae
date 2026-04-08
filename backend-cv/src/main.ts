@@ -1,6 +1,6 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { directives } from 'src/common/constants';
 import * as cookieParser from 'cookie-parser';
@@ -15,6 +15,8 @@ async function bootstrap() {
       }),
     ),
   });
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

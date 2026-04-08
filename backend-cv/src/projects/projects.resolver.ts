@@ -21,10 +21,12 @@ import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import { errors } from '../errors/errors.config';
 import { TechStack } from '../techstack/entities/techstack.entity';
+import uploadVariables from 'src/variables/upload.variables';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
+  private readonly serviceName = uploadVariables.projects.name
   constructor(
     private readonly projectsService: ProjectsService,
     private readonly s3Service: S3Service,
@@ -78,10 +80,10 @@ export class ProjectsResolver {
   @Mutation(() => ID)
   async removeProject(@Args('id', { type: () => ID }) id: string) {
     try {
-      const keys = await this.projectsImageService.getImageKeys(id);
+      const urls = await this.projectsImageService.getImageKeys(id);
       await this.projectsService.remove(id);
-      if (keys) {
-        await this.s3Service.deleteFiles(keys);
+      if (urls) {
+        await this.s3Service.deleteFiles(urls, this.serviceName, id);
       }
     } catch (error) {
       console.log(error);

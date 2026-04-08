@@ -22,11 +22,14 @@ import { PermissionGuard } from '../decorators/permission.decorator';
 import { errors } from '../errors/errors.config';
 import { Project } from '../projects/entities/project.entity';
 import { TechCategory } from '../tech-category/entities/tech-category.entity';
+import uploadVariables from 'src/variables/upload.variables';
 
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => TechStack)
 export class TechStackResolver {
+
+  private readonly serviceName = uploadVariables.techstack.name
   constructor(
     private readonly techStackService: TechStackService,
     private readonly s3Service: S3Service,
@@ -86,9 +89,9 @@ export class TechStackResolver {
   @Mutation(() => ID)
   async removeTechStack(@Args('id', { type: () => ID }) id: string) {
     try {
-      const key = await this.techStackImageService.getImageKey(id);
+      const url = await this.techStackImageService.getImageKey(id);
       await this.techStackService.remove(id);
-      if (key) await this.s3Service.deleteFile(key);
+      if (url) await this.s3Service.deleteFile(url, this.serviceName, id);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(errors.NOT_DELETED('TechStack'), {

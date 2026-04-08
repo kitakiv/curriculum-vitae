@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
+import {v4 as uuid } from 'uuid';
 
 @Injectable()
 export class S3Service {
@@ -25,7 +26,7 @@ export class S3Service {
     });
     this.bucketName = this.configService.getOrThrow('AWS_S3_BUCKET');
   }
-  async uploadFile(
+  async uploadFileToS3(
     file: { buffer: Buffer<ArrayBufferLike>; mimetype: string },
     key: string,
   ): Promise<string> {
@@ -50,24 +51,37 @@ export class S3Service {
     }
   }
 
+  async uploadFile(
+    file: { buffer: Buffer<ArrayBufferLike>; mimetype: string },
+    service: string,
+    id: string,
+  ): Promise<string> {
+    const fileKey = `${this.createKey(id, service)}.${this.getFileExtension(file.mimetype)}`; // .jpg or .png
+    try {
+      return await this.uploadFileToS3(file, fileKey);
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException('Upload failed');
+    }
+  }
+
   async uploadFiles(
     files: { buffer: Buffer<ArrayBufferLike>; mimetype: string }[],
-    key: string,
+    service: string,
+    id: string,
   ): Promise<string[]> {
-    const uploadedKeys: string[] = [];
     const urls: string[] = [];
     try {
       for (let index = 0; index < files.length; index++) {
         const file = files[index];
-        const fileKey = `${key}-${index}.${file.mimetype.split('/')[1]}`;
-        const url = await this.uploadFile(file, fileKey);
-        uploadedKeys.push(fileKey);
+        const fileKey = `${this.createKey(id, service)}.${this.getFileExtension(file.mimetype)}`;
+        const url = await this.uploadFileToS3(file, fileKey);
         urls.push(url);
       }
       return urls;
     } catch (error) {
-      if (uploadedKeys.length > 0) {
-        await this.deleteFiles(uploadedKeys);
+      if (urls.length > 0) {
+        await this.deleteFiles(urls, service, id);
       }
       this.logger.error(error);
       throw new BadRequestException('Upload failed');
@@ -75,21 +89,30 @@ export class S3Service {
   }
 
 
-  async deleteFiles(keys: string[]) {
-    await Promise.all(
-      keys.map(async (key) => {
-        await this.deleteFile(key);
+  async deleteFiles(urls: string[], service: string, id: string) {
+    if (!Array.isArray(urls)) {
+      await this.deleteFile(urls, service, id);
+    }
+    if(Array.isArray(urls)) {
+      await Promise.all(
+      urls.map(async (url) => {
+        await this.deleteFile(url, service, id);
       }),
     );
+    }
   }
 
   async createUrl(key: string) {
+    const keys = key.split('/');
+    keys[keys.length - 1] = encodeURIComponent(keys.at(-1) || '');
     return `https://${this.bucketName}.s3.${this.configService.get(
       'AWS_REGION',
-    )}.amazonaws.com/${encodeURIComponent(key)}`;
+    )}.amazonaws.com/${keys.join('/')}`;
   }
 
-  async deleteFile(key: string) {
+  async deleteFile(url: string, service: string, id: string) {
+    // create key of image form url
+    const key = this.getImageKey(url, service, id);
     const exist = await this.getFile(key);
     if (!exist) return 'File not found';
     const command = new DeleteObjectCommand({
@@ -121,4 +144,22 @@ export class S3Service {
       return false;
     }
   }
+
+  private getImageKey(url: string, service: string, id: string): string {
+    const urlParts = url.split('/');
+    const filename = decodeURIComponent(urlParts[urlParts.length - 1]);
+    return `${service}/${id}/${filename}`;
+  }
+
+
+   private createKey(id: string, service: string): string {
+      const uuidOfImage = uuid();
+      return `${service}/${id}/${uuidOfImage}`;
+    }
+  
+  
+    private getFileExtension(mimetype: string): string {
+      const extension = mimetype.split('/')[1];
+      return extension;
+    }
 }

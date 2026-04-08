@@ -33,8 +33,11 @@ import { CookiesData } from './entities/cookiesData.type';
 import { Role } from '../roles/entities/role.entity';
 import { RefreshToken } from './entities/refreshToken.entity';
 import { CurrentUserId } from 'src/decorators/currentuserid.decorator';
+import { SuperAdminGuard } from 'src/guards/superAdmin.guard';
+import { SuperAdmin } from 'src/decorators/superadmin.deconrator';
 
-@UseGuards(AuthorizationGuard)
+
+@UseGuards(AuthorizationGuard, SuperAdminGuard)
 @Resolver(() => User)
 export class AuthResolver {
   private refreshTokenName = 'refreshToken';
@@ -109,6 +112,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
+  @SuperAdmin()
   async update(
     @Args('updateUserInput', { type: () => UpdateUserInput })
     updateUserInput: UpdateUserInput,
@@ -128,6 +132,7 @@ export class AuthResolver {
     { resource: Resource.USER, actions: [Action.DELETE] },
     { resource: Resource.REFRESH, actions: [Action.DELETE] },
   ])
+  @SuperAdmin()
   @Mutation(() => ID)
   async removeUser(@Args('id', { type: () => ID }) id: string) {
     return await this.authService.remove(id);
@@ -137,6 +142,7 @@ export class AuthResolver {
     { resource: Resource.USER, actions: [Action.UPDATE] },
     { resource: Resource.ROLE, actions: [Action.UPDATE] },
   ])
+  @SuperAdmin()
   @Mutation(() => User)
   async attachRole(
     @Args('attachRoleInput', { type: () => AttachRoleInput })

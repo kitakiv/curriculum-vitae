@@ -27,6 +27,10 @@ export class ProjectsService {
     private readonly logger: Logger = new Logger(ProjectsService.name),
     private readonly redisCacheService: RedisCacheService,
   ) { }
+
+  private async deleteCache() {
+    await this.redisCacheService.del(this.PROJECT_CACHE_KEY);
+  }
   async create(
     createProjectInput: CreateProjectInput,
   ): Promise<Project | NotFoundException> {
@@ -46,6 +50,7 @@ export class ProjectsService {
           return project;
         },
       );
+      await this.deleteCache();
       return createdProject;
     } catch (error) {
       this.logger.error(error);
@@ -135,7 +140,7 @@ export class ProjectsService {
         'Tech stacks'))
       : project.techStacks;
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const updatedProject = await this.dataSource.transaction(async (manager) => {
         const updatedProject = await manager.preload(Project, {
           id,
           ...updateProjectInput,
@@ -144,6 +149,8 @@ export class ProjectsService {
         await manager.save(Project, updatedProject);
         return updatedProject;
       });
+      await this.deleteCache();
+      return updatedProject;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('Project'));
@@ -151,7 +158,7 @@ export class ProjectsService {
   }
   async remove(
     id: string,
-  ): Promise<void | NotFoundException | BadRequestException> {
+  ): Promise<{ id: string } | NotFoundException | BadRequestException> {
     const exist = await this.projectsRepository.existsBy({ id });
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Project'));
     try {
@@ -169,9 +176,11 @@ export class ProjectsService {
           .where('id = :id', { id })
           .execute();
       });
+      await this.deleteCache();
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Project'));
     }
+    return { id };
   }
 }

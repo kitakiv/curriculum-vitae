@@ -16,6 +16,7 @@ import { ProfileImageService } from '../profile/profileImage.service';
 import { AuthModule } from '../auth/auth.module';
 import { Certificate } from '../certificate/entities/certificate.entity';
 import { CertificateImageService } from 'src/certificate/certificateImage.service';
+import { RedisCacheModule } from 'src/cache/cache.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { CertificateImageService } from 'src/certificate/certificateImage.servic
       Profile,
       Certificate,
     ]),
-    AuthModule
+    AuthModule,
+    RedisCacheModule
   ],
   controllers: [UploadController],
   providers: [

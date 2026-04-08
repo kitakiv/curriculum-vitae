@@ -27,10 +27,14 @@ export class CertificateService {
     private readonly dataSource: DataSource,
     private readonly logger: Logger = new Logger(CertificateService.name),
   ) {}
+
+  async deleteCache() {
+    await this.redisCacheService.del(this.CERTIFICATE_CACHE_KEY);
+  }
   async create(createCertificateInput: CreateCertificateInput) {
     const certificate = new Certificate(createCertificateInput);
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const createdCertificate = await this.dataSource.transaction(async (manager) => {
         const createdCertificate = await manager.create(
           Certificate,
           certificate,
@@ -38,6 +42,8 @@ export class CertificateService {
         await manager.save(Certificate, createdCertificate);
         return createdCertificate;
       });
+      await this.deleteCache();
+      return createdCertificate;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Certificate'));
@@ -71,6 +77,7 @@ export class CertificateService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Certificate'));
     try {
       await this.certificateRepository.update(id, updateCertificateInput);
+      await this.deleteCache();
       return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
@@ -81,10 +88,12 @@ export class CertificateService {
   async remove(id: string) {
     const certificate = await this.findOne(id);
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const deletedId = await this.dataSource.transaction(async (manager) => {
         await manager.remove(Certificate, certificate);
         return { id };
       });
+      await this.deleteCache();
+      return deletedId;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Certificate'));
