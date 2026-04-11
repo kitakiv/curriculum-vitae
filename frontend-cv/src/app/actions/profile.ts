@@ -1,10 +1,10 @@
 'use server'
 import {  Profile, UpdateProfileInput, UpdateProfileMutation, UpdateProfileMutationVariables } from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
-import { uploadFile, uploadFiles } from "@/query/upload.http";
+import { addFile, deleteFileIndex, uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import {  } from "@/graphql/profile.graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 import {PROFILE_UPDATE_MUTATION} from "@/graphql/profile.graphql";
 
 const PROFILE_PHOTOS = 'profilePhotos';
@@ -43,43 +43,82 @@ export async function updateProfileAction(prevState: PrevState<Profile>| undefin
     
 }
 
-export async function updateProfileImageAction(prevState: PrevState<Profile>| undefined, formData: FormData, id: string, index: number):
- Promise<PrevState<Profile>> {
+export async function updateProfileImageAction(prevState: PrevStateFull<Profile['profilePhotos']>| undefined, formData: FormData, id: string, index: string):
+ Promise<PrevStateFull<Profile['profilePhotos']>> {
     try {
-        await uploadFile(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTO, id, index);
+        const res = await uploadFile(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTO, id, index);
         
         return {
             success: true,
             message: `Profile image ${index + 1} updated successfully!`,
-            id: id
+            data: (res.data as Profile).profilePhotos 
         };
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Profile image update failed',
-            id: null
+            data: null
         };
     }
 }
 
-export async function updateProfileImagesAction(prevState: PrevState<Profile>| undefined, formData: FormData, id: string):
- Promise<PrevState<Profile>> {
+export async function deleteProfileImageAction(prevState: PrevStateFull<Profile['profilePhotos']>| undefined, id: string, index: string):
+ Promise<PrevStateFull<Profile['profilePhotos']>> {
     try {
-        await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
+        const res = await deleteFileIndex(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, id, index);
+        return {
+            success: true,
+            message: `Profile image ${index} deleted successfully!`,
+            data: (res.data as Profile).profilePhotos
+        }
+    } catch (error) {
+        console.error('Update error', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Profile image delete failed',
+            data: null
+        };
+    }
+}
+
+export async function addProfileImageAction(prevState: PrevStateFull<Profile['profilePhotos']>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<Profile['profilePhotos']>> {
+    try {
+        const res =await addFile(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTO, id);
+        
+        return {
+            success: true,
+            message: 'Profile image added successfully!',
+            data: (res.data as Profile).profilePhotos
+        }
+    } catch (error) {
+        console.error('Update error', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Profile image add failed',
+            data: null
+        }
+    }
+    
+}
+
+export async function updateProfileImagesAction(prevState: PrevStateFull<Profile['profilePhotos']>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<Profile['profilePhotos']>> {
+    try {
+        const res = await uploadFiles(resourceConfig[Resource.PROFILE].editFormImage.uploadConfig, formData, PROFILE_PHOTOS, id);
         
         return {
             success: true,
             message: 'Profile images updated successfully!',
-            id: id
+            data: (res.data as Profile).profilePhotos
         }
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Profile images update failed',
-            id: null
+            data: null
         }
     }
 }
-

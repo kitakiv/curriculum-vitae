@@ -338,9 +338,19 @@ class ServerApi extends RequestClient {
         super();
     }
 
-    async uploadFile(resource: UPLOADSERVICE, body: FormData, id: string, index?: number) {
+    async uploadFile(resource: UPLOADSERVICE, body: FormData, id: string, index?: string) {
         const url = this.createUrl(resource, id, index)
         return await this.fetchHttp({ method: HTTPMETHOD.POST, body, url });
+    }
+
+    async deleteFileIndex(resource: UPLOADSERVICE, id: string, index: string) {
+        const url = this.createUrl(resource, id, index)
+        return await this.fetchHttp({ method: HTTPMETHOD.DELETE, body: "", url });
+    }
+
+    async addFile(resource: UPLOADSERVICE, body: FormData, id: string) {
+        const url = this.createUrl(resource, id, undefined, true)
+        return await this.fetchHttp({ method: HTTPMETHOD.PATCH, body, url });
     }
 
     async uploadFiles(resource: UPLOADSERVICE, body: FormData, id: string) {
@@ -348,8 +358,11 @@ class ServerApi extends RequestClient {
         return await this.fetchHttp({ method: HTTPMETHOD.POST, body, url });
     }
 
-    private createUrl(resource: UPLOADSERVICE, id: string, index?: number) {
-        if (index || index === 0) {
+    private createUrl(resource: UPLOADSERVICE, id: string, index?: string, sigleFile?: boolean) {
+        if (sigleFile) {
+            return `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}`
+        }
+        if (index) {
             return `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}/${index}`;
         } else {
            return uploadVariables[resource].multiFile ? `${UPLOADTYPE.FILES.toLocaleLowerCase()}/${resource}/${id}` : `${UPLOADTYPE.FILE.toLocaleLowerCase()}/${resource}/${id}`

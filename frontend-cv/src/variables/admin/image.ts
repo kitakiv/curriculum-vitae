@@ -1,11 +1,9 @@
-function getImageIndex(image: string): number {
+function getImageIndex(image: string): string | null {
     const idOfImage = image.split('/').at(-1);
-    if (!idOfImage) return -1;
+    if (!idOfImage) return null;
     const idWithoutType = idOfImage.split('.')[0];
-    if (!idWithoutType) return -1;
-    const index = Number(idWithoutType.split('-').at(-1));
-    if (isNaN(index) || index < 0 || index > 50) return -1;
-    return index;
+    if (!idWithoutType) return null;
+    return idWithoutType;
 }
 
 export { getImageIndex };

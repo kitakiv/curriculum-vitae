@@ -1,10 +1,10 @@
 'use server'
-import {  CreateProjectInput, Project, UpdateProjectMutationVariables, UpdateProjectInput, UpdateProjectMutation, CreateProjectMutation, CreateProjectMutationVariables, RemoveProjectMutation, RemoveProjectMutationVariables } from "@/gql/graphql"
+import {  CreateProjectInput, Project, UpdateProjectMutationVariables, UpdateProjectInput, UpdateProjectMutation, CreateProjectMutation, CreateProjectMutationVariables, RemoveProjectMutation, RemoveProjectMutationVariables, Profile } from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
-import { uploadFile, uploadFiles } from "@/query/upload.http";
+import { addFile, deleteFileIndex, uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import {  } from "@/graphql/profile.graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 import { PROJECT_UPDATE_MUTATION, PROJECT_CREATE_MUTATION, PROJECT_REMOVE_MUTATION } from "@/graphql/project.graphql";
 
 const PROJECT_IMAGES = 'projectImages';
@@ -65,42 +65,83 @@ export async function updateProjectAction(prevState: PrevState<CreateProjectInpu
     
 }
 
-export async function updateProjectImageAction(prevState: PrevState<CreateProjectInput>| undefined, formData: FormData, id: string, index: number):
- Promise<PrevState<CreateProjectInput>> {
+export async function updateProjectImageAction(prevState: PrevStateFull<Project["projectImages"]>| undefined, formData: FormData, id: string, imageId: string):
+ Promise<PrevStateFull<Project["projectImages"]>> {
     try {
-        await uploadFile(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, formData, PROJECT_IMAGE, id, index);
+        const res = await uploadFile(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, formData, PROJECT_IMAGE, id, imageId);
         
         return {
             success: true,
-            message: `Project image ${index + 1} updated successfully!`,
-            id: id
+            message: `Project image ${imageId} updated successfully!`,
+            data: (res.data as Project).projectImages
         };
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Profile image update failed',
-            id: null
+            data: null
         };
     }
 }
 
-export async function updateProjectImagesAction(prevState: PrevState<Project>| undefined, formData: FormData, id: string):
- Promise<PrevState<Project>> {
+
+export async function addProjectImageAction(prevState: PrevStateFull<Project['projectImages']>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<Project['projectImages']>> {
     try {
-        await uploadFiles(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, formData, PROJECT_IMAGES, id);
+        const res = await addFile(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, formData, PROJECT_IMAGE, id);
         
         return {
             success: true,
-            message: 'Project images updated successfully!',
-            id: id
+            message: 'Project image added successfully!',
+            data: (res.data as Project).projectImages
         }
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Profile images update failed',
-            id: null
+            message: error instanceof Error ? error.message : 'Project image add failed',
+            data: null
+        }
+    }
+    
+}
+
+export async function deleteProjectImageAction(prevState: PrevStateFull<Project['projectImages']>| undefined, id: string, imageId: string):
+ Promise<PrevStateFull<Project['projectImages']>> {
+    try {
+        const res = await deleteFileIndex(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, id, imageId);
+        return {
+            success: true,
+            message: `Project image ${imageId} deleted successfully!`,
+            data: (res.data as Project).projectImages
+        }
+    } catch (error) {
+        console.error('Update error', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Project image delete failed',
+            data: null
+        };
+    }
+}
+
+export async function updateProjectImagesAction(prevState: PrevStateFull<Project['projectImages']>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<Project['projectImages']>> {
+    try {
+        const res = await uploadFiles(resourceConfig[Resource.PROJECT].editFormImage.uploadConfig, formData, PROJECT_IMAGES, id);
+        
+        return {
+            success: true,
+            message: 'Project images updated successfully!',
+            data: (res.data as Project).projectImages
+        }
+    } catch (error) {
+        console.error('Update error', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Project images update failed',
+            data: null
         }
     }
 }

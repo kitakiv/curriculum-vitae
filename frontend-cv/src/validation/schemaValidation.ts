@@ -296,6 +296,9 @@ const schema = {
     user: {
         attachRole: attachRoleSchema,
         userDelete: deleteSchema
+    },
+    role: {
+        roleDelete: deleteSchema
     }
 }
 export { deleteSchema };

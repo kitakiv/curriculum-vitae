@@ -6,8 +6,9 @@ import AdminButton from '@/components/button/AdminButton';
 import React, { useActionState, startTransition, useEffect } from 'react';
 import SmallText from '@/components/text/SmallText';
 import { PrevState, PrevStateFull } from '@/app/actions/action.type';
-import CustomizedSnackbars from '@/components/animation/Alert';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 interface FormElementProps<V> {
@@ -15,25 +16,28 @@ interface FormElementProps<V> {
     tailwind?: string;
     inputs: InputType[];
     intialValues: object;
-    actionForm: (formData: FormData) => Promise<PrevStateFull<V>>;
+    actionForm: (formData: FormData, type: string) => Promise<PrevStateFull<V>>;
     schema: object;
     title: string;
 }
 
-export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
-    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | undefined, formData: FormData) => actionForm(formData), undefined);
+export default function FormUpdateOneImage<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
+    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | undefined, formData: FormData) => {
+        const type = formData.get('formType') as string;
+        return actionForm(formData, type);
+    }, undefined);
     const [readonly, setReadonly] = React.useState(true);
 
-    useEffect(() => {
-            if (state?.success) {
-                setReadonly(true);
-            }
-        }, [state]);
 
+    useEffect(() => {
+        if (state?.success) {
+            setReadonly(true);
+        }
+    }, [state]);
     return (
         <Formik
             initialValues={intialValues}
-            validationSchema={schema}
+            validationSchema={readonly ? null : schema}
             onSubmit={async (values) => {
                 const formData = new FormData();
                 Object.entries(values).forEach(([key, value]) => {
@@ -45,6 +49,8 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                         formData.append(key, value);
                     }
                 });
+                const formType = readonly ? 'delete' : 'update';
+                formData.append('formType', formType);
                 startTransition(() => {
                     if (action) {
                         action(formData);
@@ -55,17 +61,6 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
             {({ setFieldValue, resetForm }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
-                    {state?.message && (
-                        <>
-                            <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
-                                {state.message}
-                            </SmallText>
-                            <CustomizedSnackbars open={true} success={state?.success || false}>
-                                {state.message}
-                            </CustomizedSnackbars>
-                        </>
-
-                    )}
                     {inputs.map((input) => (
                         <InputElement
                             key={input.id}
@@ -76,18 +71,22 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                     ))}
                     {!readonly && (
                         <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
-                            <SubmitButton pending={pending}>{title}</SubmitButton>
+                            <SubmitButton pending={pending}><CheckIcon/></SubmitButton>
                             <Button click={() => {
                                 setReadonly(true)
                                 resetForm();
-                            }}><CancelIcon/></Button>
+                            }}>
+                                <CancelIcon/>
+                            </Button>
                         </div>
                     )}
                     {readonly && (
                         <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
                             <Button click={() => setReadonly(false)}><EditIcon/></Button>
+                            <SubmitDeleteButton pending={pending}><DeleteIcon/></SubmitDeleteButton>
                         </div>
                     )}
+                    
                 </Form>
             )}
         </Formik>
@@ -100,6 +99,21 @@ function SubmitButton({ pending, children }: { pending: boolean, children: React
 
     return (
         <AdminButton type="submit"
+            disabled={isDisabled}
+            pending={pending}
+        >
+            {pending ? 'Loading...' : children}
+        </AdminButton>
+    );
+}
+
+function SubmitDeleteButton({ pending, children }: { pending: boolean, children: React.ReactNode }) {
+    const { errors, isValid } = useFormikContext();
+    const hasErrors = Object.keys(errors).length > 0;
+    const isDisabled = !isValid || hasErrors || pending;
+
+    return (
+         <AdminButton type="submit"
             disabled={isDisabled}
             pending={pending}
         >

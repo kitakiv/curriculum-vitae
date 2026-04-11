@@ -38,6 +38,16 @@ const ROLE_GET_ONE_QUERY = gql`
 `;
 
 
+const RESOURCES_GET_QUERY = gql`
+    query GetResources {
+        permissions {
+            resource
+            actions
+        }
+}
+`;
+
+
 const ROLE_CREATE_MUTATION = gql`
     mutation CreateRole($createRoleInput: CreateRoleInput!) {
       createRole(createRoleInput: $createRoleInput) {
@@ -62,6 +72,8 @@ const ROLE_REMOVE_MUTATION = gql`
     }
 `;
 
+
+
 const ROLE_UPDATE_MUTATION = gql`
     mutation UpdateRole($updateRoleInput: UpdateRoleInput!) {
       updateRole(updateRoleInput: $updateRoleInput) {
@@ -80,4 +92,4 @@ const ROLE_UPDATE_MUTATION = gql`
     }
 `;
 
-export { SLIDERS_GET_QUERY, SLIDER_GET_ONE_QUERY, SLIDER_CREATE_MUTATION, ROLES_GET_QUERY, ROLE_GET_ONE_QUERY, ROLE_CREATE_MUTATION, ROLE_REMOVE_MUTATION, ROLE_UPDATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION };
+export {RESOURCES_GET_QUERY, SLIDERS_GET_QUERY, SLIDER_GET_ONE_QUERY, SLIDER_CREATE_MUTATION, ROLES_GET_QUERY, ROLE_GET_ONE_QUERY, ROLE_CREATE_MUTATION, ROLE_REMOVE_MUTATION, ROLE_UPDATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION };

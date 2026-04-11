@@ -51,19 +51,17 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
             )
         case Resource.PROFILE:
             return (
-                <>
+                <div className="grid grid-cols-2">
                     <UpdateFormProfile initialValues={resource as Profile} resourceId={resourceId}/>
                     <UpdateFormProfileImage initialValues={resource as Profile} resourceId={resourceId}/>
-                    <UpdateFormProfileImages initialValues={resource as Profile} resourceId={resourceId}/>
-                </>
+                </div >
             )
         case Resource.PROJECT:
             return (
-                <>
+                <div className="grid grid-cols-2">
                     <UpdateFormProject initialValues={resource as Project} resourceId={resourceId} inputs={inputs}/>
                     <UpdateFormProjectImage initialValues={resource as Project} resourceId={resourceId}/>
-                    <UpdateFormProjectImages initialValues={resource as Project} resourceId={resourceId}/>
-                </>
+                </div>
             )
         case Resource.TECHSTACK:
             return (

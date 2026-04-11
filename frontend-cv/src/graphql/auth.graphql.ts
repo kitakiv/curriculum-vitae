@@ -39,6 +39,8 @@ const GET_ME_USER = gql`
         name
         avatarPhoto
         role {
+            id
+            name
             permissions {
                 actions
                 resource

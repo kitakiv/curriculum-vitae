@@ -7,8 +7,7 @@ import React, { useActionState, startTransition, useEffect } from 'react';
 import SmallText from '@/components/text/SmallText';
 import { PrevState, PrevStateFull } from '@/app/actions/action.type';
 import CustomizedSnackbars from '@/components/animation/Alert';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
 
 interface FormElementProps<V> {
     children?: React.ReactNode;
@@ -20,15 +19,8 @@ interface FormElementProps<V> {
     title: string;
 }
 
-export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
-    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | undefined, formData: FormData) => actionForm(formData), undefined);
-    const [readonly, setReadonly] = React.useState(true);
-
-    useEffect(() => {
-            if (state?.success) {
-                setReadonly(true);
-            }
-        }, [state]);
+export default function FormAddOneImage<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
+    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | undefined, formData: FormData) => actionForm(formData)   , undefined);
 
     return (
         <Formik
@@ -52,42 +44,24 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({ setFieldValue, resetForm }) => (
+            {({ setFieldValue }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
-                    {state?.message && (
-                        <>
-                            <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
-                                {state.message}
-                            </SmallText>
-                            <CustomizedSnackbars open={true} success={state?.success || false}>
-                                {state.message}
-                            </CustomizedSnackbars>
-                        </>
-
-                    )}
                     {inputs.map((input) => (
                         <InputElement
                             key={input.id}
                             inputData={input as InputType}
                             setFieldValue={setFieldValue}
-                            readonly={readonly}
+                            readonly={false}
                         />
                     ))}
-                    {!readonly && (
-                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
-                            <SubmitButton pending={pending}>{title}</SubmitButton>
-                            <Button click={() => {
-                                setReadonly(true)
-                                resetForm();
-                            }}><CancelIcon/></Button>
-                        </div>
-                    )}
-                    {readonly && (
-                        <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
-                            <Button click={() => setReadonly(false)}><EditIcon/></Button>
-                        </div>
-                    )}
+
+                    <div className='absolute top-2 lg:right-4 md:right-4 sm:right-3 right-2 flex gap-4 font-extrabold'>
+                        <SubmitButton pending={pending}><>
+                            <AddIcon />
+                        </></SubmitButton>
+                    </div>
+
                 </Form>
             )}
         </Formik>
@@ -108,11 +82,4 @@ function SubmitButton({ pending, children }: { pending: boolean, children: React
     );
 }
 
-function Button({ children, click }: { children: React.ReactNode, click: () => void }) {
-    return (
-        <AdminButton type="button" click={click}
-        >
-            {children}
-        </AdminButton>
-    );
-}
+

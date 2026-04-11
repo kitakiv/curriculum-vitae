@@ -3,15 +3,16 @@
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { queryGraphQL } from "./graphql";
 import { CONTACT_GET_ONE_QUERY } from "@/graphql/contacts.graphql";
-import { GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetOneUserQuery, GetOneUserQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechCategoryQuery, GetTechCategoryQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables, GetUserMutation, GetUserMutationVariables } from "@/gql/graphql";
+import { GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetOneUserQuery, GetOneUserQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetRoleQuery, GetRoleQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechCategoryQuery, GetTechCategoryQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables, GetUserMutation, GetUserMutationVariables } from "@/gql/graphql";
 import { SLIDER_GET_ONE_QUERY } from "@/graphql/slider.graphql";
 import { CERTIFICATE_GET_ONE_QUERY } from "@/graphql/certificate.graphql";
 import { PROFILE_GET_QUERY } from "@/graphql/profile.graphql";
 import { TECHSTACK_GET_ONE_QUERY, TECHSTACKS_GET_QUERY } from "@/graphql/techStack.graphql";
 import { InputType } from "../types";
 import { PROJECT_GET_ONE_QUERY, PROJECTS_GET_QUERY } from "@/graphql/project.graphql";
-import { TECHCATEGORIES_GET_QUERY, TECHCATEGORY_GET_ONE_QUERY, TECHCATEGORY_TECHSTACK_QUERY } from "@/graphql/techCategory.graphql";
+import { TECHCATEGORIES_GET_QUERY, TECHCATEGORY_GET_ONE_QUERY } from "@/graphql/techCategory.graphql";
 import { USER_GET_ONE_QUERY } from "@/graphql/auth.graphql";
+import { ROLE_GET_ONE_QUERY } from "@/graphql/role.graphql";
 export async function getResourceById(resource: Resource, resourceId: string) {
     switch (resource) {
         case Resource.CONTACT:
@@ -30,7 +31,8 @@ export async function getResourceById(resource: Resource, resourceId: string) {
             return ((await queryGraphQL<GetTechCategoryQuery, GetTechCategoryQueryVariables>(TECHCATEGORY_GET_ONE_QUERY, { id: resourceId })).techCategory);
         case Resource.USER:
             return ((await queryGraphQL<GetOneUserQuery, GetOneUserQueryVariables>(USER_GET_ONE_QUERY, { id: resourceId })).userById);
-    
+        case Resource.ROLE:
+            return ((await queryGraphQL<GetRoleQuery, GetRoleQueryVariables>(ROLE_GET_ONE_QUERY, { id: resourceId })).role);
         default:
             return null;
     }

@@ -29,7 +29,6 @@ export class User extends AbstractEntity<User> {
     description: 'Email verification status',
     defaultValue: false,
   })
-  @Exclude()
   @Column({ default: false })
   isEmailVerified: boolean;
 

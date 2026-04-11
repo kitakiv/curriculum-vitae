@@ -1,32 +1,17 @@
-import { GetUserMutation } from "@/gql/graphql";
+import { GetResourcesQuery, GetResourcesQueryVariables, GetUserMutation, Role } from "@/gql/graphql";
 import { getMe } from "@/query/auth.query";
-import { getResourceActions, getUserResources } from "@/query/permissions";
+import List from "@/components/admin/components/List";
+import { RESOURCES_GET_QUERY } from "@/graphql/role.graphql";
+import { queryGraphQL } from "@/query/graphql";
 
 
 
 export default async function Admin() {
   const user: GetUserMutation['getUser'] | false = await getMe() as GetUserMutation['getUser'];
-  const userResources = getUserResources(user);
-  return (
-    <>
-      {userResources.map((resource) => {
-        const userActions = getResourceActions(user, resource);
-        if (userActions) {
-          return (
-            <div className="w-full" key={`resource-${resource}`}>
-              {resource}
-              {userActions.map((action) => {
-                return (
-                  <div className="flex" key={`action-${action}`}>
-                    {action}
-                  </div>
-                )
-              })}
-            </div>
-          )
-        }
-      })
-      }
-    </>
-  );
+  
+  const userRole = user?.role || null;
+  if (!userRole) return <div>Access Denied</div>;
+  const allPermissions: GetResourcesQuery['permissions'] = (await queryGraphQL<GetResourcesQuery, GetResourcesQueryVariables>(RESOURCES_GET_QUERY)).permissions;
+  return <List permissions={allPermissions} role={userRole as Role} resourceId={userRole.id}></List>
+
 }

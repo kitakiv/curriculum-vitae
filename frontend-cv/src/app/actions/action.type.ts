@@ -6,3 +6,12 @@ export type PrevState<V> = {
     success?: boolean;
     id: string | null;
 };
+
+export type PrevStateFull<V> = {
+    message?: string;
+    errors?: {
+        [K in keyof V]?: string[];
+    };
+    success?: boolean;
+    data: V;
+}

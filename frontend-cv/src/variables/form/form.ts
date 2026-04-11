@@ -1,5 +1,3 @@
-import { init } from "@graphql-codegen/cli";
-import techStack from "../techstack/techstack";
 
 
 
@@ -227,6 +225,12 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+    },
+    roleForm: {
+        initialValuesDelete: { id: ""},
+        inputsDelete: [
+            { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ]
     }
 }
 export default form;

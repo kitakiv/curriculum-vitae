@@ -89,6 +89,7 @@ export class ProjectsImageService extends MultiImageBaseClass {
     const updatedImages = images.filter((image) => !image.includes(imageId));
     try {
       await this.projectsRepository.update(id, { projectImages: updatedImages });
+      console.log(updatedImages);
       return { id, projectImages: updatedImages };
     } catch (error) {
       this.logger.error(error);

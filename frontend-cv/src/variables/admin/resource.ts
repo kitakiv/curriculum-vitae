@@ -5,12 +5,13 @@ import { createCertificateAction, updateCertificateAction, updateCertificateImag
 import { UPLOADSERVICE } from "@/variables/upload/upload";
 import { createSliderAction, deleteSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
 import table from "../table/table";
-import { updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
+import { addProfileImageAction, deleteProfileImageAction, updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
 import { deleteContactAction } from "@/app/actions/contacts";
-import { createProjectAction, deleteProjectAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
+import { addProjectImageAction, createProjectAction, deleteProjectAction, deleteProjectImageAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
 import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
 import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
 import { attachRoleToUserAction, deleteUserAction } from "@/app/actions/auth";
+import { deleteRoleAction } from "@/app/actions/role";
 
 export enum Resource {
   USER = 'user',
@@ -27,12 +28,14 @@ export enum Resource {
 }
 
 
+
 export enum Action {
   CREATE = 'create',
   READ = 'read',
   UPDATE = 'update',
   DELETE = 'delete',
 }
+
 
 const adminVariables = {
   searchParamResourse: 'resource',
@@ -98,6 +101,18 @@ const resourceConfig = {
       schema: schema.project.projectEditImage,
       title: 'Edit project photo',
       uploadConfig: UPLOADSERVICE.PROJECTS
+    },
+    addFormImage: {
+      inputs: form.projectForm.inputsEditImage,
+      initialValues: form.projectForm.initialValues,
+      action: addProjectImageAction,
+      schema: schema.project.projectEditImage,
+      title: 'Add Project Image',
+      uploadConfig: UPLOADSERVICE.PROJECTS
+    },
+    deleteFormImage: {
+      uploadConfig: UPLOADSERVICE.PROJECTS,
+      action: deleteProjectImageAction,
     },
     editFormImages: {
       inputs: form.projectForm.inputsEditImages,
@@ -334,6 +349,18 @@ const resourceConfig = {
       title: 'Edit Profile Photo',
       uploadConfig: UPLOADSERVICE.PROFILE
     },
+    addFormImage: {
+      inputs: form.profileForm.inputsEditImage,
+      initialValues: form.profileForm.initialValuesImage,
+      action: addProfileImageAction,
+      schema: schema.profile.profileEditImage,
+      title: 'Add Profile Photo',
+      uploadConfig: UPLOADSERVICE.PROFILE
+    },
+    deleteFormImage: {
+      uploadConfig: UPLOADSERVICE.PROFILE,
+      action: deleteProfileImageAction,
+    },
     editFormImages: {
       inputs: form.profileForm.inputsEditImages,
       initialValues: form.profileForm.initialValues,
@@ -384,6 +411,13 @@ const resourceConfig = {
     table: {
       table: table.roleTable
     },
+    deleteForm: {
+      inputs: form.roleForm.inputsDelete,
+      initialValues: form.roleForm.initialValuesDelete,
+      action: deleteRoleAction,
+      schema: schema.role.roleDelete,
+      title: 'Delete User Role',
+    }
     // createForm: {
     //   inputs: form.roleForm.inputs,
     //   initialValues: form.roleForm.initialValues,

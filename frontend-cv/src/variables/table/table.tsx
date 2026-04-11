@@ -5,6 +5,7 @@ import { adminVariables, Resource } from '../admin/resource';
 import { EditAdminButton, DeleteAdminButton, ViewAdminButton, AttachRoleAdminButton } from "@/components/admin/components/ActionAdminButton";
 import Table from '@/components/admin/components/Table';
 import { GetRoleQuery, Permission, Role } from '@/gql/graphql';
+import ActionChip from '@/components/admin/components/ActionChip';
 interface Table {
     [key: string]: {
         columns: GridColDef[]
@@ -625,7 +626,11 @@ const table: Table = {
                         >
                             {permissions.map((permission) => (
                                 <div key={permission.resource}>
-                                    <strong>{permission.resource}:</strong> {permission.actions.join(' ')}
+                                    <strong>{permission.resource}:</strong>
+                                    {permission.actions.map((action, index) => {
+                                        console.log(action, 'action');
+                                        return <ActionChip svg={false} size='small' key={index} action={action}></ActionChip>
+                                    })}
                                 </div>
                             ))}
                         </div>

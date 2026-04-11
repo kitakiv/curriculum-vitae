@@ -11,7 +11,7 @@ import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
-import { UseGuards, Logger } from '@nestjs/common';
+import { UseGuards, Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from './enums/resource.enum';
@@ -23,6 +23,7 @@ import { AuthService } from '../auth/auth.service';
 import { allPermission } from './entities/allPermission.entity';
 import { SuperAdminGuard } from 'src/guards/superAdmin.guard';
 import { SuperAdmin } from 'src/decorators/superadmin.deconrator';
+import { errors } from 'src/errors/errors.config';
 
 
 @UseGuards(AuthorizationGuard, SuperAdminGuard)
@@ -105,9 +106,10 @@ export class RolesResolver {
     return await this.rolesService.remove(id);
   }
 
-  @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
+  
   @Query(() => [allPermission], { name: 'permissions' })
-  async findPermissions() {
+  async findPermissions(@CurrentUserId() userId: string,) {
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
     return this.rolesService.findPermissions();
   }
 }
