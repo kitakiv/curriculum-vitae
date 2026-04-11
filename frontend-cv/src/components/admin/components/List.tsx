@@ -15,6 +15,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SecurityIcon from '@mui/icons-material/Security'
 import { Action } from "@/variables/admin/resource"
 import ActionChip from './ActionChip'
+import Summary from "./Summary"
 
 interface ListProps {
     permissions: AllPermission[];
@@ -149,19 +150,7 @@ export default function List({ role, resourceId, permissions }: ListProps) {
                     ))}
                 </div>
 
-                <div className="mt-12 p-6 liquidGlass-elem">
-                    <h3 className="font-semibold text-adminTx mb-4 text-lg">📊 Summary</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {
-                            summary.map((item, index) => (
-                                <div key={`${item.text}-${index}`} className="p-4 bg-gradient-to-br from-adminGr50 to-adminGr100 rounded-lg border-adminTx border-[1px]">
-                                    <p className={`${item.color} text-sm text-adminTx100`}>{item.text}</p>
-                                    <p className={`text-2xl text-adminTx100 font-bold ${item.size === 'large' ? 'text-3xl' : item.size === 'medium' ? 'text-xl' : 'text-base'} mt-1 `}>{item.lable}</p>
-                                </div>
-                            ))
-                        }
-                    </div>
-                </div>
+                <Summary heading="Summary" summary={summary} />
             </div>
         </div>
     )

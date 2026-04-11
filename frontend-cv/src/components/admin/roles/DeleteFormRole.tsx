@@ -3,6 +3,7 @@ import MainText from "@/components/text/MainText";
 import FormDelete from "../components/FormDelete";
 import MiddleText from "@/components/text/MiddleText";
 import { Role, UpdateRoleInput } from "@/gql/graphql";
+import RoleDeleteList from "./RoleDeleteList";
 
 interface Props {
     resource: Role;
@@ -24,12 +25,7 @@ export default function DeleteFormRole({resource, resourceId }: Props) {
                 title={roleDelete.title}
             >
                 <>
-                <MainText tailwind="text-center">
-                    {roleDelete.title}
-                </MainText>
-                <MiddleText tailwind=" text-txFirst0" >
-                    {resource.name}
-                </MiddleText>
+                <RoleDeleteList resource={resource} />
                  </>
             </FormDelete>
      </>  
