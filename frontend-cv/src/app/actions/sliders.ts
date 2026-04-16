@@ -4,7 +4,7 @@ import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { SLIDER_CREATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION } from "@/graphql/slider.graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 
 const SLIDER_IMAGE = 'sliderImage';
 
@@ -74,22 +74,22 @@ export async function updateSliderAction(prevState: PrevState<CreateSliderInput>
     
 }
 
-export async function updateSliderImageAction(prevState: PrevState<CreateSliderInput>| undefined, formData: FormData, id: string):
- Promise<PrevState<CreateSliderInput>> {
+export async function updateSliderImageAction(prevState: PrevStateFull<CreateSliderInput["sliderImage"]>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<CreateSliderInput["sliderImage"]>> {
     try {
-        await uploadFile(resourceConfig[Resource.SLIDER].createForm.uploadConfig, formData, SLIDER_IMAGE, id);
+        const res = await uploadFile(resourceConfig[Resource.SLIDER].createForm.uploadConfig, formData, SLIDER_IMAGE, id);
         
         return {
             success: true,
             message: 'Contact updated successfully!',
-            id: id
+            data: (res.data as CreateSliderInput).sliderImage
         };
     } catch (error) {
         console.error('Signup error:', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Contact Update failed',
-            id: null
+            data: null
         };
     }
 }

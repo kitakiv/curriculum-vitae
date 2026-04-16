@@ -58,7 +58,7 @@ export default function FormUpdateOneImage<V>({ children, tailwind, inputs, inti
                 });
             }}
         >
-            {({ setFieldValue, resetForm }) => (
+            {({ setFieldValue, resetForm, values }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
                     {inputs.map((input) => (
@@ -67,6 +67,7 @@ export default function FormUpdateOneImage<V>({ children, tailwind, inputs, inti
                             inputData={input as InputType}
                             setFieldValue={setFieldValue}
                             readonly={readonly}
+                            values={values}
                         />
                     ))}
                     {!readonly && (

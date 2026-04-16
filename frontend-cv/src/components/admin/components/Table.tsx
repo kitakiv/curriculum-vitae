@@ -70,7 +70,7 @@ export default function Table({
           }}
           showToolbar
           rowSelectionModel={rowSelectionModel}
-          sx={{ border: 0, height: '100%', width: '100%'}}
+          sx={{ border: 0, height: '100%', width: '100%' }}
         />
       </Paper>
     </div>

@@ -41,6 +41,12 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                         value.forEach((item) => {
                             formData.append(key, item);
                         });
+                    }
+                    else if (value instanceof File) {
+                        formData.append(key, value);
+                    }
+                    else if (value instanceof Object) {
+                        formData.append(key, JSON.stringify(value));
                     } else {
                         formData.append(key, value);
                     }
@@ -52,7 +58,7 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({ setFieldValue, resetForm }) => (
+            {({ setFieldValue, resetForm, values }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
@@ -72,6 +78,7 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                             inputData={input as InputType}
                             setFieldValue={setFieldValue}
                             readonly={readonly}
+                            values={values}
                         />
                     ))}
                     {!readonly && (

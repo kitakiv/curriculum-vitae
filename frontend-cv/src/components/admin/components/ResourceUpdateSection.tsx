@@ -4,29 +4,29 @@ import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContact
 import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
 import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
 import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
-import { Contact, Profile, Project, Slider, TechCategory, TechStack, User } from "@/gql/graphql";
+import { Contact, Profile, Project, Role, Slider, TechCategory, TechStack, User } from "@/gql/graphql";
 import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
 import { Certificate } from "crypto";
 import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
 import UpdateFormProfile from "../profile/UpdateFormProfile";
-import UpdateFormProfileImages from "../profile/UpdadteFormProfileImages";
 import UpdateFormProfileImage from "../profile/UpdateFormProfileImage";
 import UpdateFormProject from "../projects/UpdateFormProject";
 import UpdateFormProjectImage from "../projects/UpdateFormProjectImage";
-import UpdateFormProjectImages from "../projects/UpdateFormProjectImages";
 import { InputType } from "@/types/index";
 import UpdateFormTechStack from "../techstack/UpdateFormTechStack";
 import UpdateFormTechStackImage from "../techstack/UpdateTechStackImage";
 import UpdateFormTechCategory from "../techcategory/UpdateFormTechCategory";
 import AttachFormRoleUser from "../user/AttachFormRoleUser";
+import UpdateFormRole from "../roles/UpdateFormRole";
 interface ResourceSectionProps<R> {
     currentResource: Resource;
     resourceId: string;
     resource: R;
-    inputs: InputType[] | null
+    inputs: InputType[] | null;
+    initialValues?: object
 }
 
-export default function ResourceUpdateSection<R>({currentResource, resourceId, resource, inputs}: ResourceSectionProps<R>) {
+export default function ResourceUpdateSection<R>({currentResource, resourceId, resource, inputs, initialValues}: ResourceSectionProps<R>) {
     switch (currentResource) {
        case Resource.CONTACT:
             return (
@@ -80,6 +80,12 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
              return (
                 <>
                     <AttachFormRoleUser initialValues={resource as User} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.ROLE:
+            return (
+                <>
+                    <UpdateFormRole initialValues={resource as Role} resourceId={resourceId} inputs={inputs} initialValuesFields={initialValues as { name: string, permissions: Record<string, Record<string, boolean>>}}/>
                 </>
             )
         default:

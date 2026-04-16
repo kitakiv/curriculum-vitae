@@ -33,6 +33,10 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                         value.forEach((item) => {
                             formData.append(key, item);
                         });
+                    } else if (value instanceof File) {
+                        formData.append(key, value);
+                    } else if (value instanceof Object) {
+                        formData.append(key, JSON.stringify(value));
                     } else {
                         formData.append(key, value);
                     }
@@ -44,7 +48,7 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                 });
             }}
         >
-            {({ setFieldValue }) => (
+            {({ setFieldValue, values }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg`}>
                     {children}
                     {state?.message && (
@@ -63,6 +67,7 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
                             key={input.id}
                             inputData={input as InputType}
                             setFieldValue={setFieldValue}
+                            values={values}
                         />
                     ))}
                     <SubmitButton pending={pending} >

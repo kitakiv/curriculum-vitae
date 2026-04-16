@@ -3,7 +3,7 @@ import { CreateTechStackInput, CreateTechStackMutation, CreateTechStackMutationV
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 import { TECHSTACK_CREATE_MUTATION, TECHSTACK_DELETE_MUTATION, TECHSTACK_UPDATE_MUTATION } from "@/graphql/techStack.graphql";
 
 const TECHSTACK_SVG = 'techSvg';
@@ -48,22 +48,22 @@ export async function updateTechStackAction(prevState: PrevState<CreateTechStack
     
 }
 
-export async function updateTechStackImageAction(prevState: PrevState<CreateTechStackInput>| undefined, formData: FormData, id: string):
- Promise<PrevState<CreateTechStackInput>> {
+export async function updateTechStackImageAction(prevState: PrevStateFull<CreateTechStackInput["techSvg"]>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<CreateTechStackInput["techSvg"]>> {
     try {
-        await uploadFile(resourceConfig[Resource.TECHSTACK].editFormImage.uploadConfig, formData, TECHSTACK_SVG, id);
+        const res = await uploadFile(resourceConfig[Resource.TECHSTACK].editFormImage.uploadConfig, formData, TECHSTACK_SVG, id);
         
         return {
             success: true,
             message: `TechStack svg updated successfully!`,
-            id: id,
+            data: (res.data as TechStack).techSvg,
         };
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Profile image update failed',
-            id: null
+            data: null
         };
     }
 }

@@ -1,10 +1,10 @@
 'use server'
-import {  CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, RemoveCertificateMutation, RemoveContactMutation, RemoveContactMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
+import {  Certificate, CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, RemoveCertificateMutation, RemoveContactMutation, RemoveContactMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { CERTIFICATE_CREATE_MUTATION, CERTIFICATE_UPDATE_MUTATION, CERTIFICATE_REMOVE_MUTATION } from "@/graphql/certificate.graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 
 
 const CERTIFICATE_IMAGE = 'certificateImage';
@@ -79,22 +79,22 @@ export async function updateCertificateAction(prevState: PrevState<CreateCertifi
     
 }
 
-export async function updateCertificateImageAction(prevState: PrevState<CreateCertificateInput>| undefined, formData: FormData, id: string):
- Promise<PrevState<CreateCertificateInput>> {
+export async function updateCertificateImageAction(prevState: PrevStateFull<CreateCertificateInput["certificateImage"]>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<CreateCertificateInput["certificateImage"]>> {
     try {
-        await uploadFile(resourceConfig[Resource.CERTIFICATE].createForm.uploadConfig, formData, CERTIFICATE_IMAGE, id);
+        const res = await uploadFile(resourceConfig[Resource.CERTIFICATE].createForm.uploadConfig, formData, CERTIFICATE_IMAGE, id);
         
         return {
             success: true,
             message: 'Certificate image updated successfully!',
-            id: id
+            data: (res.data as Certificate).certificateImage
         };
     } catch (error) {
         console.error('Update error', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Certificate image update failed',
-            id: null
+            data: null
         };
     }
 }

@@ -9,15 +9,17 @@ import CreateFormProject from "../projects/CreateFormProject";
 import { InputType } from "@/types/index";
 import CreateFormTechStack from "../techstack/CreateFormTechStack";
 import CreateFormTechCategory from "../techcategory/CreateFormTechCategory";
+import CreateFormRole from "../roles/CreateFormRole";
 
 interface Props {
     user: GetUserMutation['getUser'];
     currentResource: Resource;
     inputs: InputType[] | null;
+    initalValues?: object;
 }
 
 
-export default function ResourceCreateSection({user, currentResource, inputs}: Props) {
+export default function ResourceCreateSection({user, currentResource, inputs, initalValues}: Props) {
     const canCreate = hasPermission(user, currentResource, [Action.CREATE]);
     if (!canCreate) return null;
     switch (currentResource) {
@@ -33,6 +35,8 @@ export default function ResourceCreateSection({user, currentResource, inputs}: P
             return <CreateFormTechStack inputs={inputs} />
         case Resource.CATEGORY:
             return <CreateFormTechCategory inputs={inputs} />
+        case Resource.ROLE:
+            return <CreateFormRole inputs={inputs} initialValues={initalValues} />
         default:
             return null; 
     }

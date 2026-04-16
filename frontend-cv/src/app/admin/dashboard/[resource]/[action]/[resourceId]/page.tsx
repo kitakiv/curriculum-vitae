@@ -2,7 +2,7 @@ import ResourceUpdateSection from "@/components/admin/components/ResourceUpdateS
 import { GetUserMutation } from "@/gql/graphql";
 import { getMe } from "@/query/auth.query";
 import { hasPermission } from "@/query/permissions";
-import { getResourceById, getResouseInputsEdit } from "@/query/query";
+import { getEditInitialValues, getResourceById, getResouseInputsEdit } from "@/query/query";
 import {Action, Resource } from "@/variables/admin/resource";
 import ResourceDeleteSection from "@/components/admin/components/ResourceDeleteSection";
 
@@ -21,8 +21,9 @@ export default async function Page({ params }: Props) {
         const resource = await getResourceById(currentResource, resourceId);
         if (!resource) return <div>Resource not found</div>;
         const inputs = await getResouseInputsEdit(currentResource);
+        const initialValues = await getEditInitialValues(currentResource, resource);
         return (
-            <ResourceUpdateSection<typeof resource> resource={resource} resourceId={resourceId} currentResource={currentResource}  inputs={inputs} />
+            <ResourceUpdateSection<typeof resource> resource={resource} resourceId={resourceId} currentResource={currentResource}  inputs={inputs} initialValues={initialValues} />
         )
     }
     if (action === Action.DELETE) {

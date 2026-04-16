@@ -230,7 +230,12 @@ const form = {
         initialValuesDelete: { id: ""},
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
-        ]
+        ],
+        initialValues: { name: "", permissions: [] },
+        inputs: [
+            { id: "name", label: "Role Name", name: "name", placeholder: "Role Name", type: "text" },
+            { id: "permissions", label: "Permissions", name: "permissions", placeholder: "Resource", type: "table", options: [] },
+        ],
     }
 }
 export default form;

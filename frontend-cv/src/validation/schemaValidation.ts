@@ -147,11 +147,15 @@ const techName = Yup.string().required("Tech stack name is required")
 const uuid = Yup.string().required("ID is required")
 .uuid("Invalid ID format");
 
+const roleName = Yup.string().required("Role name is required")
+.min(3, "Role name must be at least 3 characters long")
+.max(50, "Role name must be at most 50 characters long");
 
 const chekcbox  = Yup.array()
     .of(Yup.string())
     .min(1, 'Select at least one ') 
     .required('Required');
+
 
 const attachRoleSchema = (expectedId: string) =>
   Yup.object({
@@ -298,6 +302,9 @@ const schema = {
         userDelete: deleteSchema
     },
     role: {
+        role: Yup.object().shape({
+            name: roleName,
+        }),
         roleDelete: deleteSchema
     }
 }

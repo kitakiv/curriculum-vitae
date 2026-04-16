@@ -39,6 +39,8 @@ class InputType {
     as?: string = "";
     readonly?: boolean = false;
     options?: Array<{value: string, label: string}> = [];
+    tableHeader?: Array<string> = [];
+    tableLeftColumn?: Array<string> = [];
 }
 
 class MenuType {

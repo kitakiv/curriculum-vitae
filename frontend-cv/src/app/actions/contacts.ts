@@ -1,10 +1,10 @@
 'use server'
-import { CreateContactInput, CreateContactMutation, CreateContactMutationVariables, RemoveContactMutation, RemoveContactMutationVariables, UpdateContactInput, UpdateContactMutation, UpdateContactMutationVariables} from "@/gql/graphql"
+import { CreateContactInput, CreateContactMutation, CreateContactMutationVariables, RemoveContactMutation, RemoveContactMutationVariables, UpdateContactInput, UpdateContactMutation, UpdateContactMutationVariables, Contact} from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { CONTACT_UPDATE_MUTATION, CONTACT_CREATE_MUTATION, CONTACT_REMOVE_MUTATION } from "@/graphql/contacts.graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
 
 
 const CONTACT_SVG = 'contactSvg';
@@ -75,22 +75,22 @@ export async function updateContactAction(prevState: PrevState<CreateContactInpu
     
 }
 
-export async function updateContactImageAction(prevState: PrevState<CreateContactInput>| undefined, formData: FormData, id: string):
- Promise<PrevState<CreateContactInput>> {
+export async function updateContactImageAction(prevState: PrevStateFull<CreateContactInput["contactSvg"]>| undefined, formData: FormData, id: string):
+ Promise<PrevStateFull<CreateContactInput["contactSvg"]>> {
     try {
-        await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, CONTACT_SVG, id);
+        const res =await uploadFile(resourceConfig[Resource.CONTACT].createForm.uploadConfig, formData, CONTACT_SVG, id);
         
         return {
             success: true,
             message: 'Contact updated successfully!',
-            id: id
+            data: (res.data as Contact).contactSvg
         };
     } catch (error) {
         console.error('Signup error:', error);
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Contact Update failed',
-            id: null
+            data: null
         };
     }
 }

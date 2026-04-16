@@ -11,7 +11,7 @@ import { addProjectImageAction, createProjectAction, deleteProjectAction, delete
 import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
 import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
 import { attachRoleToUserAction, deleteUserAction } from "@/app/actions/auth";
-import { deleteRoleAction } from "@/app/actions/role";
+import { createRoleAction, deleteRoleAction, updateRoleAction } from "@/app/actions/role";
 
 export enum Resource {
   USER = 'user',
@@ -417,15 +417,22 @@ const resourceConfig = {
       action: deleteRoleAction,
       schema: schema.role.roleDelete,
       title: 'Delete User Role',
+    },
+    createForm: {
+      inputs: form.roleForm.inputs,
+      initialValues: form.roleForm.initialValues,
+      action: createRoleAction,
+      schema: schema.role.role,
+      title: 'Create User Role',
+      link: `${adminVariables.pathAdminPage}/${Resource.ROLE}/${Action.CREATE}`,
+    },
+    editForm: {
+      inputs: form.roleForm.inputs,
+      initialValues: form.roleForm.initialValues,
+      action: updateRoleAction,
+      schema: schema.role.role,
+      title: 'Edit User Role',
     }
-    // createForm: {
-    //   inputs: form.roleForm.inputs,
-    //   initialValues: form.roleForm.initialValues,
-    //   action: createRoleAction,
-    //   schema: schema.role.role,
-    //   title: 'Create User Role',
-    //   link: `${adminVariables.pathAdminPage}/${Resource.ROLE}/${Action.CREATE}`,
-    // }
   }
 };
 

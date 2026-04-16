@@ -1,9 +1,9 @@
 'use server'
 
 import { Resource, resourceConfig } from "@/variables/admin/resource";
-import { queryGraphQL } from "./graphql";
+import { cachedQueryGraphQl, queryGraphQL } from "./graphql";
 import { CONTACT_GET_ONE_QUERY } from "@/graphql/contacts.graphql";
-import { GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetOneUserQuery, GetOneUserQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetRoleQuery, GetRoleQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechCategoryQuery, GetTechCategoryQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables, GetUserMutation, GetUserMutationVariables } from "@/gql/graphql";
+import { GetCertificateQuery, GetCertificateQueryVariables, GetContactQuery, GetContactQueryVariables, GetOneUserQuery, GetOneUserQueryVariables, GetProfileQuery, GetProjectQuery, GetProjectQueryVariables, GetProjectsQuery, GetProjectsQueryVariables, GetResourcesQuery, GetResourcesQueryVariables, GetRoleQuery, GetRoleQueryVariables, GetSliderQuery, GetSliderQueryVariables, GetTechCategoriesQuery, GetTechCategoriesQueryVariables, GetTechCategoryQuery, GetTechCategoryQueryVariables, GetTechStackQuery, GetTechStackQueryVariables, GetTechStacksQuery, GetTechStacksQueryVariables, GetUserMutation, GetUserMutationVariables, Role } from "@/gql/graphql";
 import { SLIDER_GET_ONE_QUERY } from "@/graphql/slider.graphql";
 import { CERTIFICATE_GET_ONE_QUERY } from "@/graphql/certificate.graphql";
 import { PROFILE_GET_QUERY } from "@/graphql/profile.graphql";
@@ -12,7 +12,9 @@ import { InputType } from "../types";
 import { PROJECT_GET_ONE_QUERY, PROJECTS_GET_QUERY } from "@/graphql/project.graphql";
 import { TECHCATEGORIES_GET_QUERY, TECHCATEGORY_GET_ONE_QUERY } from "@/graphql/techCategory.graphql";
 import { USER_GET_ONE_QUERY } from "@/graphql/auth.graphql";
-import { ROLE_GET_ONE_QUERY } from "@/graphql/role.graphql";
+import { RESOURCES_GET_QUERY, ROLE_GET_ONE_QUERY } from "@/graphql/role.graphql";
+import { getAllPermissions } from "./permission.query";
+import { formCreateFormatValues, formUpdateFormatValues } from "@/app/actions/role";
 export async function getResourceById(resource: Resource, resourceId: string) {
     switch (resource) {
         case Resource.CONTACT:
@@ -70,6 +72,16 @@ export async function getInputsValues(resource: Resource) {
                 }
                 return input;
             });
+        case Resource.ROLE:
+            const inputsRole = resourceConfig[Resource.ROLE].createForm.inputs.find(input => input.name === 'permissions');
+            const permissions = (await cachedQueryGraphQl<GetResourcesQuery, GetResourcesQueryVariables>(RESOURCES_GET_QUERY)).permissions;
+            const permissionInput = { 
+                ...inputsRole,
+                tableHeader: permissions[0].actions,
+                tableLeftColumn: permissions.map(permission => permission.resource)
+            };
+            const finalInputs = resourceConfig[Resource.ROLE].createForm.inputs.filter(input => input.name !== 'permissions');
+            return [...finalInputs, permissionInput];
        default:
        return null;
     }
@@ -89,7 +101,7 @@ export async function getResouseInputsEdit(resource: Resource) {
             return input;
         });
         case Resource.TECHSTACK:
-            const intputsEdit = resourceConfig[Resource.TECHSTACK].editForm;
+        const intputsEdit = resourceConfig[Resource.TECHSTACK].editForm;
         const techCategories = (await queryGraphQL<GetTechCategoriesQuery, GetTechCategoriesQueryVariables>(TECHCATEGORIES_GET_QUERY)).techCategories.map(category => ({ value: category.id, label: category.categoryName }));
         const projects = (await queryGraphQL<GetProjectsQuery, GetProjectsQueryVariables>(PROJECTS_GET_QUERY)).projects.map(project => ({ value: project.id, label: project.projectTitle }));
         return intputsEdit.inputs.map((input: InputType) => {
@@ -110,7 +122,41 @@ export async function getResouseInputsEdit(resource: Resource) {
                 }
                 return input;
             });
+        case Resource.ROLE:
+            const inputsRole = resourceConfig[Resource.ROLE].editForm.inputs.find(input => input.name === 'permissions');
+            const permissions = await getAllPermissions();
+            const permissionInput = { 
+                ...inputsRole,
+                tableHeader: permissions[0].actions,
+                tableLeftColumn: permissions.map(permission => permission.resource)
+            };
+            const finalInputs = resourceConfig[Resource.ROLE].createForm.inputs.filter(input => input.name !== 'permissions');
+            return [...finalInputs, permissionInput];
        default:
-       return null;
+       return undefined;
     }
 }
+
+
+export async function getInitialValues(resource: Resource) {
+    switch (resource) {
+       case Resource.ROLE:
+            const initialValuesRole = resourceConfig[Resource.ROLE].createForm.initialValues;
+            const permissions = await formCreateFormatValues();
+            return { ...initialValuesRole, permissions };
+       default:
+       return undefined;
+    }
+}
+
+export async function getEditInitialValues(resource: Resource, values: object) {
+    switch (resource) {
+       case Resource.ROLE:
+            const role = values as Role;
+            const permissions = await formUpdateFormatValues(role);
+            return { ...values, permissions };
+       default:
+       return undefined;
+    }
+}
+

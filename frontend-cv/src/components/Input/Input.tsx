@@ -4,10 +4,18 @@ import { useState, useCallback } from "react"
 import MiddleText from "../text/MiddleText";
 import { useDropzone } from 'react-dropzone'
 import SmallText from "../text/SmallText";
+import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
-export default function InputElement({ inputData, setFieldValue, readonly = false }: { inputData: InputType, setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object>, readonly?: boolean }) {
-    const { id, label, name, placeholder, type, as } = inputData;
-    const [hasError, setHasError] = useState<boolean>(false)
+interface Props {
+    inputData: InputType,
+    setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object>,
+    values: object
+    readonly?: boolean
+}
+
+export default function InputElement({ inputData, setFieldValue, readonly = false, values }: Props) {
+    const { id, label, name, placeholder, type, as, tableHeader, tableLeftColumn } = inputData;
+    const [_, setHasError] = useState<boolean>(false)
     const { errors, touched } = useFormikContext<any>();
     const [fileImages, setFileImages] = useState<{ file: File; preview: string; }[]>([]);
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -20,7 +28,6 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                     setFieldValue(name, file);
                     if (!errors[name]) {
                         setHasError(false);
-                        console.log('file', file);
                         const fileWithPreview = {
                             file,
                             preview: URL.createObjectURL(file),
@@ -42,7 +49,6 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                     setFieldValue(name, files);
                     if (!errors[name]) {
                         setHasError(false);
-                        console.log('files', files);
                         const filesWithPreview = files.map((file) => ({
                             file,
                             preview: URL.createObjectURL(file),
@@ -134,20 +140,87 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
     if (type === "checkbox" && inputData.options) {
         return (
             <>
-            <label htmlFor={id}><MiddleText tailwind="text-footerTx">{label}</MiddleText></label>
-             {inputData.options.map((option) => (
-                <div key={`option-${name}-${option.value}`}>
-                    <label className="text-adminTx100">
-                        <Field className="checked:bg-txFirst100 indeterminate:bg-adminTx100" type="checkbox" name={name} id={option.value} disabled={readonly} value={option.value} />
-                        {option.label}
-                    </label>
-                </div>
-            ))}
-             <span className={`${errors[name] && touched[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string)}</span>
+                <label htmlFor={id}><MiddleText tailwind="text-footerTx">{label}</MiddleText></label>
+                {inputData.options.map((option) => (
+                    <div key={`option-${name}-${option.value}`}>
+                        <label className="text-adminTx100">
+                            <Field className="checked:bg-txFirst100 indeterminate:bg-adminTx100" type="checkbox" name={name} id={option.value} disabled={readonly} value={option.value} />
+                            {option.label}
+                        </label>
+                    </div>
+                ))}
+                <span className={`${errors[name] && touched[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string)}</span>
             </>
         )
     }
-    // readonly 
+
+
+    // table input
+    else if (type === "table" && tableHeader && tableLeftColumn) {
+        return (
+            <>
+                <label htmlFor={id}>
+                    <MiddleText tailwind="text-footerTx">
+                        {label}
+                    </MiddleText>
+                </label>
+                <Table sx={{ position: 'relative', background: 'linear-gradient(var(--admin-gr33), var(--admin-gr100))' }}>
+                    <TableHead sx={{ position: 'sticky', top: 100, zIndex: 1, backgroundColor: 'var(--admin-gr33)' }}>
+                        <TableRow sx={{ backgroundColor: 'var(--admin-gr33)' }}>
+                            <TableCell>
+                                <MiddleText tailwind="text-footerTx">{placeholder}</MiddleText>
+                            </TableCell>
+                            {tableHeader.map(action => (
+                                <TableCell key={action}>
+                                    <MiddleText tailwind="text-footerTx">{action.toUpperCase()}</MiddleText>
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {tableLeftColumn.map(resource => (
+                            <TableRow key={resource}>
+                                <TableCell>
+                                    <MiddleText tailwind="text-footerTx">{resource}</MiddleText>
+                                </TableCell>
+
+                                {tableHeader.map(action => {
+                                    const fieldName = `${id}.${resource}.${action}`;
+
+                                    return (
+                                        <TableCell key={action}>
+                                            <Checkbox
+                                                sx={{
+                                                    color: 'var(--admin-tx0)',
+                                                    '&.Mui-checked': {
+                                                        color: 'var(--admin-tx0)',
+                                                    },
+                                                    '&.Mui-disabled': {
+                                                        color: 'var(--admin-tx100)',
+                                                    },
+                                                }}
+                                                disabled={readonly}
+                                                checked={values[id][resource][action]}
+                                                onChange={() =>
+                                                    setFieldValue(
+                                                        fieldName,
+                                                        !values[id][resource][action]
+                                                    )
+                                                }
+                                            />
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                <Error name={name}>{handleError}</Error>
+            </>
+        )
+    }
+      // readonly 
     else if (type !== "file" && readonly) {
         return (<>
             <label htmlFor={id}>

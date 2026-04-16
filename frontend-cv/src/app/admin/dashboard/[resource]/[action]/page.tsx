@@ -2,7 +2,7 @@ import ResourceCreateSection from "@/components/admin/components/ResourceCreateS
 import { GetUserMutation } from "@/gql/graphql";
 import { getMe } from "@/query/auth.query";
 import { hasPermission } from "@/query/permissions";
-import {getInputsValues } from "@/query/query";
+import {getInitialValues, getInputsValues } from "@/query/query";
 import { Resource, Action } from "@/variables/admin/resource";
 
 type Props = {
@@ -18,9 +18,8 @@ export default async function Page({ params }: Props) {
         const canCreate = user ? hasPermission(user, currentResource, [Action.CREATE]) : false;
         if (!canCreate) return <div>Access Denied</div>
         const inputsAdd = await getInputsValues(currentResource);
-        console.log('inputsAdd', inputsAdd)
-        if (action === Action.CREATE) 
-            return <ResourceCreateSection user={user} currentResource={currentResource} inputs={inputsAdd} />
+        const initalValues = await getInitialValues(currentResource);
+        return <ResourceCreateSection user={user} currentResource={currentResource} inputs={inputsAdd} initalValues={initalValues} />
     }
 
 
