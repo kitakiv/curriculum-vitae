@@ -9,6 +9,7 @@ import FlyModelSection from "@/components/3D/FlyModelSection";
 import techStack from "@/variables/techstack/techstack";
 import { getMe } from "@/query/auth.query";
 import { GetUserMutation } from "@/gql/graphql";
+import PhotoSection from "@/components/photosection/PhotoSection";
 
 
 export type Props = {
@@ -31,6 +32,7 @@ export default async function Page({ searchParams }: Props) {
       <ProjectSection selectedTechId={params[techStack.searchParam]} />
       <TechStackSection selectedCategoryId={params[techStack.searchParamCategory]}/>
       <ExperienceSection/>
+       <PhotoSection/>
       </main>
       <Footer />
     </>

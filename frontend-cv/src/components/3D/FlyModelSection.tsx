@@ -10,6 +10,7 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import header from "@/variables/header/header";
 import * as THREE from 'three';
 import { Center } from "@react-three/drei";
+
 gsap.registerPlugin(ScrollTrigger)
 
 
@@ -18,6 +19,7 @@ export default function FlyModelSection() {
   const [rotateY, setRotateY] = useState(0);
   const screenHeight = window.innerHeight;
   const objectWidth = 25;
+  const objectHeight = 35;
   const screenWidth = window.innerWidth - screenHeight / 100 * objectWidth;
   const threeScreenOfObject = 2.3;
   const prevX = useRef(0);
@@ -58,15 +60,15 @@ export default function FlyModelSection() {
           currentScale.current = scale;
           currentScale.current += (scale - currentScale.current) * 0.1;
           block.current.style.width = `${currentScale.current * objectWidth}vh`;
-          block.current.style.height = `${currentScale.current * objectWidth}vh`;
+          block.current.style.height = `${currentScale.current * objectHeight}vh`;
           block.current.style.transform = `translateX(${x}px) scale(${currentScale.current})`;// y = (screenHeight / 2)sin(πt) + screenHeight / 2)
           setRotateY(targetYaw);
         },
       }
     })
-  }, [window.innerHeight, window.innerWidth])
+  }, [document.documentElement.scrollHeight, document.documentElement.scrollWidht]);
   return <section className="w-full" id={flyModel.id}>
-    <div ref={block} className="absolute z-[35] left-0 top-[15vh]  w-[25vh] h-[25vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
+    <div ref={block} className="absolute z-[35] left-0 top-[15vh] w-[25vh] h-[35vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
       <Canvas>
         <directionalLight position={[0, 0, 5]} intensity={8} />
         <Suspense fallback={<Loader />}>

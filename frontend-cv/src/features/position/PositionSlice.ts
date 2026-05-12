@@ -5,6 +5,7 @@ interface  PositionState {
   value: {
     position: boolean;
     section: string;
+    burgrMenu: boolean
   };
 }
 
@@ -12,6 +13,7 @@ const initialState: PositionState = {
   value: {
     position: false,
     section: "home",
+    burgerMenu: false
   },
 }
 
@@ -25,10 +27,14 @@ export const positionSlice = createSlice({
     changeSection: (state, action: PayloadAction<string>) => {
       state.value.section = action.payload
     },
+
+    toggleBurgerMenu: (state) => {
+      state.value.burgrMenu = !state.value.burgrMenu
+    },
   },
 })
 
-export const { changePosition, changeSection } = positionSlice.actions
+export const { changePosition, changeSection, toggleBurgerMenu } = positionSlice.actions
 
 export const selectPosition = (state: RootState) => state.position.value
 

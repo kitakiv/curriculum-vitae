@@ -16,7 +16,7 @@ interface Props {
 
 export default function ProfileSection({profile}: Props) {
     return (<>
-        <StartPage tailwind="grid grid-cols-12 grid-flow-col grid-rows-12">
+       
                 <HeaderModel />
                 <HeaderImage images={profile.profilePhotos || []} />
                 <HeaderTitle textFirst={header.firstTitle} textSecond={header.secondTitle} />
@@ -27,6 +27,5 @@ export default function ProfileSection({profile}: Props) {
                         <Image src={header.arrow} alt="arrow" width={20} height={20} className="w-0 opacity-0 group-hover:w-5 group-hover:opacity-100 transition duration-700"></Image>
                     </PinkButton>
                 </Link>
-            </StartPage >
     </>)
 }

@@ -1,15 +1,13 @@
 import HeaderSection from "./components/HeaderSection"
-import MainText from "@/components/text/MainText"
 import ThemeIcon from "@/components/header/components/ThemeIcon"
 import header from "@/variables/header/header"
-import Link from "next/link"
+import MainLink from "@/components/header/components/MainLink";
 
 export default function HeaderLogin() {
+     const profile: GetProfileQuery["profile"] = await getProfileCached();
     return (
         <HeaderSection>
-                <Link href='/'>
-                    <MainText>{header.name + " " + header.surname}</MainText>
-                </Link>
+                <MainLink profile={profile} href="/"/>
                 <ThemeIcon key={header.keyIcons} />
         </HeaderSection>
     )
