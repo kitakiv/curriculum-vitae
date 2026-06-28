@@ -12,8 +12,13 @@ import { ConfigService } from '@nestjs/config';
         username: configService.getOrThrow<string>('POSTGRES_USER'),
         password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
         database: configService.getOrThrow<string>('POSTGRES_DB'),
-        synchronize: true, // configService.getOrThrow<boolean>('POSTGRES_SYNCHRONIZE'),
+        synchronize: true,
         autoLoadEntities: true,
+        schema: 'public',
+        entities: ['dist/**/*.entity.js', 'dist/**/*.entity.ts'],
+        ssl: configService.get('NODE_ENV') === 'production'
+          ? { rejectUnauthorized: false }
+          : false,
       }),
       inject: [ConfigService],
     }),
