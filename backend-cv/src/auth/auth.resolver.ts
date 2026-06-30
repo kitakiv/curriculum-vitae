@@ -32,9 +32,9 @@ import { CookiesService } from '../common/cookies/cookies.service';
 import { CookiesData } from './entities/cookiesData.type';
 import { Role } from '../roles/entities/role.entity';
 import { RefreshToken } from './entities/refreshToken.entity';
-import { CurrentUserId } from 'src/decorators/currentuserid.decorator';
-import { SuperAdminGuard } from 'src/guards/superAdmin.guard';
-import { SuperAdmin } from 'src/decorators/superadmin.deconrator';
+import { CurrentUserId } from '../decorators/currentuserid.decorator';
+import { SuperAdminGuard } from '../guards/superAdmin.guard';
+import { SuperAdmin } from '../decorators/superadmin.deconrator';
 
 
 @UseGuards(AuthorizationGuard, SuperAdminGuard)

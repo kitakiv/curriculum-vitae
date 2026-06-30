@@ -30,7 +30,7 @@ import { Sign } from './entities/sign.type';
 import { CreatePermissionInput } from '../roles/dto/create-role.input';
 import { SignUpGoogleInput } from './dto/signUpGoogle';
 import { randomBytes } from 'crypto';
-import { UserProvider } from 'src/common/types/types';
+import { UserProvider } from '../common/types/types';
 import { LoginGoogleInput } from './dto/loginGoogle.input';
 import { EmailService } from '../email/email.service';
 
@@ -346,32 +346,45 @@ export class AuthService implements OnModuleInit {
     const adminLogin = this.configService.get('ADMIN_LOGIN');
     const adminPassword = this.configService.get('ADMIN_PASSWORD');
     if (!adminLogin || !adminPassword) {
-      this.logger.warn(
+      this.logger.error(
         'Admin credentials not configured - skipping admin creation',
       );
       return;
     }
-    let admin: User = await this.userRepository.findOneBy({
+    await this.createOrUpdateSuperUser();
+  }
+
+  private async createOrUpdateSuperUser() {
+    const adminLogin = this.configService.get('ADMIN_LOGIN');
+    const adminPassword = this.configService.get('ADMIN_PASSWORD');
+    const hashedPassword = await this.createHashPassword(adminPassword);
+    const admin = await this.userRepository.findOneBy({
       login: adminLogin,
     });
-    if (admin && admin.isEmailVerified === false) {
-      admin.isEmailVerified = true;
+    if (admin) {
       admin.verificationToken = null;
+      admin.password = hashedPassword;
+      admin.isEmailVerified = true;
       await this.userRepository.save(admin);
-    }
-    if (!admin) {
-      admin = (await this.createUser({
-        login: adminLogin,
-        password: adminPassword,
-        name: 'Admin',
-        provider: UserProvider.LOCAL,
-        isEmailVerified: true,
-      })) as User;
-      if (!admin) {
-        this.logger.warn('Something went wrong check the errors in the logs');
+      return admin;
+    } else {
+      const createdUser = await this.dataSource.transaction(async (manager) => {
+        const user = await manager.create(User, {
+          login: adminLogin,
+          password: hashedPassword,
+          name: 'Admin',
+          provider: UserProvider.LOCAL,
+          isEmailVerified: true,
+        });
+        await manager.save(User, user);
+        return user;
+      });
+      if (!createdUser) {
+        this.logger.error('Admin user not created');
         return;
       }
     }
+
   }
 
   async remove(userId: string) {

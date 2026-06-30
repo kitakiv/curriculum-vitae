@@ -17,7 +17,7 @@ import { User } from '../auth/entities/user.entity';
 import { Action } from './enums/action.enum';
 import { Resource } from './enums/resource.enum';
 import { ConfigService } from '@nestjs/config';
-import { allPermission } from './entities/allPermission.entity';
+import { allPermission } from './entities/allPermission.object';
 
 @Injectable()
 export class RolesService implements OnModuleInit {

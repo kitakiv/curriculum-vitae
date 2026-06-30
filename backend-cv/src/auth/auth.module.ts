@@ -5,7 +5,7 @@ import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refreshToken.entity';
 import { Role } from '../roles/entities/role.entity';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from '../common/common.module';
 import { EmailModule } from '../email/email.module';
 
 @Module({

@@ -20,7 +20,7 @@ import { Permission } from './entities/permission.entity';
 import { User } from '../auth/entities/user.entity';
 import { CurrentUserId } from '../decorators/currentuserid.decorator';
 import { AuthService } from '../auth/auth.service';
-import { allPermission } from './entities/allPermission.entity';
+import { allPermission } from './entities/allPermission.object';
 import { SuperAdminGuard } from 'src/guards/superAdmin.guard';
 import { SuperAdmin } from 'src/decorators/superadmin.deconrator';
 import { errors } from 'src/errors/errors.config';

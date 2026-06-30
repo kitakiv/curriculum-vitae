@@ -191,6 +191,32 @@
   mask-size: 100% 100%;
 }
 
+.image-mask-right-photo {
+  mask-image: linear-gradient(to right, black 80%, transparent 99%);
+  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 99%);
+   -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.image-mask-left-photo {
+  mask-image: linear-gradient(to left, black 80%, transparent 99%);
+  -webkit-mask-image: linear-gradient(to left, black 80%, transparent 99%);
+   -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
 .image-mask-project {
   mask-image: linear-gradient(to left, black 80%, transparent),
   linear-gradient(to right, black 80%, transparent);

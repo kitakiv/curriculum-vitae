@@ -19,7 +19,7 @@ export default function FlyModelSection() {
   const [rotateY, setRotateY] = useState(0);
   const screenHeight = window.innerHeight;
   const objectWidth = 25;
-  const objectHeight = 35;
+  const objectHeight = 30;
   const screenWidth = window.innerWidth - screenHeight / 100 * objectWidth;
   const threeScreenOfObject = 2.3;
   const prevX = useRef(0);
@@ -45,9 +45,9 @@ export default function FlyModelSection() {
           prevX.current = x;
           const maxYaw = Math.PI * 0.5; // ~30°;
           const prevSmoothDX = smoothDX.current;
-          smoothDX.current += (dx - prevSmoothDX) * 0.5;
+          smoothDX.current += (dx - prevSmoothDX) * 0.05;
           const targetYaw = THREE.MathUtils.clamp(
-            smoothDX.current * 0.03,
+            smoothDX.current * 0.11,
             -maxYaw,
             maxYaw
           )
@@ -66,9 +66,9 @@ export default function FlyModelSection() {
         },
       }
     })
-  }, [document.documentElement.scrollHeight, document.documentElement.scrollWidht]);
+  }, [document.documentElement.scrollWidth]);
   return <section className="w-full" id={flyModel.id}>
-    <div ref={block} className="absolute z-[35] left-0 top-[15vh] w-[25vh] h-[35vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
+    <div ref={block} className="absolute z-[35] left-0 top-[15vh] w-[25vh] h-[30vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
       <Canvas>
         <directionalLight position={[0, 0, 5]} intensity={8} />
         <Suspense fallback={<Loader />}>
