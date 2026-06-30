@@ -1,6 +1,5 @@
 'use client'
 import { FormType, SliderText } from "@/types/index";
-import { imagesDefault, imagesTitle } from "@/variables/aboutme/aboutme";
 import MoreInfoBlock from "@/components/form/MoreInfoBlock";
 import TitleContent from "./TitleContent";
 import FlexibleForm from "./FlexibleForm";
@@ -10,6 +9,16 @@ import form from "@/variables/form/form";
 import project from "@/variables/projects/projects";
 import schema from "@/validation/schemaValidation";
 import AdminBorder from "@/components/border/AdminBorder";
+
+const imagesDefault = [
+    "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider1.jpg",
+    "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider2.jpg",
+];
+
+const imagesTitle: SliderText[] = [
+    { title: "Web Development", text: "Creating responsive and interactive web applications using modern technologies." },
+    { title: "UI/UX Design", text: "Designing intuitive user interfaces and experiences that enhance usability." },
+];
 
 export default function ListSliders({ images = imagesDefault, titles = imagesTitle, type }: { images?: string[], titles?: SliderText[], type: FormType }) {
     const schemaForm = {

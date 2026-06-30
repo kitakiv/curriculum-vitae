@@ -2,7 +2,7 @@
 export default function Rounds({children}: {children: React.ReactNode}) {
     return (
        <>
-       <svg xmlns="http://www.w3.org/2000/svg">
+       <svg xmlns="http://www.w3.org/2000/svg" className="hidden">
       <defs>
         <filter id="goo">
           <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
@@ -11,7 +11,7 @@ export default function Rounds({children}: {children: React.ReactNode}) {
         </filter>
       </defs>
     </svg>
-    <div className="container-rounds absolute top-0 left-0 w-full h-full" >
+    <div className=" absolute top-0 left-0 w-full h-full container-rounds" >
         <div className="absolute w-72 h-72  top-1/4 right-1/4 rounded-full gradient-box-rounds-third opacity-40   z-0 overflow-hidden"></div>
         <div className="absolute h-80 w-80 top-1/2 -translate-y-1/2 left-1/3 rounded-full gradient-box-rounds-second opacity-50 overflow-hidden"></div>
         <div className="absolute w-40 h-40 top-1/4 -translate-y-1/2 left-1/3 rounded-full gradient-box-rounds-second opacity-20  z-20 overflow-hidden"></div>

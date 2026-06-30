@@ -8,7 +8,7 @@ const experiences = {
     githubSvg: "/svg/github.svg",
     demoButton: "View Deploy",
     defaultImage: "/svg/image-broken.svg",
-    name: "projects",
+    name: "Certificates",
     arrowSvg: "/svg/ok.svg",
     companySvg: "/svg/company.svg",
     periodSvg: "/svg/period.svg",

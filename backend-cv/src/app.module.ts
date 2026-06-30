@@ -28,6 +28,10 @@ import { throttlerOptions } from './config/throttler.config';
 import { RedisCacheModule } from './cache/cache.module';
 import { jwtOptions } from './config/jwt.config';
 import { graphqlOptions } from './config/graphql.config';
+import { TechCategoryModule } from './tech-category/tech-category.module';
+import { CertificateModule } from './certificate/certificate.module';
+import { GoogleauthModule } from './googleauth/googleauth.module';
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -44,6 +48,10 @@ import { graphqlOptions } from './config/graphql.config';
     TechStackModule,
     AuthModule,
     RolesModule,
+    TechCategoryModule,
+    CertificateModule,
+    GoogleauthModule,
+    EmailModule,
   ],
   providers: [
     Logger,
@@ -58,7 +66,7 @@ import { graphqlOptions } from './config/graphql.config';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
-    }
+    },
   ],
 })
 export class AppModule implements NestModule {

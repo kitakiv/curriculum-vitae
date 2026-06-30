@@ -29,6 +29,16 @@ const uploadVariables = {
     cacheKey: 'profile-data',
     cacheTime: 60000,
   },
+  techCategory: {
+    cacheKey: 'techCategory-data',
+    cacheTime: 60000,
+  },
+  certificate: {
+    name: 'certificate',
+    multiFile: false,
+    cacheKey: 'certificate-data',
+    cacheTime: 60000,
+  },
 };
 
 export default uploadVariables;

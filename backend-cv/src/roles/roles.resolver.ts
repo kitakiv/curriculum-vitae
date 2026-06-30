@@ -11,7 +11,7 @@ import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
 import { CreateRoleInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
-import { UseGuards, Logger } from '@nestjs/common';
+import { UseGuards, Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
 import { Resource } from './enums/resource.enum';
@@ -20,9 +20,13 @@ import { Permission } from './entities/permission.entity';
 import { User } from '../auth/entities/user.entity';
 import { CurrentUserId } from '../decorators/currentuserid.decorator';
 import { AuthService } from '../auth/auth.service';
+import { allPermission } from './entities/allPermission.object';
+import { SuperAdminGuard } from 'src/guards/superAdmin.guard';
+import { SuperAdmin } from 'src/decorators/superadmin.deconrator';
+import { errors } from 'src/errors/errors.config';
 
 
-@UseGuards(AuthorizationGuard)
+@UseGuards(AuthorizationGuard, SuperAdminGuard)
 @Resolver(() => Role)
 export class RolesResolver {
   constructor(
@@ -82,6 +86,7 @@ export class RolesResolver {
   }
 
   @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.UPDATE] }])
+  @SuperAdmin()
   @Mutation(() => Role)
   async updateRole(
     @Args('updateRoleInput', { type: () => UpdateRoleInput })
@@ -95,8 +100,16 @@ export class RolesResolver {
     { resource: Resource.ROLE, actions: [Action.DELETE] },
     { resource: Resource.USER, actions: [Action.UPDATE] },
   ])
+  @SuperAdmin()
   @Mutation(() => ID)
   async removeRole(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.remove(id);
+  }
+
+  
+  @Query(() => [allPermission], { name: 'permissions' })
+  async findPermissions(@CurrentUserId() userId: string,) {
+    if (!userId) throw new UnauthorizedException(errors.NOT_FOUND('User'));
+    return this.rolesService.findPermissions();
   }
 }

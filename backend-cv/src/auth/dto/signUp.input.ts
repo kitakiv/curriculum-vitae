@@ -6,6 +6,8 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsUrl,
+  IsOptional,
 } from 'class-validator';
 @InputType()
 export class SignUpInput {
@@ -39,4 +41,10 @@ export class SignUpInput {
     message: 'Password must contain at least one special character',
   })
   password: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl({ require_protocol: true })
+  avatarPhoto?: string;
 }

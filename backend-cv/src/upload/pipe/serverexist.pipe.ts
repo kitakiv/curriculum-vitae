@@ -16,6 +16,6 @@ export class ServerExistPipe implements PipeTransform {
     ) {
       return value;
     }
-    throw new BadRequestException(`Server ${value} does not exist`);
+    throw new BadRequestException(`Server ${value} does not exist servers list [${Object.keys(uploadVariables).join(', ')}]`);
   }
 }

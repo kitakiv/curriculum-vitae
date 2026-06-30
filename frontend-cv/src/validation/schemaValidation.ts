@@ -1,8 +1,22 @@
 
+import techStack, { techStacks } from "@/variables/techstack/techstack";
+import { attach } from "@react-three/fiber/dist/declarations/src/core/utils";
+import { profile } from "console";
+import { sign } from "crypto";
 import * as Yup from "yup";
-// const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
-// const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
-
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1mb
+const FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+  "image/gif",
+  "image/avif",
+  "image/bmp",
+  "image/tiff",
+  "image/x-icon",
+  "image/svg"
+];
 
 const login = Yup.string().required("Login is required")
     .min(3, "Login must be at least 3 characters long")
@@ -56,16 +70,36 @@ const projectDescription = Yup.string().required("Project description is require
 
 
 
-// function isValidFileType(fileName: string, fileTypeKey: string) {
-//   const fileType= fileName.split('.'). pop() || '';
-//  return validFileExtensions[fileTypeKey as keyof typeof validFileExtensions].includes(fileType);
-// }
+const images = Yup.array()
+    .min(1, 'Upload at least one file')
+    .max(10, 'Maximum 5 files allowed')
+    .of(
+      Yup.mixed()
+        .test(
+          'fileSize',
+          'File too large (max 1MB)',
+          (value) => value && (value as File).size <= MAX_FILE_SIZE
+        )
+        .test(
+          'fileType',
+          "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
+          (value) => value && FILE_TYPES.includes((value as File).type.toLowerCase())
+        )
+    )
 
 const image = Yup.mixed().required("Contact image is required")
 .test("fileSize", `File size must be less than 1MB`,
-    (value) => value && (value as File).size <= 1024 * 1024 * 1)
-.test("fileType", "Invalid file type",
-    (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
+    (value) => value && (value as File).size <= MAX_FILE_SIZE)
+.test("fileType", "Invalid file type use jpg, png, webp, svg, gif, avif, bmp, tiff, x-icon",
+    (value) => value && FILE_TYPES.includes((value as File).type.toLowerCase()));
+
+const deleteSchema = (expectedId: string) =>
+  Yup.object({
+    id: Yup.string()
+      .required("ID is required")
+      .oneOf([expectedId], `ID must be ${expectedId}`),
+  });
+
 
 
 const projectGithubLink = Yup.string().required("Github link is required")
@@ -80,29 +114,85 @@ const contactName = Yup.string().required("Contact name is required")
 .min(3, "Contact name must be at least 3 characters long")
 .max(20, "Contact name must be at most 20 characters long");
 
-// const contactSvg = Yup.mixed().required("Contact image is required")
-// .test("fileSize", `File size must be less than 1MB`,
-//     (value) => value && (value as File).size <= 1024 * 1024 * 100)
-// .test("fileType", "Invalid file type",
-//     (value) => value && ["image/jpeg", "image/png", "image/webp"].includes((value as File).type));
-
+const certificateCompany = Yup.string().required("Certificate company is required")
+.min(3, "Certificate company must be at least 3 characters long")
+.max(50, "Certificate company must be at most 50 characters long");
 const contactLink = Yup.string().required("Contact link is required")
 .url("Invalid contact link format")
 .matches(/^(https?:\/\/)/, "Invalid contact link format");
 
+const certificateTitle = Yup.string().required("Certificate name is required")
+.min(3, "Certificate name must be at least 3 characters long")
+.max(50, "Certificate name must be at most 50 characters long");
+
+const certificateDescription = Yup.string().required("Certificate description is required")
+.min(10, "Certificate description must be at least 10 characters long")
+.max(1000, "Certificate description must be at most 1000 characters long");
+
+const certificateLink = Yup.string().optional().required("Certificate link is required")
+.url("Invalid certificate link format")
+.matches(/^(https?:\/\/)/, "Invalid certificate link format");
+
+const certificatePeriodStart = Yup.date().required("Certificate period start date is required")
+.max(new Date(), "Certificate period start date must be in the past")
+.min(new Date('1900-01-01'), "Certificate period start date must be at least 1900-01-01");
+const certificatePeriodEnd = Yup.date().required("Certificate period end date is required")
+.min(new Date('1900-01-01'), "Certificate period end date must be in the future")
+.max(new Date(Date.now()), "Certificate period end date must be in the past");
+
+const techName = Yup.string().required("Tech stack name is required")
+.min(3, "Tech stack name must be at least 3 characters long")
+.max(50, "Tech stack name must be at most 50 characters long");
+
+const uuid = Yup.string().required("ID is required")
+.uuid("Invalid ID format");
+
+const roleName = Yup.string().required("Role name is required")
+.min(3, "Role name must be at least 3 characters long")
+.max(50, "Role name must be at most 50 characters long");
+
+const chekcbox  = Yup.array()
+    .of(Yup.string())
+    .min(1, 'Select at least one ') 
+    .required('Required');
+
+
+const attachRoleSchema = (expectedId: string) =>
+  Yup.object({
+    userId: Yup.string()
+      .required("User ID is required")
+      .oneOf([expectedId], `User ID must be ${expectedId}`),
+
+    roleId: uuid,
+  });
+
+
 const schema = {
     custom : Yup.object().shape({
-        login,
+        login: email,
         password,
     }),
-    profile: Yup.object().shape({
+    signUp: Yup.object().shape({
+        login: email,
         name,
-        surname,
-        typingText,
-        email,
-        phone,
-        location
+        password
     }),
+    profile: {
+        profileEdit: Yup.object().shape({
+            name,
+            surname,
+            typingText,
+            email,
+            phone,
+            location
+        }),
+        profileEditImage: Yup.object().shape({
+            profilePhoto: image
+        }),
+        profileEditImages: Yup.object().shape({
+            profilePhotos: images
+        })
+    },
     mainImage: Yup.object().shape({
         mainImage: image
     }),
@@ -119,24 +209,31 @@ const schema = {
         sliderImage: Yup.object().shape({
             sliderImage: image
         }),
+        sliderDelete: deleteSchema
     },
     project: {
         projectEdit: Yup.object().shape({
             projectTitle,
             projectDescription,
             projectGithubLink,
-            projectDemoLink
+            projectDemoLink,
+            techStacks: chekcbox,
         }),
         projectAdd: Yup.object().shape({
             projectTitle,
             projectDescription,
-            projectImage: image,
             projectGithubLink,
-            projectDemoLink
+            projectDemoLink,
+            techStacks: chekcbox,
+            projectImages: images,
+        }),
+        projectEditImages: Yup.object().shape({
+            projectImages: images
         }),
         projectEditImage: Yup.object().shape({
             projectImage: image
         }),
+        projectDelete: deleteSchema
     },
     contact: {
         contactEdit: Yup.object().shape({
@@ -151,6 +248,65 @@ const schema = {
         contactEditImage: Yup.object().shape({
             contactSvg: image
         }),
+        contactDelete: deleteSchema
+    },
+    techStack: {
+        techStackAdd: Yup.object().shape({
+            techName: contactName,
+            techSvg: image,
+            projects: chekcbox,
+            techCategories: chekcbox,
+        }),
+        techStackEdit: Yup.object().shape({
+            techName: contactName,
+            projects: chekcbox,
+            techCategories: chekcbox,
+        }),
+        techStackEditImage: Yup.object().shape({
+            techSvg: image
+        }),
+        techStackDelete: deleteSchema
+    },
+    certificate: {
+        certificateEdit: Yup.object().shape({
+            certificateTitle,
+            certificateDescription,
+            certificateLink,
+            certificatePeriodStart,
+            certificatePeriodEnd,
+            certificateCompany,
+        }),
+        certificateAdd: Yup.object().shape({
+            certificateTitle,
+            certificateDescription,
+            certificateLink,
+            certificatePeriodStart,
+            certificatePeriodEnd,
+            certificateCompany,
+            certificateImage: image
+        }),
+        certificateEditImage: Yup.object().shape({
+            certificateImage: image
+        }),
+        certificateDelete: deleteSchema
+    },
+    category: {
+        category: Yup.object().shape({
+            categoryName: contactName,
+            techStacks: chekcbox,
+        }),
+        categoryDelete: deleteSchema
+    },
+    user: {
+        attachRole: attachRoleSchema,
+        userDelete: deleteSchema
+    },
+    role: {
+        role: Yup.object().shape({
+            name: roleName,
+        }),
+        roleDelete: deleteSchema
     }
 }
+export { deleteSchema };
 export default schema

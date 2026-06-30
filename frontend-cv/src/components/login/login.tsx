@@ -1,9 +1,8 @@
-import FormAdmin from "@/components/login/components/Form";
 
-export default function LoginPage() {
+import FormLoginAdmin from "./components/Form";
+
+export default async function LoginPage() {
     return (
-        <>
-         <FormAdmin />
-        </>
+         <FormLoginAdmin />
     );
 }

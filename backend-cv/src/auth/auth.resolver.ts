@@ -32,9 +32,12 @@ import { CookiesService } from '../common/cookies/cookies.service';
 import { CookiesData } from './entities/cookiesData.type';
 import { Role } from '../roles/entities/role.entity';
 import { RefreshToken } from './entities/refreshToken.entity';
-import { CurrentUserId } from 'src/decorators/currentuserid.decorator';
+import { CurrentUserId } from '../decorators/currentuserid.decorator';
+import { SuperAdminGuard } from '../guards/superAdmin.guard';
+import { SuperAdmin } from '../decorators/superadmin.deconrator';
 
-@UseGuards(AuthorizationGuard)
+
+@UseGuards(AuthorizationGuard, SuperAdminGuard)
 @Resolver(() => User)
 export class AuthResolver {
   private refreshTokenName = 'refreshToken';
@@ -45,17 +48,11 @@ export class AuthResolver {
   ) {}
 
   @Public()
-  @Mutation(() => CookiesData)
+  @Mutation(() => Boolean)
   async signup(
     @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
-    @Context() { res }: { res: Response },
   ) {
     const result = await this.authService.signUp(signUpInput);
-    this.cookiesService.setCookies(
-      res,
-      result.tokens.refreshToken,
-      this.refreshTokenName,
-    );
     return result;
   }
 
@@ -81,6 +78,8 @@ export class AuthResolver {
       req,
       this.refreshTokenName,
     );
+    console.log(req);
+    console.log(refreshToken);
     if (!refreshToken)
       throw new BadRequestException(errors.NOT_FOUND('Refresh token'));
     const result = await this.authService.refreshToken(refreshToken);
@@ -113,6 +112,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
+  @SuperAdmin()
   async update(
     @Args('updateUserInput', { type: () => UpdateUserInput })
     updateUserInput: UpdateUserInput,
@@ -132,6 +132,7 @@ export class AuthResolver {
     { resource: Resource.USER, actions: [Action.DELETE] },
     { resource: Resource.REFRESH, actions: [Action.DELETE] },
   ])
+  @SuperAdmin()
   @Mutation(() => ID)
   async removeUser(@Args('id', { type: () => ID }) id: string) {
     return await this.authService.remove(id);
@@ -141,6 +142,7 @@ export class AuthResolver {
     { resource: Resource.USER, actions: [Action.UPDATE] },
     { resource: Resource.ROLE, actions: [Action.UPDATE] },
   ])
+  @SuperAdmin()
   @Mutation(() => User)
   async attachRole(
     @Args('attachRoleInput', { type: () => AttachRoleInput })
@@ -201,5 +203,12 @@ export class AuthResolver {
   @Query(() => User, { name: 'user' })
   async findOne(@Args('login', { type: () => String }) login: string) {
     return await this.authService.findOne(login);
+  }
+
+
+  @PermissionGuard([{ resource: Resource.USER, actions: [Action.READ] }])
+  @Query(() => User, { name: 'userById' })
+  async findOneById(@Args('id', { type: () => ID }) id: string) {
+    return await this.authService.findOneById(id);
   }
 }

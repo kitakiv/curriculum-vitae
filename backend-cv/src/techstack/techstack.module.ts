@@ -8,10 +8,11 @@ import { S3Service } from '../s3/s3.service';
 import { AuthModule } from '../auth/auth.module';
 import { RedisCacheModule } from '../cache/cache.module';
 import { Project } from '../projects/entities/project.entity';
+import { TechCategory } from '../tech-category/entities/tech-category.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TechStack, Project]),
+    TypeOrmModule.forFeature([TechStack, Project, TechCategory]),
     AuthModule,
     RedisCacheModule,
   ],

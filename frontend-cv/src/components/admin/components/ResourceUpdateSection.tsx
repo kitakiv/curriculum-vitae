@@ -1,0 +1,94 @@
+"use client";
+import { Resource } from "@/variables/admin/resource";
+import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContactImage";
+import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
+import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
+import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
+import { Contact, Profile, Project, Role, Slider, TechCategory, TechStack, User } from "@/gql/graphql";
+import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
+import { Certificate } from "crypto";
+import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
+import UpdateFormProfile from "../profile/UpdateFormProfile";
+import UpdateFormProfileImage from "../profile/UpdateFormProfileImage";
+import UpdateFormProject from "../projects/UpdateFormProject";
+import UpdateFormProjectImage from "../projects/UpdateFormProjectImage";
+import { InputType } from "@/types/index";
+import UpdateFormTechStack from "../techstack/UpdateFormTechStack";
+import UpdateFormTechStackImage from "../techstack/UpdateTechStackImage";
+import UpdateFormTechCategory from "../techcategory/UpdateFormTechCategory";
+import AttachFormRoleUser from "../user/AttachFormRoleUser";
+import UpdateFormRole from "../roles/UpdateFormRole";
+interface ResourceSectionProps<R> {
+    currentResource: Resource;
+    resourceId: string;
+    resource: R;
+    inputs: InputType[] | null;
+    initialValues?: object
+}
+
+export default function ResourceUpdateSection<R>({currentResource, resourceId, resource, inputs, initialValues}: ResourceSectionProps<R>) {
+    switch (currentResource) {
+       case Resource.CONTACT:
+            return (
+                <>
+                    <UpdateFormContact initialValues={resource as Contact} resourceId={resourceId}/>
+                    <UpdateFormContactImage initialValues={resource as Contact} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.SLIDER:
+            return (
+                <>
+                    <UpdateFormSlider initialValues={resource as Slider} resourceId={resourceId}/>
+                    <UpdateFormSliderImage initialValues={resource as Slider} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.CERTIFICATE:
+            return (
+                <>
+                    <UpdateFormCertificate initialValues={resource as Certificate} resourceId={resourceId} />
+                    <UpdateFormCertificateImage initialValues={resource as Certificate} resourceId={resourceId} />
+                </>
+            )
+        case Resource.PROFILE:
+            return (
+                <div className="grid grid-cols-2">
+                    <UpdateFormProfile initialValues={resource as Profile} resourceId={resourceId}/>
+                    <UpdateFormProfileImage initialValues={resource as Profile} resourceId={resourceId}/>
+                </div >
+            )
+        case Resource.PROJECT:
+            return (
+                <div className="grid grid-cols-2">
+                    <UpdateFormProject initialValues={resource as Project} resourceId={resourceId} inputs={inputs}/>
+                    <UpdateFormProjectImage initialValues={resource as Project} resourceId={resourceId}/>
+                </div>
+            )
+        case Resource.TECHSTACK:
+            return (
+                <>
+                    <UpdateFormTechStack initialValues={resource as TechStack} resourceId={resourceId} inputs={inputs}/>
+                    <UpdateFormTechStackImage initialValues={resource as TechStack} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.CATEGORY:
+            return (
+                <>
+                    <UpdateFormTechCategory initialValues={resource as TechCategory} resourceId={resourceId} inputs={inputs}/>
+                </>
+            )
+        case Resource.USER:
+             return (
+                <>
+                    <AttachFormRoleUser initialValues={resource as User} resourceId={resourceId}/>
+                </>
+            )
+        case Resource.ROLE:
+            return (
+                <>
+                    <UpdateFormRole initialValues={resource as Role} resourceId={resourceId} inputs={inputs} initialValuesFields={initialValues as { name: string, permissions: Record<string, Record<string, boolean>>}}/>
+                </>
+            )
+        default:
+            return null; 
+    }
+}

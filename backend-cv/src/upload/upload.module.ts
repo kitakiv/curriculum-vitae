@@ -14,11 +14,22 @@ import { Project } from '../projects/entities/project.entity';
 import { Profile } from '../profile/entities/profile.entity';
 import { ProfileImageService } from '../profile/profileImage.service';
 import { AuthModule } from '../auth/auth.module';
+import { Certificate } from '../certificate/entities/certificate.entity';
+import { CertificateImageService } from 'src/certificate/certificateImage.service';
+import { RedisCacheModule } from 'src/cache/cache.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Contact, Slider, TechStack, Project, Profile]),
-    AuthModule
+    TypeOrmModule.forFeature([
+      Contact,
+      Slider,
+      TechStack,
+      Project,
+      Profile,
+      Certificate,
+    ]),
+    AuthModule,
+    RedisCacheModule
   ],
   controllers: [UploadController],
   providers: [
@@ -29,6 +40,7 @@ import { AuthModule } from '../auth/auth.module';
     TechStackImageService,
     ProjectsImageService,
     ProfileImageService,
+    CertificateImageService,
     Logger
   ],
 })

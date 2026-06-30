@@ -24,14 +24,20 @@ export class ContactsService {
     private readonly redisCacheService: RedisCacheService,
     private readonly dataSource: DataSource,
   ) {}
+
+  async deleteCache() {
+    await this.redisCacheService.del(this.CONTACT_CACHE_KEY);
+  }
   async create(createContactInput: CreateContactInput) {
     const contact = new Contact(createContactInput);
     try {
-      return await this.dataSource.transaction(async (manager) => {
+      const createdContact = await this.dataSource.transaction(async (manager) => {
         const createdContact = await manager.create(Contact, contact);
         await manager.save(Contact, createdContact);
         return createdContact;
       });
+      await this.deleteCache();
+      return createdContact;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('Contact'));
@@ -61,12 +67,12 @@ export class ContactsService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
     try {
       await this.contactsRepository.update(id, updateContactInput);
+      await this.deleteCache();
+      return await this.findOne(id);
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('Contact'));
     }
-    const updatedContact = await this.contactsRepository.findOneBy({ id });
-    return updatedContact;
   }
 
   async remove(id: string) {
@@ -74,6 +80,7 @@ export class ContactsService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
     try {
       await this.contactsRepository.delete(id);
+      await this.deleteCache();
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Contact'));

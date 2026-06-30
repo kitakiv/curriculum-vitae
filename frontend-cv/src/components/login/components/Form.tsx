@@ -7,33 +7,70 @@ import Image from 'next/image';
 import header from '@/variables/header/header';
 import TextBlack from '@/components/text/TextBlack';
 import SmallText from '@/components/text/SmallText';
-import FormElement from '@/components/form/Form';
-export default function FormAdmin() {
+import { Formik, Form, useFormikContext } from 'formik';
+import InputElement from '@/components/Input/Input';
+import { login } from 'app/actions/auth';
+import { startTransition, useActionState } from 'react';
+import GoogleButton from '@/components/button/GoogleButton';
+export default function FormLoginAdmin() {
+  const [state, action, pending] = useActionState(login, undefined);
   return (
     <>
-    <FormElement
-      initialValues={form.loginForm.initialValues}
-      onSubmit={() => { alert('submit') }}
-      validationSchema={schema.custom}
-      inputs={form.loginForm.inputs}
-      submitElement={<SubmitButton />}
-      tailwind="lg:w-1/4 md:w-2/3 sm:w-2/3 w-3/4 flex flex-col gap-3 bg-form rounded-lg padding-elements relative z-40 first:-left-full">
-      <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-txFirst0 to-txFirst100 flex justify-center items-center">
-        <Image src={form.loginForm.svg} alt="logo" width={35} height={35}></Image>
-      </div>
-      <TextBlack tailwind='text-center w-full font-bold'>{form.loginForm.title}</TextBlack>
-      <SmallText tailwind='text-center w-full  text-footerTx'>{form.loginForm.text}</SmallText>
-
-    </FormElement>
+      <>
+        <Formik initialValues={form.loginForm.initialValues}
+          validationSchema={schema.custom}
+          onSubmit={async (values) => {
+            const formData = new FormData();
+            Object.entries(values).forEach(([key, value]) => {
+              formData.append(key, value);
+            });
+            startTransition(() => {
+              action(formData);
+            });
+          }}
+        >
+          {({ setFieldValue }) => (
+            <Form className='padding-elements gap-4 grid xl:w-[30vw] lg:w-[40vw] md:w-[40vw] sm:w-full w-full  liquidGlass-elem liquidGlass-shadow rounded-lg '>
+              <div className="w-full flex justify-center items-center">
+                <img className="rounded-xl bg-gradient-to-tr from-txFirst0 to-txFirst100 p-1 w-11 h-11" src={form.loginForm.svg} alt="logo"></img>
+              </div>
+              <TextBlack tailwind='text-center w-full font-bold'>{form.loginForm.title}</TextBlack>
+              <SmallText tailwind='text-center w-full  text-footerTx'>{form.loginForm.text}</SmallText>
+              {state?.message && (
+                <SmallText tailwind={`text-center w-full ${state.success ? 'text-green-500' : 'text-red-500'}`}>
+                  {state.message}
+                </SmallText>
+              )}
+              {form.loginForm.inputs.map((input) => (
+                <InputElement
+                  key={input.id}
+                  inputData={input}
+                  setFieldValue={setFieldValue}
+                />
+              ))}
+              <GoogleButton/>
+              <SubmitButton pending={pending} />
+            </Form>
+          )}
+        </Formik>
+      </>
     </>
   );
 }
 
-function SubmitButton() {
+function SubmitButton({ pending }: { pending: boolean }) {
+  const { errors, isValid } = useFormikContext();
+  const hasErrors = Object.keys(errors).length > 0;
+  const isDisabled = !isValid || hasErrors || pending;
+
   return (
-    <PinkButton type="submit" tailwind="transition duration-700 group flex justify-center items-center gap-2 hover:shadow-lg hover:shadow-txSecond">
-   {form.loginForm.buttonText}
-    <Image src={header.arrow} alt="arrow" width={20} height={20} className="w-0 opacity-0 group-hover:w-5 group-hover:opacity-100 transition duration-700"></Image>
+    <PinkButton
+      type="submit"
+      disabled={isDisabled}
+      tailwind={`transition duration-700 flex justify-center items-center gap-2 ${!isDisabled ? 'group hover:shadow-lg hover:shadow-txSecond' : 'opacity-50 cursor-not-allowed'}`}
+    >
+      {pending ? form.loginForm.loginFormLoading : form.loginForm.buttonText}
+      {!pending && <Image src={header.arrow} alt="arrow" width={20} height={20} className={`transition duration-700 ${!isDisabled ? 'w-0 opacity-0 group-hover:w-5 group-hover:opacity-100' : 'w-0 opacity-0'}`}></Image>}
     </PinkButton>
   );
 }

@@ -2,20 +2,17 @@
 import HeaderSection from "@/components/header/components/HeaderSection";
 import ThemeIcon from "@/components/header/components/ThemeIcon";
 import header from "@/variables/header/header";
-import menu from "@/variables/menu/menu";
-import Link from "next/link";
-import MainText from "@/components/text/MainText";
-import BurgerMenu from "@/components/header/components/Menu";
+import MainLink from "./components/MainLink";
+import { getProfileCached } from "@/query/profile.query";
+import { GetProfileQuery } from "@/gql/graphql";
+
 export default async function HeaderAdmin() {
+    
+    const profile: GetProfileQuery["profile"] = await getProfileCached();
     return (
         <HeaderSection>
-                <Link href='/' className="lg:w-5/12 md:w-1/2 relative z-50">
-                    <MainText>{header.name + " " + header.surname}</MainText>
-                </Link>
-                <div className="flex lg:items-center lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
-                <BurgerMenu burgerMenu={menu.adminHeader} />
+               <MainLink href="/" profile={profile}/>
                 <ThemeIcon key={header.keyIcons} />
-                </div>
-            </HeaderSection>
+        </HeaderSection>
     );
 }

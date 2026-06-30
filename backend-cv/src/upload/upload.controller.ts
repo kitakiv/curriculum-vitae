@@ -7,6 +7,8 @@ import {
   ParseUUIDPipe,
   Param,
   UseGuards,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from './pipe/upload.pipe';
@@ -36,7 +38,7 @@ export class UploadController {
   async uploadFile(
     @UploadedFile(new FileValidationPipe())
     file: Express.Multer.File,
-    @Param('service', OneFilePipe, ServerExistPipe) service: string,
+    @Param('service', ServerExistPipe, OneFilePipe) service: string,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return await this.uploadService.uploadFile({ file, service, id });
@@ -48,7 +50,6 @@ export class UploadController {
       actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
     },
   ])
-
   @Post('files/:service/:id')
   @UseInterceptors(FilesInterceptor('Files'))
   async uploadFiles(
@@ -68,20 +69,59 @@ export class UploadController {
       actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
     },
   ])
-  @Post('file/:service/:id/:index')
+  @Post('file/:service/:id/:imageid')
   @UseInterceptors(FileInterceptor('File'))
   async updateFile(
     @UploadedFile(new FileValidationPipe())
     file: Express.Multer.File,
     @Param('service', MultiFilePipe, ServerExistPipe) service: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Param('index', MaxIndexPipe) index: string,
+    @Param('imageid', ParseUUIDPipe) imageid: string,
   ) {
-    return await this.uploadService.uploadFile({
+    return await this.uploadService.uploadFileIndex({
       file,
       service,
-      id,
-      index: parseInt(index),
+      resourceId: id,
+      imageId: imageid,
     });
+  }
+
+  @PermissionGuard([
+    {
+      resource: Resource.IMAGE,
+      actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
+    },
+  ])
+  @Delete('file/:service/:id/:imageid')
+  async deleteFile(
+    @Param('service', ServerExistPipe, MultiFilePipe) service: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('imageid', ParseUUIDPipe) imageid: string,
+  ) {
+    console.log('imageid', imageid);
+    return await this.uploadService.deleteFileIndex({
+      service,
+      resourceId: id,
+      imageId: imageid,
+    });
+  }
+
+  // add one more image to multiple service
+
+  @PermissionGuard([
+    {
+      resource: Resource.IMAGE,
+      actions: [Action.CREATE, Action.UPDATE, Action.DELETE],
+    },
+  ])
+  @Patch('file/:service/:id')
+  @UseInterceptors(FileInterceptor('File'))
+  async uploadFileMore(
+    @UploadedFile(new FileValidationPipe())
+    file: Express.Multer.File,
+    @Param('service', ServerExistPipe, MultiFilePipe) service: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return await this.uploadService.uploadFileMore({ file, service, id });
   }
 }

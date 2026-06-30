@@ -9,7 +9,7 @@ export class Role extends AbstractEntity<Role> {
   @Field(() => ID, { description: 'Role id' })
   id: string;
 
-  @Field(() => String, { description: 'Role name' })
+  @Field(() => String, { description: 'Role name'})
   @Column({ unique: true })
   name: string;
 

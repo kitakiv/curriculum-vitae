@@ -9,15 +9,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { Logger } from '@nestjs/common';
+import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
 
 @Injectable()
-export class ContactsImageService {
+export class ContactsImageService extends SingleImageBaseClass {
   public name: string;
   constructor(
     @InjectRepository(Contact)
     private readonly contactsRepository: Repository<Contact>,
     private readonly logger: Logger = new Logger(ContactsImageService.name),
   ) {
+    super();
     this.name = uploadVariables.contacts.name;
   }
   async uploadImage({ id, image }: { id: string; image: string }) {
@@ -39,7 +41,7 @@ export class ContactsImageService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('Contact'));
     const contact = await this.contactsRepository.findOneBy({ id });
     if (contact.contactSvg) {
-      return decodeURIComponent(contact.contactSvg.split(`/`).at(-1));
+      return contact.contactSvg;
     }
     return null;
   }

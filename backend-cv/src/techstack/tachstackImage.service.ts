@@ -9,15 +9,17 @@ import { TechStack } from './entities/techstack.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
+import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
 
 @Injectable()
-export class TechStackImageService {
+export class TechStackImageService extends SingleImageBaseClass {
   public name: string;
   constructor(
     @InjectRepository(TechStack)
     private readonly techStackRepository: Repository<TechStack>,
     private readonly logger: Logger = new Logger(TechStackImageService.name),
   ) {
+    super();
     this.name = uploadVariables.techstack.name;
   }
   async uploadImage({ id, image }: { id: string; image: string }) {
@@ -37,7 +39,7 @@ export class TechStackImageService {
     if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechStack'));
     const techStack = await this.techStackRepository.findOneBy({ id });
     if (techStack.techSvg) {
-      return decodeURIComponent(techStack.techSvg.split(`/`).at(-1));
+      return techStack.techSvg;
     }
     return null;
   }

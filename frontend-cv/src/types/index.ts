@@ -36,8 +36,11 @@ class InputType {
     name: string = "";
     placeholder: string = "";
     type: string = "";
-    as?: "input" | "textarea" | "select" = "input";
-    readonly?: boolean = false
+    as?: string = "";
+    readonly?: boolean = false;
+    options?: Array<{value: string, label: string}> = [];
+    tableHeader?: Array<string> = [];
+    tableLeftColumn?: Array<string> = [];
 }
 
 class MenuType {

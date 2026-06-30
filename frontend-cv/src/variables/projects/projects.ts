@@ -12,6 +12,7 @@ const projects = {
     techStack: "Tech Stack",
     portfolio: "Portfolio Showcase",
     lightSvg: "/svg/light.svg",
+    all: "All",
 }
 
 const demoProject: ProjectCard = {

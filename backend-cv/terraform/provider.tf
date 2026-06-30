@@ -2,14 +2,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.18.0"
+      version = "~> 5.0"
     }
   }
 
   backend "s3" {
-    bucket       = "terraform-s3-forbackend"
-    key          = "terraform.tfstate"
-    region       = "eu-west-1"
-    use_lockfile = true
+    bucket = "terraform-s3-forbackend-vika"
+    key    = "terraform.tfstate"
+    region = "eu-west-1"
   }
+}
+
+provider "aws" {
+  region = var.aws_region
 }

@@ -3,10 +3,10 @@ export default function LiquidGlass({children, shadow = false, rounded = false, 
   return (
     <>
     <SvgLiquidGlass />
-    <div className={`liquidGlass-wrapper ${tailwindParent} ${width ? "w-full": ""}  ${shadow ? "liquidGlass-shadow":  ""} ${rounded ? "rounded-full": ""} ${hover ? "liquidGlass-hover": ""}`}>
-          <div className="liquidGlass-effect"></div>
-          <div className={`${tint ? "liquidGlass-tint": ""}`}></div>
-          <div className={`${shine ? "liquidGlass-shine": ""}`}></div>
+    <div className={`liquidGlass-wrapper ${tailwindParent} ${width ? "w-full": ""}  ${shadow ? "liquidGlass-shadow border-[1px] border-light":  "border-[1px] border-transparent"} ${rounded ? "rounded-full": ""} ${hover ? "liquidGlass-hover": ""}`}>
+          <div className="liquidGlass-effect" ></div>
+          <div className={`${tint ? "liquidGlass-tint": ""}`} ></div>
+          <div className={`${shine ? "liquidGlass-shine": ""}`} ></div>
           <div className={`${tailwind} liquidGlass-text`}>{children}</div>
     </div>
     </>
