@@ -8,8 +8,8 @@ async function getContacts(): Promise<GetContactsQuery["contacts"]> {
     const res = await apiClient.fetchGraphQL<{ data: GetContactsQuery }>(CONTACT_GET_QUERY);
     return res.data.data.contacts;
   } catch (error) {
-    console.error("Error fetching projects:", error);
-    throw error;
+    console.error("Error fetching contacts:", error);
+    return [];
   }
 }
 

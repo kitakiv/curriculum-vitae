@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
         autoLoadEntities: true,
         schema: 'public',
         entities: ['dist/**/*.entity.js'],
-        logging: ['query', 'schema', 'error'],
+        logging: ['error'],
         ssl:
           configService.get('NODE_ENV') === 'production'
             ? { rejectUnauthorized: false }

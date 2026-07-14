@@ -24,7 +24,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.FRONTEND_URL?.split(',').map(url => url.trim()),
+    origin: process.env.FRONTEND_URL ?? 'https://curriculum-vitae-eta-ruby.vercel.app/',
     credentials: true,
   });
   app.use(cookieParser());
@@ -39,5 +39,6 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
   console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
 }
 bootstrap();
