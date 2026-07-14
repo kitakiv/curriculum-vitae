@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleBurgerMenu } from "@/features/position/PositionSlice";
 export default function BurgerIcon() {
     const dispatch = useAppDispatch();
-    const burgerOpen = useAppSelector((state) => state.position.value.burgrMenu);
+    const burgerOpen = useAppSelector((state) => state.position.value.burgerMenu);
     return <>
     <div className="relative w-11 h-11 z-50 lg:hidden sm:block block">
             <div className="relative w-11 h-11 z-40 lg:hidden sm:block block" onClick={() => dispatch(toggleBurgerMenu())} >

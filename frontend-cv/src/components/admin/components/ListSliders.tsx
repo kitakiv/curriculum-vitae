@@ -1,76 +1,76 @@
-'use client'
-import { FormType, SliderText } from "@/types/index";
-import MoreInfoBlock from "@/components/form/MoreInfoBlock";
-import TitleContent from "./TitleContent";
-import FlexibleForm from "./FlexibleForm";
-import MiddleText from "@/components/text/MiddleText";
-import Image from "next/image";
-import form from "@/variables/form/form";
-import project from "@/variables/projects/projects";
-import schema from "@/validation/schemaValidation";
-import AdminBorder from "@/components/border/AdminBorder";
+// 'use client'
+// import { FormType, SliderText } from "@/types/index";
+// import MoreInfoBlock from "@/components/form/MoreInfoBlock";
+// import TitleContent from "./TitleContent";
+// import FlexibleForm from "./FlexibleForm";
+// import MiddleText from "@/components/text/MiddleText";
+// import Image from "next/image";
+// import form from "@/variables/form/form";
+// import project from "@/variables/projects/projects";
+// import schema from "@/validation/schemaValidation";
+// import AdminBorder from "@/components/border/AdminBorder";
 
-const imagesDefault = [
-    "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider1.jpg",
-    "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider2.jpg",
-];
+// const imagesDefault = [
+//     "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider1.jpg",
+//     "https://res.cloudinary.com/dv1jzqg5u/image/upload/v1700000000/curriculum-vitae/slider2.jpg",
+// ];
 
-const imagesTitle: SliderText[] = [
-    { title: "Web Development", text: "Creating responsive and interactive web applications using modern technologies." },
-    { title: "UI/UX Design", text: "Designing intuitive user interfaces and experiences that enhance usability." },
-];
+// const imagesTitle: SliderText[] = [
+//     { title: "Web Development", text: "Creating responsive and interactive web applications using modern technologies." },
+//     { title: "UI/UX Design", text: "Designing intuitive user interfaces and experiences that enhance usability." },
+// ];
 
-export default function ListSliders({ images = imagesDefault, titles = imagesTitle, type }: { images?: string[], titles?: SliderText[], type: FormType }) {
-    const schemaForm = {
-        "add": {
-            schema: schema.slider.sliderAdd,
-            inputs: form.sliderForm.inputsAdd,
-        },
-        "edit": {
-            schema: schema.slider.sliderEdit,
-            inputs: form.sliderForm.inputsEdit
-        },
-        "addImage": {
-            schema: schema.slider.sliderImage,
-            inputs: form.sliderForm.inputsEditImage,
-            type: "oneElement" as FormType
-        }
-    }
-    const imageEdit = "addImage";
-    function alertMessage(values: object) {
-        alert(JSON.stringify(values));
-    }
+// export default function ListSliders({ images = imagesDefault, titles = imagesTitle, type }: { images?: string[], titles?: SliderText[], type: FormType }) {
+//     const schemaForm = {
+//         "add": {
+//             schema: schema.slider.sliderAdd,
+//             inputs: form.sliderForm.inputsAdd,
+//         },
+//         "edit": {
+//             schema: schema.slider.sliderEdit,
+//             inputs: form.sliderForm.inputsEdit
+//         },
+//         "addImage": {
+//             schema: schema.slider.sliderImage,
+//             inputs: form.sliderForm.inputsEditImage,
+//             type: "oneElement" as FormType
+//         }
+//     }
+//     const imageEdit = "addImage";
+//     function alertMessage(values: object) {
+//         alert(JSON.stringify(values));
+//     }
 
-    const elements = titles.map((item, index) => {
-        const initialValues = type === "edit" ? { sliderText: item.text, sliderName: item.title } : { sliderText: item.text, sliderName: item.title, sliderImage: "" };
-        if (type === "edit") {
-            return (
-            <MoreInfoBlock key={`${type}-slider-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
-                titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={images[index] || project.defaultImage} />}>
-                <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  padding-elements">
-                <FlexibleForm tailwind="padding-admin flex justify-center items-center" type={schemaForm[imageEdit].type || type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
-                    <Image src={images[index]} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
-                </FlexibleForm>
-                <FlexibleForm tailwind="padding-admin" type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
-                    <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
-                </FlexibleForm>
-                </div>
-            </MoreInfoBlock>)
-        } else if (type === "add") {
-            return (
-                <AdminBorder key={`slider-admin-${index}`} >
-                    <FlexibleForm tailwind="padding-elements" type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
-                        <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
-                    </FlexibleForm>
-                </AdminBorder>
-            )
-        }
-        return <></>
-    });
+//     const elements = titles.map((item, index) => {
+//         const initialValues = type === "edit" ? { sliderText: item.text, sliderName: item.title } : { sliderText: item.text, sliderName: item.title, sliderImage: "" };
+//         if (type === "edit") {
+//             return (
+//             <MoreInfoBlock key={`${type}-slider-admin-${index}`} tailwind="px-4 py-2 flex flex-col"
+//                 titleChildren={<TitleContent tailwind='flex gap-2 items-center' title={item.title} image={images[index] || project.defaultImage} />}>
+//                 <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  padding-elements">
+//                 <FlexibleForm tailwind="padding-admin flex justify-center items-center" type={schemaForm[imageEdit].type || type} initialValues={initialValues} formInputs={schemaForm[imageEdit].inputs} submitFunction={alertMessage} schema={schemaForm[imageEdit].schema}>
+//                     <Image src={images[index]} alt="slider" width={1000} height={500} className="h-48 w-fit rounded-md"></Image>
+//                 </FlexibleForm>
+//                 <FlexibleForm tailwind="padding-admin" type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+//                     <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
+//                 </FlexibleForm>
+//                 </div>
+//             </MoreInfoBlock>)
+//         } else if (type === "add") {
+//             return (
+//                 <AdminBorder key={`slider-admin-${index}`} >
+//                     <FlexibleForm tailwind="padding-elements" type={type} initialValues={initialValues} formInputs={schemaForm[type].inputs} submitFunction={alertMessage} schema={schemaForm[type].schema}>
+//                         <MiddleText tailwind='text-adminTx font-bold'>{form.sliderForm.title}</MiddleText>
+//                     </FlexibleForm>
+//                 </AdminBorder>
+//             )
+//         }
+//         return <></>
+//     });
 
-    return (
-        <>
-            {elements}
-        </>
-    )
-}
+//     return (
+//         <>
+//             {elements}
+//         </>
+//     )
+// }

@@ -22,6 +22,7 @@ export default async function Header({ user }: { user: GetUserMutation["getUser"
                     {/* the name of the page */}
                     <MainLink href="/" profile={profile} />
                     {/* menu on big screens */}
+                    {/* @ts-ignore */}
                     <Menu burgerMenu={menu.mainHeader} user={user} >
                         <HelpfullElements user={user}/>
                     </Menu>
@@ -32,6 +33,7 @@ export default async function Header({ user }: { user: GetUserMutation["getUser"
                 <ProfileSeciton profile={profile} />
                </StartPage>
                {/* opened burger menu */}
+               {/* @ts-ignore */}
                <BurgerMenu user={user} list={menu.mainHeader}>
                    {/* theme icon and auth */}
                     <HelpfullElements user={user}/>

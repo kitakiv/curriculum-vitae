@@ -58,7 +58,7 @@ class RequestClient {
                 'Content-Type': 'application/json',
                 ...config.defaultHeaders,
             },
-            timeout: config.timeout || 10000,
+            timeout: config.timeout || 30000,
             cache: config.cache || 'no-cache'
         };
         this.configUpload = {

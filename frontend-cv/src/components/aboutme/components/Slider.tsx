@@ -19,11 +19,11 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
     function startAutoPlay() {
         stopAutoPlay();
         intervalRef.current = setInterval(() => {
-           if (widthRef.current >= 100) {
-            changeRight();
-           } else {
-            changeWidth();
-           }
+            if (widthRef.current >= 100) {
+                changeRight();
+            } else {
+                changeWidth();
+            }
         }, 1000);
     }
 
@@ -49,17 +49,17 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
 
     function changeLeft() {
         changeWidth(true);
-        dispatch({ type: CounterActionTypes.PREVIOUSSLIDER, payload: { sliderCount: state.sliderCount, maxSliders: state.maxSliders} });
+        dispatch({ type: CounterActionTypes.PREVIOUSSLIDER, payload: { sliderCount: state.sliderCount, maxSliders: state.maxSliders } });
     }
 
     function changeRight() {
         changeWidth(true);
-        dispatch({ type: CounterActionTypes.NEXTSLIDER, payload: { sliderCount: state.sliderCount, maxSliders: state.maxSliders} });
+        dispatch({ type: CounterActionTypes.NEXTSLIDER, payload: { sliderCount: state.sliderCount, maxSliders: state.maxSliders } });
 
     }
 
     function handleSetSlider(sliderCount: number) {
-        dispatch({ type: CounterActionTypes.SETSLIDER, payload: { sliderCount: sliderCount, maxSliders: state.maxSliders} });
+        dispatch({ type: CounterActionTypes.SETSLIDER, payload: { sliderCount: sliderCount, maxSliders: state.maxSliders } });
     }
 
     function startTouch(event: React.TouchEvent<HTMLDivElement>) {
@@ -95,8 +95,14 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
                         return (
                             <>
                                 <div key={`image-slider-${slider.id}`} className="flex-shrink-0 w-[100%] h-full relative">
-                                      {/* @eslint-disable-next-line */}
-                                    <img src={slider.sliderImage} alt="developer"  className={`lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0`} />
+                                    {/* @eslint-disable-next-line */}
+                                    {slider.sliderImage && (
+                                        <img
+                                            src={slider.sliderImage}
+                                            alt="developer"
+                                           className="lg:image-mask sm:image-mask-sm image-mask transition duration-700  w-fit h-full absolute right-0 top-0"
+                                        />
+                                    )}
                                 </div>
                             </>
                         )
@@ -121,7 +127,7 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
                             <div key={`image-slider-dot-${index}`} className="lg:w-9 lg:h-9 md:w-11 md:h-11 sm:w-20 sm:h-20 w-20 h-20 flex items-center justify-center group" onClick={() => handleSetSlider(index)}>
                                 {state.sliderCount === index ?
                                     <div className="w-10 h-3 rounded-full transition duration-700 bg-gradient-to-r from-adminGr0 to-adminText overflow-hidden">
-                                        <div className="h-3 w-10 rounded-full transition duration-1000 bg-gradient-to-br from-txFirst100 to-txFirst0" style={{ transform: `translateX(-${100 - width}%)`}}></div>
+                                        <div className="h-3 w-10 rounded-full transition duration-1000 bg-gradient-to-br from-txFirst100 to-txFirst0" style={{ transform: `translateX(-${100 - width}%)` }}></div>
                                     </div>
                                     :
                                     <div className="w-3 h-3 rounded-full transition duration-700  bg-light  group-hover:scale-125 cursor-pointer group-hover:bg-txFirst0" ></div>

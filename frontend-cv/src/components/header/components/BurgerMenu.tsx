@@ -4,6 +4,7 @@ import LargeText from "@/components/text/LargeText";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleBurgerMenu } from "@/features/position/PositionSlice";
 import FadeInSection from "@/components/animation/FadeInSection";
+import { MenuType } from "@/types/index";
 
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 
 export default function BurgerMenu({list, children}: Props) {
     const mainId = useAppSelector((state) => state.position.value.section);
-    const burger = useAppSelector((state) => state.position.value.burgrMenu);
+    const burger = useAppSelector((state) => state.position.value.burgerMenu);
     const dispatch = useAppDispatch();
     return (
                 <nav className="fixed z-40 itmes-center flex flex-col gap-4 top-0 right-0 w-screen h-screen overflow-y-scroll pb-20 liquid-glass-burger pt-20 px-4 transition duration-700 " style={{ transform: burger ? "translateX(0)" : "translateX(100%)" }}>

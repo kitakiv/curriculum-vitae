@@ -5,6 +5,7 @@ import { hasPermission } from "@/query/permissions";
 import { getEditInitialValues, getResourceById, getResouseInputsEdit } from "@/query/query";
 import {Action, Resource } from "@/variables/admin/resource";
 import ResourceDeleteSection from "@/components/admin/components/ResourceDeleteSection";
+import { InputType } from "@/types/index";
 
 type Props = {
     params: Promise<{ resource: Resource, action: Action, resourceId: string }>
@@ -23,7 +24,7 @@ export default async function Page({ params }: Props) {
         const inputs = await getResouseInputsEdit(currentResource);
         const initialValues = await getEditInitialValues(currentResource, resource);
         return (
-            <ResourceUpdateSection<typeof resource> resource={resource} resourceId={resourceId} currentResource={currentResource}  inputs={inputs} initialValues={initialValues} />
+            <ResourceUpdateSection<typeof resource> resource={resource} resourceId={resourceId} currentResource={currentResource}  inputs={inputs as InputType[] | null} initialValues={initialValues} />
         )
     }
     if (action === Action.DELETE) {

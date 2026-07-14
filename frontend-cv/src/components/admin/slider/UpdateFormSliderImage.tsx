@@ -29,7 +29,7 @@ export default function UpdateFormSliderImage({ initialValues, resourceId }: Pro
             schema={updateSliderImage.schema}
             title={updateSliderImage.title}
         >   
-           <img src={image} alt={intialValuesEmpty.sliderName} className="w-72 h-fit rounded-lg" />
+           <img src={image as string} alt={intialValuesEmpty.sliderName} className="w-72 h-fit rounded-lg" />
         </FormUpdate>
     )
 }

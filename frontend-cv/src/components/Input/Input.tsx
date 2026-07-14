@@ -9,7 +9,7 @@ import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui
 interface Props {
     inputData: InputType,
     setFieldValue: (field: string, value: unknown, shouldValidate?: boolean) => Promise<void | object>,
-    values: object
+    values?: object
     readonly?: boolean
 }
 
@@ -201,10 +201,12 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                                                     },
                                                 }}
                                                 disabled={readonly}
+                                                // @ts-ignore
                                                 checked={values[id][resource][action]}
                                                 onChange={() =>
                                                     setFieldValue(
                                                         fieldName,
+                                                        // @ts-ignore
                                                         !values[id][resource][action]
                                                     )
                                                 }

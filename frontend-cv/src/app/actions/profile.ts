@@ -17,7 +17,7 @@ export async function updateProfileAction(prevState: PrevState<Profile>| undefin
 
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (formData.get(key) !== value && key !== PROFILE_PHOTOS) {
-            updateInput[key as keyof UpdateProfileInput] = formData.get(key);
+            updateInput[key as keyof UpdateProfileInput] = formData.get(key) as string & string[];
         }
     });
     try {

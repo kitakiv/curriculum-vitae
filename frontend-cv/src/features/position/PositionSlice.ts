@@ -5,7 +5,7 @@ interface  PositionState {
   value: {
     position: boolean;
     section: string;
-    burgrMenu: boolean
+    burgerMenu: boolean
   };
 }
 
@@ -29,7 +29,7 @@ export const positionSlice = createSlice({
     },
 
     toggleBurgerMenu: (state) => {
-      state.value.burgrMenu = !state.value.burgrMenu
+      state.value.burgerMenu = !state.value.burgerMenu
     },
   },
 })

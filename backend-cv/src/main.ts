@@ -2,7 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
-import { directives } from 'src/common/constants';
+import { directives } from './common/constants';
 import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -24,7 +24,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL?.split(',').map(url => url.trim()),
     credentials: true,
   });
   app.use(cookieParser());

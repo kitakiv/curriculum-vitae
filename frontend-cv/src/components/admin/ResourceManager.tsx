@@ -36,6 +36,7 @@ export default function ResourceManager({
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold capitalize">{resource}s</h1>
         {canCreate && onCreate && (
+          // @ts-ignore
           <LiquidGlassButton onClick={onCreate}>
             Create New
           </LiquidGlassButton>

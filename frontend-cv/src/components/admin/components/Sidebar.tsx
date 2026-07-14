@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 interface SidebarProps {
   user: GetUserMutation['getUser'];
-  currentResource?: Resource | null;
+  currentResource?: string | null;
 }
 
 export default function Sidebar({ user, currentResource }: SidebarProps) {
@@ -16,8 +16,9 @@ export default function Sidebar({ user, currentResource }: SidebarProps) {
   return (
     <aside className="w-full liquidGlass-elem p-4 sticky top-20 rounded-lg">
       <nav className="flex flex-col gap-2">
-        {userResources.map((resource) => {
-          const config = resource ? resourceConfig[resource] : null;
+        {userResources.map((resource: Resource) => {
+          // @ts-ignore
+          const config = resource ? resourceConfig[resource]: null;
           if (!config) return null;
           const isActive = currentResource?.toLocaleLowerCase() === resource.toLocaleLowerCase() + 's' 
           || currentResource?.toLocaleLowerCase() === resource.toLocaleLowerCase();

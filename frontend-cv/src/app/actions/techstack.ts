@@ -17,11 +17,11 @@ export async function updateTechStackAction(prevState: PrevState<CreateTechStack
 
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (value instanceof Array) {
-            const formValues = formData.getAll(key) as string[];
+            const formValues = formData.getAll(key) as string[] & string;
                 updateInput[key as keyof UpdateTechStackInput] = formValues;
         } else {
             if (formData.get(key) !== value && key !== TECHSTACK_SVG) {
-                updateInput[key as keyof UpdateTechStackInput] = formData.get(key);
+                updateInput[key as keyof UpdateTechStackInput] = formData.get(key) as string & string[];
             }
         }
     });

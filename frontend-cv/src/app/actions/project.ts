@@ -20,10 +20,10 @@ export async function updateProjectAction(prevState: PrevState<CreateProjectInpu
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (value instanceof Array) {
             const formValues = formData.getAll(key) as string[];
-                updateInput[key as keyof UpdateProjectInput] = formValues;
+                updateInput[key as keyof UpdateProjectInput] = formValues as string[] & string;
         } else {
             if (formData.get(key) !== value && key !== PROJECT_IMAGES) {
-                updateInput[key as keyof UpdateProjectInput] = formData.get(key);
+                updateInput[key as keyof UpdateProjectInput] = formData.get(key) as string & string[];
             }
         }
     });

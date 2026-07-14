@@ -11,7 +11,11 @@ import TechBlock from "@/components/button/TechBlock";
 import SmallText from "@/components/text/SmallText";
 import { GetProjectsByTechStackQuery, Project } from "@/gql/graphql";
 
-export default function CardProject({project}: {project: GetProjectsByTechStackQuery["techstack"]["projects"][number]}) {
+type ProjectFromTechStack = NonNullable<
+  GetProjectsByTechStackQuery["techstack"]["projects"]
+>[number];
+
+export default function CardProject({project}: {project: ProjectFromTechStack}) {
   const colours = ["bg100",
     "bg33",
     "bg0",
@@ -35,9 +39,10 @@ export default function CardProject({project}: {project: GetProjectsByTechStackQ
             )
           }
           {
+            // @ts-ignore
             project?.techStacks?.map((tech) => (
               <TechBlock active={true} tailwind="gap-2"  key={`techStack-${tech.techName}-button`}>
-                <img className="w-5 h-5" src={tech.techSvg} alt={`${tech.techName} logo`} />
+                <img className="w-5 h-5" src={tech.techSvg as string} alt={`${tech.techName} logo`} />
                 <SmallText tailwind="text-light">{tech.techName}</SmallText>
               </TechBlock>
             ))

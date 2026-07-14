@@ -12,6 +12,7 @@ export default function UpdateFormContact({initialValues, resourceId }: Props) {
     const contactUpdate = resourceConfig[Resource.CONTACT].editFrom;
     const initialValuesEmpty = contactUpdate.initialValues;
     Object.keys(initialValuesEmpty).forEach((key: string) => {
+        // @ts-ignore
         initialValuesEmpty[key] = initialValues[key];
     })
 

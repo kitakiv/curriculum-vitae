@@ -35,7 +35,7 @@ export default function UpdateFormTechStackImage({ initialValues, resourceId }: 
             schema={techStackUpdate.schema}
             title={techStackUpdate.title}
         >
-           <img src={image} alt={initialValues.techName} className="h-40 w-40" />
+           <img src={image as string} alt={initialValues.techName} className="h-40 w-40" />
         </FormUpdate>
     )
 }

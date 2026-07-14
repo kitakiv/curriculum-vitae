@@ -49,7 +49,7 @@ export async function updateContactAction(prevState: PrevState<CreateContactInpu
 
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (formData.get(key) !== value && key !== CONTACT_SVG) {
-            updateInput[key as keyof UpdateContactInput] = formData.get(key);
+            updateInput[key as keyof UpdateContactInput] = formData.get(key) as string;
         }
         })
     try {

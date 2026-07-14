@@ -55,10 +55,14 @@ export function checkResource(currentResource: string | null, resourse: Resource
 }
 
 export function returnResourceData(currenctResource: string | null) {
+  // @ts-ignore
   if (resourceConfig[currenctResource as Resource]) {
+    // @ts-ignore
     return resourceConfig[currenctResource as Resource]
   }
+  // @ts-ignore
   if (resourceConfig[currenctResource + "s" as Resource]) {
+    // @ts-ignore
     return resourceConfig[currenctResource + "s" as Resource]
   }
   return null

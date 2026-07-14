@@ -1,5 +1,5 @@
 'use server'
-import { CreateTechCategoryInput, CreateTechCategoryMutation, CreateTechCategoryMutationVariables, RemoveTechCategoryMutation, RemoveTechCategoryMutationVariables, UpdateTechCategoryInput, UpdateTechCategoryMutation, UpdateTechCategoryMutationVariables } from "@/gql/graphql"
+import { CreateTechCategoryInput, CreateTechCategoryMutation, CreateTechCategoryMutationVariables, RemoveTechCategoryMutation, RemoveTechCategoryMutationVariables, UpdateTechCategoryInput, UpdateTechCategoryMutation, UpdateTechCategoryMutationVariables, TechCategory } from "@/gql/graphql"
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState } from "./action.type";
 import { TECHCATEGORY_CREATE_MUTATION, TECHCATEGORY_DELETE_MUTATION, TECHCATEGORY_UPDATE_MUTATION } from "@/graphql/techCategory.graphql";
@@ -14,11 +14,11 @@ export async function updateTechCategoryAction(prevState: PrevState<UpdateTechCa
 
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (value instanceof Array) {
-            const formValues = formData.getAll(key) as string[];
+            const formValues = formData.getAll(key) as unknown as string[] & string;
                 updateInput[key as keyof UpdateTechCategoryInput] = formValues;
         } else {
             if (formData.get(key) !== value) {
-                updateInput[key as keyof UpdateTechCategoryInput] = formData.get(key);
+                updateInput[key as keyof UpdateTechCategoryInput] = formData.get(key) as unknown as string & string[];
             }
         }
     });

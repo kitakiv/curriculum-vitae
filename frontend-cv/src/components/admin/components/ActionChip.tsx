@@ -3,13 +3,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { ChipProps } from "@mui/material/Chip";
+import React from "react";
 
 
 interface ActionConfig {
-    label: string
-    icon: React.ReactNode
-    color: string
-
+    label: string;
+    icon?: React.ReactElement;
+    color: ChipProps['color'];
+    size?: ChipProps['size'];
 }
 
  const actionsElements: Record<string, ActionConfig> =  {
@@ -55,10 +57,10 @@ export default function ActionChip({ action, size = "medium", svg = true }: Prop
             enterDelay={200}
         >
             <Chip
-                icon={svg ? actionConfig.icon : null}
+                icon={svg ? actionConfig.icon : actionConfig.icon}
                 label={actionConfig.label}
                 color={actionConfig.color}
-                size={size}
+                size={size as ChipProps['size']}
                 variant="outlined"
                 className="font-bold"
             />

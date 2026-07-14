@@ -1,6 +1,7 @@
 import FadeInSection from "@/components/animation/FadeInSection";
 import Link from "next/link";
 import MainText from "@/components/text/MainText";
+import { GetProfileQuery } from "@/gql/graphql";
 
 interface Props {
     href: string,

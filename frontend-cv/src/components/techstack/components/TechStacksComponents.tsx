@@ -6,6 +6,7 @@ import { getTechStackByTechCategoryCached } from "@/query/techCategory.query";
 import TechStackIcon from "./TechStackIcon";
 import IconSection from "./IconSection";
 import { getTechStacksCached } from "@/query/techStack.query";
+import { TechStack } from "@/gql/graphql";
 type TechStackProps = {
     categoryId: string;
 };
@@ -22,9 +23,10 @@ export default async function TechStacksComponent({ categoryId = techStack.all}:
         <>
                 {shownCount > 0 ? (
                     <IconSection>{
+                    // @ts-ignore
                     techStacksToShow.map((techStack) => (
                         <div className="relative tech-stack-icon" key={techStack.id} >
-                            <TechStackIcon techStack={techStack} />
+                            <TechStackIcon techStack={techStack as TechStack} />
                         </div>
                     ))
                     }</IconSection>

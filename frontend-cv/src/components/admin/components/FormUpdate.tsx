@@ -15,13 +15,14 @@ interface FormElementProps<V> {
     tailwind?: string;
     inputs: InputType[];
     intialValues: object;
-    actionForm: (formData: FormData) => Promise<PrevStateFull<V>>;
+    actionForm: (formData: FormData) => Promise<PrevStateFull<V>> | Promise<PrevState<V>>;
     schema: object;
     title: string;
 }
 
 export default function FormUpdate<V>({ children, tailwind, inputs, intialValues, actionForm, schema, title }: FormElementProps<V>) {
-    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | undefined, formData: FormData) => actionForm(formData), undefined);
+    // @ts-ignore
+    const [state, action, pending] = useActionState((prevState: PrevStateFull<V> | PrevState<V> | undefined, formData: FormData) => actionForm(formData), undefined);
     const [readonly, setReadonly] = React.useState(true);
 
     useEffect(() => {
@@ -53,6 +54,7 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
                 });
                 startTransition(() => {
                     if (action) {
+                        // @ts-ignore
                         action(formData);
                     }
                 });

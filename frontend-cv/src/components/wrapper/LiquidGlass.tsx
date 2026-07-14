@@ -1,5 +1,5 @@
 import SvgLiquidGlass from "@/components/wrapper/SvgLiquidGlass"
-export default function LiquidGlass({children, shadow = false, rounded = false, hover = false, shine = false, tint = false, width = false, tailwind, tailwindParent,}: {children: React.ReactNode, shadow?: boolean, rounded?: boolean, hover?: boolean, tint?: boolean, shine?: boolean, width?: boolean, tailwind?: string, tailwindParent?: string}) {
+export default function LiquidGlass({children, shadow = false, rounded = false, hover = false, shine = false, tint = false, width = false, tailwind, tailwindParent,}: {children?: React.ReactNode, shadow?: boolean, rounded?: boolean, hover?: boolean, tint?: boolean, shine?: boolean, width?: boolean, tailwind?: string, tailwindParent?: string}) {
   return (
     <>
     <SvgLiquidGlass />

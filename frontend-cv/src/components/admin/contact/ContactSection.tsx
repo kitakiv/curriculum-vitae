@@ -10,6 +10,7 @@ import { Contact, CreateContactInput, GetContactsQuery, GetUserMutation } from "
 import { hasPermission } from "@/query/permissions"
 import table from "@/variables/table/table";
 import Table from "../components/Table";
+import { UpdateContactInput } from "@/gql/graphql";
 interface Props {
     user: GetUserMutation['getUser'],
     rows: GetContactsQuery['contacts']
@@ -59,7 +60,8 @@ export function createFormContact() {
 export function createUpdateFrom(intialValues: Contact, id: string) {
     const initialValuesEmpty = resourceConfig[Resource.CONTACT].editFrom.initialValues;
     Object.keys(initialValuesEmpty).forEach((key: string) => {
-        initialValuesEmpty[key] = intialValues[key];
+        // @ts-ignore
+        initialValuesEmpty[key] = intialValues[key] as string;
     })
     const contactUpdate = resourceConfig[Resource.CONTACT].editFrom;
 
@@ -89,15 +91,17 @@ export function createUpdateFrom(intialValues: Contact, id: string) {
 export function createUpdateFromImage(intialValues: Contact, id: string) {
     const intialValuesEmpty = resourceConfig[Resource.CONTACT].editFormImage.initialValues;
     Object.keys(intialValuesEmpty).forEach((key: string) => {
+        // @ts-ignore
         intialValuesEmpty[key] = intialValues[key];
     })
     const contactUpdate = resourceConfig[Resource.CONTACT].editFormImage;
 
     return (
-        <FromUpdate<CreateContactInput>
+        <FromUpdate<UpdateContactInput["id"]>
             inputs={contactUpdate.inputs}
             intialValues={intialValuesEmpty}
             actionForm={(formData) =>
+                // @ts-ignore
                 contactUpdate.action(
                     undefined,
                     formData,

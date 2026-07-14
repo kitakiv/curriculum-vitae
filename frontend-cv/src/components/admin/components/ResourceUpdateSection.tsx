@@ -4,9 +4,8 @@ import UpdateFormContactImage from "@/components/admin/contact/UpdateFormContact
 import UpdateFormContact from "@/components/admin/contact/UpdateFormContact";
 import UpdateFormSlider from "@/components/admin/slider/UpdateFormSlider";
 import UpdateFormSliderImage from "@/components/admin/slider/UpdateFormSliderImage";
-import { Contact, Profile, Project, Role, Slider, TechCategory, TechStack, User } from "@/gql/graphql";
+import { Contact, Profile, Project, Role, Slider, TechCategory, TechStack, User, Certificate } from "@/gql/graphql";
 import UpdateFormCertificate from "../certificates/UpdateFormCertificate";
-import { Certificate } from "crypto";
 import UpdateFormCertificateImage from "../certificates/UpdateFormCertificateImage";
 import UpdateFormProfile from "../profile/UpdateFormProfile";
 import UpdateFormProfileImage from "../profile/UpdateFormProfileImage";
@@ -19,7 +18,7 @@ import UpdateFormTechCategory from "../techcategory/UpdateFormTechCategory";
 import AttachFormRoleUser from "../user/AttachFormRoleUser";
 import UpdateFormRole from "../roles/UpdateFormRole";
 interface ResourceSectionProps<R> {
-    currentResource: Resource;
+    currentResource: Resource | null | undefined;
     resourceId: string;
     resource: R;
     inputs: InputType[] | null;

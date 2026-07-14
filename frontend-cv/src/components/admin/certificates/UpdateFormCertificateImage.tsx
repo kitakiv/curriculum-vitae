@@ -35,7 +35,7 @@ export default function UpdateFormCertificateImage({ initialValues, resourceId }
             schema={updateCertificateImage.schema}
             title={updateCertificateImage.title}
         >   
-           <img src={image} alt={initialValues.certificateTitle} className="w-72 h-fit rounded-lg" />
+           <img src={image as string} alt={initialValues.certificateTitle} className="w-72 h-fit rounded-lg" />
         </FormUpdate>
     )
 }

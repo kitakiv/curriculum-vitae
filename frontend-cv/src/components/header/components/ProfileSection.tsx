@@ -8,6 +8,7 @@ import PinkButton from "../../button/PinkButton";
 import Image from "next/image";
 import Link from "next/link";
 import aboutme from "@/variables/aboutme/aboutme";
+import { GetProfileQuery } from "@/gql/graphql";
 
 
 interface Props {

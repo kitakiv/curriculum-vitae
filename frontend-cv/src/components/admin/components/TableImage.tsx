@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box'
+import { GridRenderCellParams, GridTreeNodeWithRender } from '@mui/x-data-grid';
 interface Props {
-    params: {
-        value: string | null | string[]
-    }
+    params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
     tailwind?: string
 }
 

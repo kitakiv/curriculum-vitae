@@ -1,4 +1,4 @@
-import {  TechCategorUpdateTechCateUpdateTechCategoryInput, goryInput, y, TechSt, UpdateTechCategoryInput, UpdateTechCategoryInput, UpdateTechCategoryInputack, UpdateTechStackInput, TechCategory } from "@/gql/graphql";
+import { UpdateTechCategoryInput, TechCategory } from "@/gql/graphql";
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import FormUpdate from "@/components/admin/components/FormUpdate";
 import MainText from "@/components/text/MainText";

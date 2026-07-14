@@ -1,5 +1,5 @@
 'use server'
-import { CreatePermissionInput, CreateRoleInput, CreateRoleMutation, CreateRoleMutationVariables, GetResourcesQuery, GetResourcesQueryVariables, Permission, RemoveRoleMutation, RemoveRoleMutationVariables, Role, UpdateRoleInput, UpdateRoleMutation, UpdateRoleMutationVariables } from "@/gql/graphql"
+import { CreatePermissionInput, CreateRoleInput, CreateRoleMutation, CreateRoleMutationVariables, RemoveRoleMutation, RemoveRoleMutationVariables, Role, UpdateRoleInput, UpdateRoleMutation, UpdateRoleMutationVariables } from "@/gql/graphql"
 import { cachedQueryGraphQl, queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { RESOURCES_GET_QUERY, ROLE_CREATE_MUTATION, ROLE_REMOVE_MUTATION, ROLE_UPDATE_MUTATION } from "@/graphql/role.graphql";
@@ -64,7 +64,11 @@ export async function updateRoleAction(prevState: PrevStateFull<UpdateRoleInput>
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Role Update failed',
-            data: null
+            data: {
+                id: id,
+                name: intitalValues.name,
+                permissions: intitalValues.permissions
+            }
         };
     }
 
@@ -125,10 +129,10 @@ async function correctFormatPermissions(permissions: Record<string, Record<strin
  export async function formCreateFormatValues(): Promise<Record<string, Record<string, boolean>>> {
     try {
         const permissions = await getAllPermissions();
-        const resouces = {};
+        const resouces = {} as Record<string, Record<string, boolean>>;
         permissions.forEach((permission: CreatePermissionInput ) => {
-            const actions = {};
-            permission.actions.forEach(action => {
+            const actions = {} as Record<string, boolean>;
+            permission.actions.forEach((action: string) => {
                 actions[action] = false;
             });
             resouces[permission.resource] = actions;

@@ -35,7 +35,7 @@ export default function UpdateFormContactImage({ initialValues, resourceId }: Pr
             schema={contactUpdate.schema}
             title={contactUpdate.title}
         >
-           <img src={image} alt={initialValues.contactName} className="h-40 w-40" />
+           <img src={image as string} alt={initialValues.contactName} className="h-40 w-40" />
         </FormUpdate>
     )
 }
