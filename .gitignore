@@ -23,3 +23,4 @@ TestResults.xml
 
 .env.production.example
 .env.local
+.env.prod

@@ -13,6 +13,7 @@ const experiences = {
     companySvg: "/svg/company.svg",
     periodSvg: "/svg/period.svg",
     doneSvg: "/svg/done.svg",
+    redirectQuery: "link",
     portfolio: "Professional Journey",
 }
 
