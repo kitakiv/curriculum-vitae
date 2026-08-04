@@ -9,7 +9,7 @@ import { useGSAP } from '@gsap/react';
 import ScrollTrigger from "gsap/ScrollTrigger";
 import header from "@/variables/header/header";
 import * as THREE from 'three';
-import { Center } from "@react-three/drei";
+
 
 gsap.registerPlugin(ScrollTrigger)
 

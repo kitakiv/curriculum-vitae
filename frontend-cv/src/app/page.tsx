@@ -10,6 +10,7 @@ import techStack from "@/variables/techstack/techstack";
 import { getMe } from "@/query/auth.query";
 import { GetUserMutation } from "@/gql/graphql";
 import PhotoSection from "@/components/photosection/PhotoSection";
+import FlyModelLoadingSection from "@/components/loader/ButterflyLoader";
 
 
 export type Props = {

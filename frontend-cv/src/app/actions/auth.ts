@@ -1,9 +1,11 @@
 'use server'
-import { AttachRoleInput, AttachRoleToUserMutation, AttachRoleToUserMutationVariables, DeleteUserMutation, DeleteUserMutationVariables, LoginInput, SignUpInput, User } from "@/gql/graphql"
-import { USER_ATTACH_ROLE_MUTATION, USER_DELETE_QUERY } from "@/graphql/auth.graphql";
+import { AttachRoleInput, AttachRoleToUserMutation, AttachRoleToUserMutationVariables, DeleteUserMutation, DeleteUserMutationVariables, LoginInput, SignUpInput, User, LogoutMutation, LogoutMutationVariables } from "@/gql/graphql"
+import { USER_ATTACH_ROLE_MUTATION, USER_DELETE_QUERY, LOGOUT_AUTH_QUERY } from "@/graphql/auth.graphql";
 import { loginUser, signUpUser } from "@/query/auth.query";
 import { queryGraphQL } from "@/query/graphql";
-import { PrevState } from "./action.type";
+import { PrevState, PrevStateFull } from "./action.type";
+import { clearTokens } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export type LoginFormState = {
     message?: string;
@@ -70,6 +72,32 @@ export async function login(prevState: LoginFormState | undefined, formData: For
             success: false,
             message: error instanceof Error ? error.message : 'Login failed'
         };
+    }
+}
+
+export async function logoutUserAction(): Promise<PrevStateFull<boolean>> {
+    'use server'
+     try {
+        const result = await queryGraphQL<LogoutMutation, LogoutMutationVariables>(
+            LOGOUT_AUTH_QUERY, {}
+        );
+
+        return {
+            data: result,
+            success: true,
+            message: 'Logged out successfully'
+        };
+    } catch (error) {
+        return {
+            data: false,
+            success: false,
+            message: error instanceof Error ? error.message : 'Role attachment failed'
+        };
+
+    }
+    finally {
+        clearTokens();
+        redirect('/');
     }
 }
 

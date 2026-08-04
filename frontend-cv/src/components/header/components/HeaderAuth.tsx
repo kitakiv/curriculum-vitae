@@ -3,6 +3,7 @@ import { GetUserMutation } from '@/gql/graphql';
 import Image from 'next/image';
 import LiquidGlassButton from '@/components/button/LiquidButton';
 import header from '@/variables/header/header';
+import LogoutForm from '@/components/admin/logout/LogoutForm';
 
 interface AuthButtonsProps {
     user: GetUserMutation['getUser'] | undefined | false;
@@ -36,6 +37,7 @@ export default function HeaderAuth({ user }: AuthButtonsProps) {
             >
                 <LiquidGlassButton>{header.buttonAdmin.text}</LiquidGlassButton>
             </Link>
+            <LogoutForm />
             <Link 
                 href="/profile"
                 className="liquidGlass-elem liquidGlass-shadow h-11 w-11 rounded-full border-[1px] border-light flex items-center justify-center hover:scale-105 transition-transform flex-shrink-0 overflow-hidden"

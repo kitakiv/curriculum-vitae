@@ -10,7 +10,7 @@ import { deleteContactAction } from "@/app/actions/contacts";
 import { addProjectImageAction, createProjectAction, deleteProjectAction, deleteProjectImageAction, updateProjectAction, updateProjectImageAction, updateProjectImagesAction } from "@/app/actions/project";
 import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, updateTechStackImageAction } from "@/app/actions/techstack";
 import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
-import { attachRoleToUserAction, deleteUserAction } from "@/app/actions/auth";
+import { attachRoleToUserAction, deleteUserAction, logoutUserAction } from "@/app/actions/auth";
 import { createRoleAction, deleteRoleAction, updateRoleAction } from "@/app/actions/role";
 
 export enum Resource {
@@ -436,6 +436,12 @@ const resourceConfig = {
   }
 };
 
+const logoutForm = {
+  action: logoutUserAction,
+  button: 'Logout',
+  pendiong: 'Logging out...',
+}
 
-export { resourceConfig, adminVariables }
+
+export { resourceConfig, adminVariables, logoutForm };
 

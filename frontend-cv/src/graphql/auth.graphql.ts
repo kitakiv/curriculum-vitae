@@ -119,7 +119,13 @@ const USER_GET_ONE_QUERY = gql`
     }
 }
 `;
-    
+
+
+const LOGOUT_AUTH_QUERY = gql`
+    mutation Logout {
+    logout
+}
+`;
 
 export { SIGNUP_AUTH_QUERY,
      LOGIN_AUTH_QUERY,
@@ -128,5 +134,6 @@ export { SIGNUP_AUTH_QUERY,
         USERS_GET_QUERY,
          USER_ATTACH_ROLE_MUTATION,
         USER_DELETE_QUERY,
-        USER_GET_ONE_QUERY
+        USER_GET_ONE_QUERY,
+        LOGOUT_AUTH_QUERY
 };
