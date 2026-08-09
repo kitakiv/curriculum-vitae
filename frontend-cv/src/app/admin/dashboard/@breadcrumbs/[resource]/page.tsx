@@ -14,7 +14,7 @@ type Props = {
 export default async function Page({ params }: Props) {
     const resource = (await params).resource
     return (
-        <div className="flex gap-2 text-adminGr0">
+        <div className="flex gap-2 text-adminGr0 px-11 py-4">
             <Link className="flex gap-2 hover:text-adminTx underline text-adminGr0 transition-all duration-700" href={adminVariables.pathAdminPage}>
             <HomeIcon />
             <MiddleText>

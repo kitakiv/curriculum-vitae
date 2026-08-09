@@ -6,6 +6,7 @@ import { queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { clearTokens } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import header from "@/variables/header/header";
 
 export type LoginFormState = {
     message?: string;
@@ -27,7 +28,6 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
     const name = formData.get('name') as string;
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
-
     try {
         const result = await signUpUser({
             signUpInput: {
@@ -36,7 +36,6 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
                 password
             }
         });
-
         return {
             success: true,
             message: 'Signup successful!'
@@ -53,6 +52,8 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
 export async function login(prevState: LoginFormState | undefined, formData: FormData): Promise<LoginFormState> {
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
+    const redirectUrl = header.buttonAdmin.link;
+    let success: boolean = false;
 
     try {
         const result = await loginUser({
@@ -61,17 +62,20 @@ export async function login(prevState: LoginFormState | undefined, formData: For
                 password
             }
         });
-
-
+        success = true;
         return {
             success: true,
-            message: 'Login successful!'
-        };
+            message: "login successful"
+        }
     } catch (error) {
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Login failed'
         };
+    } finally {
+        if (success) {
+            redirect(redirectUrl);
+        }
     }
 }
 

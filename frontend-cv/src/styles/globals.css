@@ -586,3 +586,7 @@
 .display-none {
   display: none;
 }
+
+.pin-spacer {
+  pointer-events: none;
+}

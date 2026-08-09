@@ -81,7 +81,7 @@ export default function SliderComponent({ sliders }: { sliders: Slider[] }) {
     return (
         <>
             <div key="slider-left" className="absolute top-1/2 left-3  -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110" onClick={changeLeft}></div>
-            <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 " onClick={changeRight}></div>
+            <div key="slider-right" className="absolute top-1/2 right-3 -translate-y-1/2 w-11 h-11 bg-bg0 rounded-full z-40 transition duration-700 border-light border-2 hover:scale-110 "onClick={changeRight}></div>
 
             <div
                 onTouchStart={startTouch}

@@ -73,7 +73,7 @@ export default function List({ role, resourceId, permissions }: ListProps) {
         },
     ]
     return (
-        <div className="w-full min-h-screen bg-gradient-to-t from-adminGr0 to-adminGr100 p-8">
+        <div className="w-full min-h-screen bg-gradient-to-t from-adminGr0 to-adminGr100">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-10">
                     <h1 className="text-4xl font-bold text-adminTx mb-2 flex items-center gap-3">

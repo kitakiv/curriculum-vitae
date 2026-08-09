@@ -68,13 +68,10 @@ export default function FlyModelSection() {
     })
   }, [document.documentElement.scrollWidth]);
   return <section className="w-full" id={flyModel.id}>
-    <div ref={block} className="absolute z-[35] left-0 top-[15vh] w-[25vh] h-[30vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
+    <div ref={block} className="absolute z-[35] pointer-events-none left-0 top-[15vh] w-[25vh] h-[30vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
       <Canvas>
         <directionalLight position={[0, 0, 5]} intensity={8} />
-        <Suspense fallback={<Loader />}>
           <FlyModel rotation={[0, rotateY, 0]} />
-
-        </Suspense>
       </Canvas>
     </div>
   </section>

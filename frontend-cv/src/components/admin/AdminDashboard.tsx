@@ -10,13 +10,13 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ user, children }: AdminDashboardProps) {
   return (
-    <div className="grid grid-cols-12 pt-24">
-      <div className='col-span-2'>
+    <>
+      <div className='lg:col-span-6 md:col-span-3 sm:col-span-6'>
         <SideBar user={user}/>
       </div>
-      <div className='col-span-10'>
+      <div className='lg:col-span-6 md:col-span-9 sm:col-span-6'>
         {children}
       </div>
-    </div>
+    </>
   );
 }
