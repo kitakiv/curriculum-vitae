@@ -60,6 +60,13 @@ const PROJECT_REMOVE_MUTATION = gql`
     }
 `;
 
+const PROJECTS_REMOVE_MUTATION = gql`
+    mutation RemoveProjects($ids: [ID!]!) {
+        removeProjects(ids: $ids)
+    }
+`;
+
+
 const PROJECT_CREATE_MUTATION = gql`
     mutation CreateProject($createProjectInput: CreateProjectInput!) {
         createProject(createProjectInput: $createProjectInput) {
@@ -78,4 +85,4 @@ const PROJECT_CREATE_MUTATION = gql`
     }
 `;
 
-export { PROJECTS_GET_QUERY, PROJECT_UPDATE_MUTATION, PROJECT_REMOVE_MUTATION, PROJECT_CREATE_MUTATION, PROJECT_GET_ONE_QUERY };
+export { PROJECTS_GET_QUERY, PROJECT_UPDATE_MUTATION, PROJECT_REMOVE_MUTATION, PROJECT_CREATE_MUTATION, PROJECT_GET_ONE_QUERY, PROJECTS_REMOVE_MUTATION };

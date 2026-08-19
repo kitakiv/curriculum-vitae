@@ -4,7 +4,7 @@ import MiddleText from "@/components/text/MiddleText";
 
 export default function Default() {
     return (
-         <div className="flex gap-2 text-adminGr0 px-11 4">
+         <div className="flex gap-2 text-adminTx px-11 4">
                     <HomeIcon />
                     <MiddleText>
                         {adminVariables.dashBoard}

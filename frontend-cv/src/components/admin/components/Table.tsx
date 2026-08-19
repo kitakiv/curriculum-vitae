@@ -7,6 +7,8 @@ import Paper from '@mui/material/Paper';
 import { GridColDef } from '@mui/x-data-grid';
 import { useState, useEffect } from "react";
 import HelpButtons from "./HelpButtons";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { changeResourceIds } from "@/features/form/FormSlice";
 
 
 interface Props {
@@ -35,7 +37,8 @@ export default function Table({
     type: 'include',
     ids: new Set<GridRowId>([]),
   });
-
+  const dispatch = useAppDispatch();
+  console.log(resource);
   const [columnModel, setColumnModel] = useState<GridColDef[]>(columns);
   useEffect(() => {
     if (!canUpdate) {
@@ -53,7 +56,7 @@ export default function Table({
 
   if (!canRead) return null;
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-auto min-h-screen">
       <HelpButtons canDelete={canDelete} canCreate={canCreate} ids={rowSelectionModel.ids} resource={resource} />
       <Paper sx={{ width: '100%'}}>
         <DataGrid
@@ -66,11 +69,17 @@ export default function Table({
           getRowHeight={() => 'auto'}
           onRowSelectionModelChange={(newRowSelectionModel) => {
             setRowSelectionModel(newRowSelectionModel);
-            console.log(newRowSelectionModel);
+            const ids = Array.from(newRowSelectionModel.ids);
+            console.log(ids, resource);
+            dispatch(changeResourceIds({
+              resourceType: resource,
+              ids: ids,
+              form: 'formDeleteMany'
+            }));
           }}
           showToolbar
           rowSelectionModel={rowSelectionModel}
-          sx={{ border: 0, height: '100%', width: '100%' }}
+          sx={{ border: 0, width: '100%' }}
         />
       </Paper>
     </div>

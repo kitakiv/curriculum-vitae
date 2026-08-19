@@ -40,6 +40,12 @@ const CONTACT_REMOVE_MUTATION = gql`
     }
 `;
 
+const CONTACTS_REMOVE_MUTATION = gql`
+    mutation RemoveContacts($ids: [ID!]!) {
+      removeContacts(ids: $ids)
+    }
+`;    
+
 const CONTACT_UPDATE_MUTATION = gql`
     mutation UpdateContact($updateContactInput: UpdateContactInput!) {
       updateContact(updateContactInput: $updateContactInput) {
@@ -51,4 +57,4 @@ const CONTACT_UPDATE_MUTATION = gql`
     }
 `;
 
-export { CONTACT_GET_QUERY, CONTACT_CREATE_MUTATION, CONTACT_UPDATE_MUTATION, CONTACT_GET_ONE_QUERY, CONTACT_REMOVE_MUTATION };
+export { CONTACT_GET_QUERY, CONTACT_CREATE_MUTATION, CONTACT_UPDATE_MUTATION, CONTACT_GET_ONE_QUERY, CONTACT_REMOVE_MUTATION, CONTACTS_REMOVE_MUTATION };

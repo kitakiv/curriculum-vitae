@@ -40,6 +40,12 @@ const SLIDER_REMOVE_MUTATION = gql`
     }
 `;
 
+const SLIDERS_REMOVE_MUTATION = gql`
+    mutation RemoveSliders($ids: [ID!]!) {
+      removeSliders(ids: $ids)
+    }
+`;
+
 const SLIDER_UPDATE_MUTATION = gql`
     mutation UpdateSlider($updateSliderInput: UpdateSliderInput!) {
       updateSlider(updateSliderInput: $updateSliderInput) {
@@ -51,4 +57,4 @@ const SLIDER_UPDATE_MUTATION = gql`
     }
 `;
 
-export { SLIDERS_GET_QUERY, SLIDER_GET_ONE_QUERY, SLIDER_CREATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION };
+export { SLIDERS_GET_QUERY, SLIDER_GET_ONE_QUERY, SLIDER_CREATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDERS_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION };

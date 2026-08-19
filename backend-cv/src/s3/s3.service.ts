@@ -7,6 +7,8 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import {v4 as uuid } from 'uuid';
+import { SingleImagesFromIds } from '../upload/interface/singleImage.abstract';
+import { MultiImagesFromIds } from '../upload/interface/multiImage.abstract';
 
 @Injectable()
 export class S3Service {
@@ -99,6 +101,35 @@ export class S3Service {
         await this.deleteFile(url, service, id);
       }),
     );
+    }
+  }
+
+  async deleteFileFromIds(service: string, ids: SingleImagesFromIds[]) {
+    if (Array.isArray(ids)) {
+      await Promise.all(
+        ids.map(async ({ resourceId, imageKey }) => {
+          await this.deleteFile(imageKey, service, resourceId);
+        }),
+      )
+    }
+  }
+
+  async deleteFilesFromIds(service: string, ids: MultiImagesFromIds[]) {
+    if (Array.isArray(ids)) {
+      await Promise.all(
+        ids.map(async ({ resourceId, imageKeys }) => {
+          if (Array.isArray(imageKeys)) {
+            await Promise.all(
+            imageKeys.map(async (imageKey) => {
+              await this.deleteFile(imageKey, service, resourceId);
+            })
+          );
+          }
+          if (!Array.isArray(imageKeys)) {
+            await this.deleteFile(imageKeys, service, resourceId);
+          }
+        })
+      );
     }
   }
 

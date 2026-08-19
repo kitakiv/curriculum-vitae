@@ -28,7 +28,7 @@ export default function HelpButtons({
                 </Link>
               }
         {canDelete && 
-                <Link href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.create.path}/`}>
+                <Link href={`${adminVariables.pathAdminPage}/${resource}/${adminVariables.deleteMany.path}/`}>
                   <AdminButton disabled={ids.size === 0} type="button">
                     <DeleteIcon />
                     {adminVariables.delete.title}

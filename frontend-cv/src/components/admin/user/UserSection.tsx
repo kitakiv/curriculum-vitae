@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function UserSection({ user, rows}: Props) {
-    const resource = Resource.TECHSTACK;
+    const resource = Resource.USER;
     const canRead = hasPermission(user, resource, [Action.READ]);
     const canCreate = false;
     const canUpdate = hasPermission(user, resource, [Action.UPDATE]) && hasPermission(user, Resource.ROLE, [Action.READ]);
@@ -24,10 +24,9 @@ export default function UserSection({ user, rows}: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.USER}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.USER}
                 canDelete={canDelete}
             />
         </>

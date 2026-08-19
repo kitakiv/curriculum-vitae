@@ -1,15 +1,16 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
-  Logger
+  Logger,
+  NotFoundException
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TechStack } from './entities/techstack.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
+import { SingleImagesFromIds } from '../upload/interface/singleImage.abstract';
 
 @Injectable()
 export class TechStackImageService extends SingleImageBaseClass {
@@ -42,6 +43,18 @@ export class TechStackImageService extends SingleImageBaseClass {
       return techStack.techSvg;
     }
     return null;
+  }
+
+  async getImageKeys(ids: string[]): Promise<(SingleImagesFromIds)[]> {
+    const techStacks = await this.techStackRepository.findBy({ id: In(ids) });
+    if (techStacks.length === 0) throw new NotFoundException(errors.NOT_FOUND('TechStacks'));
+    const imageKeys = techStacks.reduce((acc: (SingleImagesFromIds)[], techStack) => {
+      if (techStack.techSvg) {
+        acc.push({ resourceId: techStack.id, imageKey: techStack.techSvg });
+      }
+      return acc;
+    }, []);
+    return imageKeys;
   }
 }
 

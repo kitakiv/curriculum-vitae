@@ -149,13 +149,21 @@ type Mutation {
   logout: Boolean!
   refreshTheTokens: CookiesData!
   removeCertificate(id: ID!): ID!
+  removeCertificates(ids: [ID!]!): [ID!]!
   removeContact(id: ID!): ID!
+  removeContacts(ids: [ID!]!): [ID!]!
   removeProject(id: ID!): ID!
+  removeProjects(ids: [ID!]!): [ID!]!
   removeRole(id: ID!): ID!
+  removeRoles(ids: [ID!]!): [ID!]!
   removeSlider(id: ID!): ID!
+  removeSliders(ids: [ID!]!): [ID!]!
+  removeTechCategories(ids: [ID!]!): [ID!]!
   removeTechCategory(id: ID!): ID!
   removeTechStack(id: ID!): ID!
+  removeTechStacks(ids: [ID!]!): [ID!]!
   removeUser(id: ID!): ID!
+  removeUsers(ids: [ID!]!): [ID!]!
   signup(signUpInput: SignUpInput!): Boolean!
   update(updateUserInput: UpdateUserInput!): User!
   updateCertificate(updateCertificateInput: UpdateCertificateInput!): Certificate!

@@ -69,4 +69,10 @@ export class TechCategoryResolver {
   removeTechCategory(@Args('id', { type: () => ID }) id: string) {
     return this.techCategoryService.remove(id);
   }
+
+  @PermissionGuard([{ resource: Resource.CATEGORY, actions: [Action.DELETE] }])
+  @Mutation(() => [ID])
+  removeTechCategories(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    return this.techCategoryService.removeMany(ids);
+  }
 }

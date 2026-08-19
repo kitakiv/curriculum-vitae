@@ -80,4 +80,22 @@ export class CertificateResolver {
     }
     return id;
   }
+
+  @PermissionGuard([
+    { resource: Resource.CERTIFICATE, actions: [Action.DELETE] },
+  ])
+  @Mutation(() => [ID])
+  async removeCertificates(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    try {
+      const urls = await this.certificateImageService.getImageKeys(ids);
+      await this.certificateService.removeMany(ids);
+      await this.s3Service.deleteFileFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('Certificates'), {
+        cause: error,
+      });
+    }
+    return ids;
+  }
+
 }

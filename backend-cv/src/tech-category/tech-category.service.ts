@@ -214,4 +214,31 @@ export class TechCategoryService {
       throw new BadRequestException(errors.NOT_DELETED('Tech category'));
     }
   }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const categories = await this.techCategoryRepository.findBy({ id: In(ids) });
+    if (categories.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Tech categories'));
+    if (categories.length !== ids.length) {
+      const foundIds = categories.map((c) => c.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Tech category with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('tech_stack_tech_categories_tech_category')
+          .where('techCategoryId IN (:...ids)', { ids })
+          .execute();
+        await manager.delete(TechCategory, ids);
+      });
+      await this.deleteCache();
+      return ids;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Tech categories with ids: ' + ids.join(', ')));
+    }
+  }
 }

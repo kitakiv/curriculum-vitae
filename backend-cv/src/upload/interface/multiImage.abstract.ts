@@ -1,13 +1,20 @@
 import { BadRequestException } from "@nestjs/common";
 
+interface MultiImagesFromIds {
+    resourceId: string;
+    imageKeys: string[];
+}
+
 interface MultiImage {
     getImageKey(resourceId: string, imageId: string): Promise<string | null>;
     uploadImage({ id, url }: { id: string; url: string }): Promise<{ id: string; [key: string]: string | string[]} | BadRequestException>;
     getImageKeys(resourceId: string): Promise<string[] | null>;
+    getImageKeysIds(resourceIds: string[]): Promise<MultiImagesFromIds[]>;
     uploadImages({ id, images }: { id: string; images: string[] }): Promise<{ id: string; [key: string]: string[] | string} | BadRequestException>;
     uploadImageIndex({ id, previousImageId, url }: { id: string; previousImageId: string; url: string }): Promise<{ id: string; [key: string]: string[] | string} | BadRequestException>;
     deleteImageIndex({ id, imageId }: { id: string; imageId: string }): Promise<{ id: string; [key: string]: string[] | string} | BadRequestException>;
 }
+
 
 abstract class MultiImageBaseClass {
     public name: string;
@@ -19,4 +26,5 @@ abstract class MultiImageBaseClass {
     abstract deleteImageIndex({ id, imageId }: { id: string; imageId: string }): Promise<{ id: string; [key: string]: string[] | string} | BadRequestException>;
 }
 
-export { MultiImage, MultiImageBaseClass };
+
+export { MultiImage, MultiImageBaseClass, MultiImagesFromIds };

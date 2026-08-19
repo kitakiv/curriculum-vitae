@@ -3,13 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { Logger } from '@nestjs/common';
 import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
+import { SingleImagesFromIds } from '../upload/interface/singleImage.abstract';
 
 @Injectable()
 export class ContactsImageService extends SingleImageBaseClass {
@@ -44,5 +45,17 @@ export class ContactsImageService extends SingleImageBaseClass {
       return contact.contactSvg;
     }
     return null;
+  }
+
+  async getImageKeys(ids: string[]): Promise<(SingleImagesFromIds)[]> {
+    const contacts = await this.contactsRepository.findBy({ id: In(ids) });
+    if (contacts.length === 0) throw new NotFoundException(errors.NOT_FOUND('Contacts'));
+    const imageKeys = contacts.reduce((acc: (SingleImagesFromIds)[], contact) => {
+      if (contact.contactSvg) {
+        acc.push({ resourceId: contact.id, imageKey: contact.contactSvg });
+      }
+      return acc;
+    }, []);
+    return imageKeys;
   }
 }

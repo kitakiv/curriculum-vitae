@@ -3,7 +3,7 @@ import schema from "@/validation/schemaValidation";
 import { createContactAction, updateContactAction, updateContactImageAction } from "@/app/actions/contacts";
 import { createCertificateAction, updateCertificateAction, updateCertificateImageAction, deleteCertificateAction } from "@/app/actions/certificate";
 import { UPLOADSERVICE } from "@/variables/upload/upload";
-import { createSliderAction, deleteSliderAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
+import { createSliderAction, deleteSliderAction, deleteSlidersAction, updateSliderAction, updateSliderImageAction } from "@/app/actions/sliders";
 import table from "../table/table";
 import { addProfileImageAction, deleteProfileImageAction, updateProfileAction, updateProfileImageAction, updateProfileImagesAction } from "@/app/actions/profile";
 import { deleteContactAction } from "@/app/actions/contacts";
@@ -12,6 +12,13 @@ import { createTechStackAciton, deleteTechStackAciton, updateTechStackAction, up
 import { createTechCategoryAction, deleteTechCategoryAction, updateTechCategoryAction } from "@/app/actions/category";
 import { attachRoleToUserAction, deleteUserAction, logoutUserAction } from "@/app/actions/auth";
 import { createRoleAction, deleteRoleAction, updateRoleAction } from "@/app/actions/role";
+import { deleteProjectsAction } from "@/app/actions/project";
+import { deleteCertificatesAction } from "@/app/actions/certificate";
+import { deleteContactsAction } from "@/app/actions/contacts";
+import { deleteTechStacksAciton } from "@/app/actions/techstack";
+import { deleteUsersAction } from "@/app/actions/auth";
+import { deleteTechCategoriesAction } from "@/app/actions/category";
+import { deleteRolesAction } from "@/app/actions/role";
 
 export enum Resource {
   USER = 'user',
@@ -34,6 +41,7 @@ export enum Action {
   READ = 'read',
   UPDATE = 'update',
   DELETE = 'delete',
+  DELETEMANY = 'deleteMany'
 }
 
 
@@ -44,13 +52,13 @@ const adminVariables = {
   edit: {
     button: 'Edit',
     title: 'Edit',
-    path: 'update'
+    path: Action.UPDATE
 
   },
   delete: {
     button: 'Delete',
     title: 'Delete',
-    path: 'delete'
+    path: Action.DELETE
   },
   view: {
     button: 'View',
@@ -61,12 +69,17 @@ const adminVariables = {
   create: {
     button: 'Create',
     title: 'Create',
-    path: 'create',
+    path: Action.CREATE
   },
   attachRole: {
     button: 'Attach Role',
     title: 'Attach Role to user',
-    path: 'update'
+    path: Action.CREATE
+  },
+  deleteMany: {
+    button: 'Delete Selected',
+    title: 'Delete Selected Items',
+    path: Action.DELETEMANY
   }
 }
 
@@ -123,11 +136,18 @@ const resourceConfig = {
       uploadConfig: UPLOADSERVICE.PROJECTS
     },
     deleteForm: {
-      title: 'Delete project',
+      title: 'Delete Project',
       action: deleteProjectAction,
       schema: schema.project.projectDelete,
       inputs: form.projectForm.inputsDelete,
       initialValues: form.projectForm.initialValuesDelete
+    },
+    deleteManyForm: {
+      title: 'Delete Projects',
+      action: deleteProjectsAction ,
+      schema: schema.project.projectDeleteMany,
+      inputs: form.projectForm.inputsDeleteMany,
+      initialValues: form.projectForm.initialValuesDeleteMany,
     },
     validationSchema: schema.project,
     form: form.projectForm,
@@ -171,6 +191,13 @@ const resourceConfig = {
       schema: schema.slider.sliderImage,
       title: 'Edit slider image',
     },
+    deleteManyForm: {
+      title: 'Delete Sliders',
+      action: deleteSlidersAction,
+      schema: schema.slider.sliderDeleteMany,
+      inputs: form.sliderForm.inputsDeleteMany,
+      initialValues: form.sliderForm.initialValuesDeleteMany,
+    },
     validationSchema: schema.slider,
     form: form.sliderForm,
   },
@@ -212,6 +239,13 @@ const resourceConfig = {
       schema: schema.certificate.certificateDelete,
       title: 'Delete Certificate',
     },
+    deleteManyForm: {
+      title: 'Delete Certificates',
+      action: deleteCertificatesAction,
+      schema: schema.certificate.certificateDeleteMany,
+      inputs: form.certificatesForm.inputsDeleteMany,
+      initialValues: form.certificatesForm.initialValuesDeleteMany,
+    },
     validationSchema: schema.certificate,
     form: form.certificatesForm,
   },
@@ -232,7 +266,7 @@ const resourceConfig = {
       uploadConfig: UPLOADSERVICE.CONTACTS,
       link: `${adminVariables.pathAdminPage}/${Resource.CONTACT}/${Action.CREATE}`,
     },
-    editFrom: {
+    editForm: {
       inputs: form.contactsForm.inputsEdit,
       initialValues: form.contactsForm.initialValues,
       action: updateContactAction,
@@ -252,6 +286,13 @@ const resourceConfig = {
       action: deleteContactAction,
       schema: schema.contact.contactDelete,
       title: 'Delete contact',
+    },
+     deleteManyForm: {
+      title: 'Delete Contacts',
+      action: deleteContactsAction,
+      schema: schema.contact.contactDeleteMany,
+      inputs: form.contactsForm.inputsDeleteMany,
+      initialValues: form.contactsForm.initialValuesDeleteMany,
     },
     validationSchema: schema.contact,
     form: form.contactsForm,
@@ -295,6 +336,13 @@ const resourceConfig = {
       schema: schema.techStack.techStackDelete,
       title: 'Delete tech stack',
     },
+     deleteManyForm: {
+      title: 'Delete TechStacks',
+      action: deleteTechStacksAciton,
+      schema: schema.techStack.techStackDeleteMany,
+      inputs: form.techStackForm.inputsDeleteMany,
+      initialValues: form.techStackForm.initialValuesDeleteMany,
+    },
     validationSchema: null,
     form: null,
     actionCreate: null
@@ -320,6 +368,13 @@ const resourceConfig = {
       action: deleteUserAction,
       schema: schema.user.userDelete,
       title: 'Delete user',
+    },
+    deleteManyForm: {
+      title: 'Delete Users',
+      action: deleteUsersAction,
+      schema: schema.user.userDeleteMany,
+      inputs: form.userForm.inputsDeleteMany,
+      initialValues: form.userForm.initialValuesDeleteMany,
     },
     validationSchema: null,
     form: null,
@@ -402,6 +457,13 @@ const resourceConfig = {
       schema: schema.category.categoryDelete,
       title: 'Delete Tech Stack Category',
     },
+    deleteManyForm: {
+      title: 'Delete Tech Stack Categories',
+      action: deleteTechCategoriesAction,
+      schema: schema.category.techCategoryDeleteMany,
+      inputs: form.categoryForm.inputsDeleteMany,
+      initialValues: form.categoryForm.initialValuesDeleteMany,
+    },
   },
   [Resource.ROLE]: {
     id: 'admin-roles',
@@ -432,7 +494,14 @@ const resourceConfig = {
       action: updateRoleAction,
       schema: schema.role.role,
       title: 'Edit User Role',
-    }
+    },
+    deleteManyForm: {
+      title: 'Delete User Roles',
+      action: deleteRolesAction,
+      schema: schema.role.roleDeleteMany,
+      inputs: form.roleForm.inputsDeleteMany,
+      initialValues: form.roleForm.initialValuesDeleteMany,
+    },
   }
 };
 
@@ -444,4 +513,3 @@ const logoutForm = {
 
 
 export { resourceConfig, adminVariables, logoutForm };
-

@@ -1,13 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Logger, OnModuleInit } from '@nestjs/common';
 import { CreateRoleInput } from './dto/create-role.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { UpdateRoleInput } from './dto/update-role.input';
@@ -134,6 +128,43 @@ export class RolesService implements OnModuleInit {
       throw new BadRequestException(errors.NOT_DELETED('Role'));
     }
     return id;
+  }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const roles = await this.roleRepository.findBy({ id: In(ids) });
+    if (roles.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Roles'));
+    if (roles.length !== ids.length) {
+      const foundIds = roles.map((r) => r.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Role with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .update(User)
+          .set({ role: null })
+          .where('role.id IN (:...ids)', { ids })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from(Permission)
+          .where('role.id IN (:...ids)', { ids })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from(Role)
+          .where('id IN (:...ids)', { ids })
+          .execute();
+      });
+      return ids;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Roles with ids: ' + ids.join(', ')));
+    }
   }
 
   async onModuleInit() {

@@ -39,7 +39,6 @@ export default function SrollPhotos({sliders}: Props) {
 
     images.forEach((item, index) => {
       tl.to(item, {
-        scale: 0.9,
         borderRadius: "10px",
       });
     });
@@ -65,7 +64,7 @@ export default function SrollPhotos({sliders}: Props) {
         sliders.map((slider, index) => {
           const mask = (index + 2) % 2 === 0 ? "image-mask-right-photo" : "image-mask-left-photo";
             return (
-                <PhotoCards tailwindParent={` flex items-stretch  ${index === 0 ? "flex-row" : "flex-row-reverse"}`} tailwind={`h-full w-auto transition duration-700 ${mask}`} key={slider.id} slider={slider} />
+                <PhotoCards tailwindParent={` flex items-stretch items-stretch sm:flex-col flex-col-reverse  ${index === 0 ? "lg:flex-row md:flex-row" : "lg:flex-row-reverse md:flex-row-reverse "}`} tailwind={`lg:h-full lg:w-auto md:h-full md:w-auto sm:w-full sm:h-auto w-full h-auto transition duration-700 ${mask}`} key={slider.id} slider={slider} />
 
             )
         })

@@ -1,5 +1,6 @@
 
 import techStack, { techStacks } from "@/variables/techstack/techstack";
+import { withWarningSpy } from "@apollo/client/v4-migration";
 import { attach } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { profile } from "console";
 import { sign } from "crypto";
@@ -100,6 +101,12 @@ const deleteSchema = (expectedId: string) =>
       .oneOf([expectedId], `ID must be ${expectedId}`),
   });
 
+const deleteManySchema = (phrase: string = "confirm delete") =>
+  Yup.object({
+    ids: Yup.array().required("IDs are required"),
+    phrase: Yup.string().required("Phrase is required").oneOf([phrase], `Phrase must be ${phrase}`),
+  });
+
 
 
 const projectGithubLink = Yup.string().required("Github link is required")
@@ -156,7 +163,9 @@ const chekcbox  = Yup.array()
     .min(1, 'Select at least one ') 
     .required('Required');
 
-
+const optioalCheckbox = Yup.array()
+    .of(Yup.string())
+    .optional();
 const attachRoleSchema = (expectedId: string) =>
   Yup.object({
     userId: Yup.string()
@@ -170,7 +179,7 @@ const attachRoleSchema = (expectedId: string) =>
 const schema = {
     custom : Yup.object().shape({
         login: email,
-        password,
+        password: password,
     }),
     signUp: Yup.object().shape({
         login: email,
@@ -209,7 +218,8 @@ const schema = {
         sliderImage: Yup.object().shape({
             sliderImage: image
         }),
-        sliderDelete: deleteSchema
+        sliderDelete: deleteSchema,
+        sliderDeleteMany: deleteManySchema
     },
     project: {
         projectEdit: Yup.object().shape({
@@ -217,14 +227,14 @@ const schema = {
             projectDescription,
             projectGithubLink,
             projectDemoLink,
-            techStacks: chekcbox,
+            techStacks: optioalCheckbox,
         }),
         projectAdd: Yup.object().shape({
             projectTitle,
             projectDescription,
             projectGithubLink,
             projectDemoLink,
-            techStacks: chekcbox,
+            techStacks: optioalCheckbox,
             projectImages: images,
         }),
         projectEditImages: Yup.object().shape({
@@ -233,7 +243,8 @@ const schema = {
         projectEditImage: Yup.object().shape({
             projectImage: image
         }),
-        projectDelete: deleteSchema
+        projectDelete: deleteSchema,
+        projectsDeleteMany: deleteManySchema
     },
     contact: {
         contactEdit: Yup.object().shape({
@@ -248,24 +259,26 @@ const schema = {
         contactEditImage: Yup.object().shape({
             contactSvg: image
         }),
-        contactDelete: deleteSchema
+        contactDelete: deleteSchema,
+        contactDeleteMany: deleteManySchema
     },
     techStack: {
         techStackAdd: Yup.object().shape({
             techName: contactName,
             techSvg: image,
-            projects: chekcbox,
-            techCategories: chekcbox,
+            projects: optioalCheckbox,
+            techCategories: optioalCheckbox,
         }),
         techStackEdit: Yup.object().shape({
             techName: contactName,
-            projects: chekcbox,
-            techCategories: chekcbox,
+            projects: optioalCheckbox,
+            techCategories: optioalCheckbox,
         }),
         techStackEditImage: Yup.object().shape({
             techSvg: image
         }),
-        techStackDelete: deleteSchema
+        techStackDelete: deleteSchema,
+        techStackDeleteMany: deleteManySchema
     },
     certificate: {
         certificateEdit: Yup.object().shape({
@@ -288,24 +301,28 @@ const schema = {
         certificateEditImage: Yup.object().shape({
             certificateImage: image
         }),
-        certificateDelete: deleteSchema
+        certificateDelete: deleteSchema,
+        certificateDeleteMany: deleteManySchema
     },
     category: {
         category: Yup.object().shape({
             categoryName: contactName,
-            techStacks: chekcbox,
+            techStacks: optioalCheckbox,
         }),
-        categoryDelete: deleteSchema
+        categoryDelete: deleteSchema,
+        categoryDeleteMany: deleteManySchema
     },
     user: {
         attachRole: attachRoleSchema,
-        userDelete: deleteSchema
+        userDelete: deleteSchema,
+        userDeleteMany: deleteManySchema
     },
     role: {
         role: Yup.object().shape({
             name: roleName,
         }),
-        roleDelete: deleteSchema
+        roleDelete: deleteSchema,
+        roleDeleteMany: deleteManySchema
     }
 }
 export { deleteSchema };

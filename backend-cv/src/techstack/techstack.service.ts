@@ -217,11 +217,49 @@ export class TechStackService {
           .where('id = :id', { id })
           .execute();
       });
-      await this.deleteCache(); 
+      await this.deleteCache();
       return { id };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('TechStack'));
+    }
+  }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const techStacks = await this.techStackRepository.findBy({ id: In(ids) });
+    if (techStacks.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('TechStacks'));
+    if (techStacks.length !== ids.length) {
+      const foundIds = techStacks.map((t) => t.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('TechStack with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('project_tech_stacks_tech_stack')
+          .where('techStackId IN (:...ids)', { ids })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('tech_stack_tech_categories_tech_category')
+          .where('techStackId IN (:...ids)', { ids })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('tech_stack')
+          .where('id IN (:...ids)', { ids })
+          .execute();
+      });
+      await this.deleteCache();
+      return ids;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('TechStacks with ids: ' + ids.join(', ')));
     }
   }
 }

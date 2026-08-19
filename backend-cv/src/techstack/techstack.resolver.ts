@@ -100,4 +100,21 @@ export class TechStackResolver {
     }
     return id;
   }
+
+  @PermissionGuard([
+    { resource: Resource.TECHSTACK, actions: [Action.DELETE] },
+  ])
+  @Mutation(() => [ID])
+  async removeTechStacks(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    try {
+      const urls = await this.techStackImageService.getImageKeys(ids);
+      await this.techStackService.removeMany(ids);
+      await this.s3Service.deleteFileFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('TechStacks'), {
+        cause: error,
+      });
+    }
+    return ids;
+  }
 }

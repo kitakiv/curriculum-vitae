@@ -4,6 +4,9 @@ import { cachedQueryGraphQl, queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { RESOURCES_GET_QUERY, ROLE_CREATE_MUTATION, ROLE_REMOVE_MUTATION, ROLE_UPDATE_MUTATION } from "@/graphql/role.graphql";
 import { getAllPermissions } from "@/query/permission.query";
+import { RemoveRolesMutation } from "@/gql/graphql";
+import { RemoveRolesMutationVariables } from "@/gql/graphql";
+import { ROLES_REMOVE_MUTATION } from "@/graphql/role.graphql";
 
 
 export async function createRoleAction(prevState: PrevState<CreateRoleInput> | undefined, formData: FormData):
@@ -93,6 +96,29 @@ export async function deleteRoleAction(prevState: PrevState<UpdateRoleInput> | u
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Role deletion failed',
+            id: null
+        };
+    }
+}
+
+export async function deleteRolesAction(prevState: PrevState<{ids: string[]}> | undefined, formData: FormData)
+    : Promise<PrevState<{ids: string[]}>> {
+    const rolesIds = formData.getAll('ids') as string[];
+    try {
+        const res = await queryGraphQL<RemoveRolesMutation, RemoveRolesMutationVariables>
+            (ROLES_REMOVE_MUTATION, {
+                ids: rolesIds
+            });
+        return {
+            success: true,
+            message: `Roles with ids ${rolesIds.join(', ')} deleted successfully`,
+            id: res.removeRoles
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : `Roles with ids ${rolesIds.join(', ')} deletion failed`,
             id: null
         };
     }

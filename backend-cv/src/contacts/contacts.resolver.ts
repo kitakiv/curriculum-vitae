@@ -12,6 +12,7 @@ import { AuthorizationGuard } from '../guards/authorization.guard';
 import { Resource } from '../roles/enums/resource.enum';
 import { Action } from '../roles/enums/action.enum';
 import uploadVariables from 'src/variables/upload.variables';
+import { errors } from '../errors/errors.config';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Contact)
@@ -74,4 +75,20 @@ export class ContactsResolver {
     }
     return id;
   }
+
+  @PermissionGuard([{ resource: Resource.CONTACT, actions: [Action.DELETE] }])
+  @Mutation(() => [ID])
+  async removeContacts(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    try {
+      const urls = await this.contactsImageService.getImageKeys(ids);
+      await this.contactsService.removeMany(ids);
+      await this.s3Service.deleteFileFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('Contacts'), {
+        cause: error,
+      });
+    }
+    return ids;
+  }
+
 }

@@ -4,12 +4,13 @@ import {
   NotFoundException,
   Logger
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Certificate } from './entities/certificate.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
+import { SingleImagesFromIds } from '../upload/interface/singleImage.abstract';
 @Injectable()
 export class CertificateImageService extends SingleImageBaseClass {
   public name: string;
@@ -41,5 +42,17 @@ export class CertificateImageService extends SingleImageBaseClass {
       return certificate.certificateImage;
     }
     return null;
+  }
+
+  async getImageKeys(ids: string[]): Promise<(SingleImagesFromIds)[]> {
+    const certificates = await this.certificatesRepository.findBy({ id: In(ids) });
+    if (certificates.length === 0) throw new NotFoundException(errors.NOT_FOUND('Certificates'));
+    const imageKeys = certificates.reduce((acc: (SingleImagesFromIds)[], certificate) => {
+      if (certificate.certificateImage) {
+        acc.push({ resourceId: certificate.id, imageKey: certificate.certificateImage });
+      }
+      return acc;
+    }, []);
+    return imageKeys;
   }
 }

@@ -139,6 +139,16 @@ export class AuthResolver {
   }
 
   @PermissionGuard([
+    { resource: Resource.USER, actions: [Action.DELETE] },
+    { resource: Resource.REFRESH, actions: [Action.DELETE] },
+  ])
+  @SuperAdmin()
+  @Mutation(() => [ID])
+  async removeUsers(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    return await this.authService.removeMany(ids);
+  }
+
+  @PermissionGuard([
     { resource: Resource.USER, actions: [Action.UPDATE] },
     { resource: Resource.ROLE, actions: [Action.UPDATE] },
   ])

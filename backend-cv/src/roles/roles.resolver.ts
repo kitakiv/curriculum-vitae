@@ -106,6 +106,16 @@ export class RolesResolver {
     return await this.rolesService.remove(id);
   }
 
+  @PermissionGuard([
+    { resource: Resource.ROLE, actions: [Action.DELETE] },
+    { resource: Resource.USER, actions: [Action.UPDATE] },
+  ])
+  @SuperAdmin()
+  @Mutation(() => [ID])
+  async removeRoles(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    return await this.rolesService.removeMany(ids);
+  }
+
   
   @Query(() => [allPermission], { name: 'permissions' })
   async findPermissions(@CurrentUserId() userId: string,) {

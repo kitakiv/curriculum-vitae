@@ -4,13 +4,14 @@ import {
   NotFoundException,
   Logger
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Project } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { images } from 'src/variables/image.variables';
 import { MultiImage, MultiImageBaseClass } from 'src/upload/interface/multiImage.abstract';
+import { MultiImagesFromIds } from '../upload/interface/multiImage.abstract';
 
 @Injectable()
 export class ProjectsImageService extends MultiImageBaseClass {
@@ -118,5 +119,22 @@ export class ProjectsImageService extends MultiImageBaseClass {
       return project.projectImages;
     }
     return null;
+  }
+
+  async getImageKeysIds(resourceIds: string[]): Promise<(MultiImagesFromIds)[]> {
+    const projects = await this.projectsRepository.findBy({ id: In(resourceIds) });
+    if (projects.length === 0) throw new NotFoundException(errors.NOT_FOUND('Projects'));
+    if (projects.length !== resourceIds.length) {
+      const foundIds = projects.map((p) => p.id);
+      const notFoundIds = resourceIds.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Project with id: ' + notFoundIds.join(', ')));
+    }
+    const imageKeys = projects.reduce((acc: (MultiImagesFromIds)[], project) => {
+      if (project.projectImages && project.projectImages.length > 0) {
+        acc.push({ resourceId: project.id, imageKeys: project.projectImages });
+      }
+      return acc;
+    }, []);
+    return imageKeys;
   }
 }

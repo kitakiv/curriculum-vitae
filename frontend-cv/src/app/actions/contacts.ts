@@ -5,6 +5,9 @@ import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { CONTACT_UPDATE_MUTATION, CONTACT_CREATE_MUTATION, CONTACT_REMOVE_MUTATION } from "@/graphql/contacts.graphql";
 import { PrevState, PrevStateFull } from "./action.type";
+import { CONTACTS_REMOVE_MUTATION } from "@/graphql/contacts.graphql";
+import { RemoveContactsMutation } from "@/gql/graphql";
+import { RemoveContactsMutationVariables } from "@/gql/graphql";
 
 
 const CONTACT_SVG = 'contactSvg';
@@ -97,9 +100,9 @@ export async function updateContactImageAction(prevState: PrevStateFull<CreateCo
 
 export async function deleteContactAction(prevState: PrevState<CreateContactInput>| undefined, formData: FormData,  initialValues: UpdateContactInput, id: string)
 :Promise<PrevState<CreateContactInput>> {
-    const sliderId = formData.get('id')?.toString() as string;
+    const constactId = formData.get('id')?.toString() as string;
     try {
-       if (initialValues.id !== sliderId || id !== initialValues.id) throw Error("The id incorrect");
+       if (initialValues.id !== constactId || id !== initialValues.id) throw Error("The id incorrect");
         const res = await queryGraphQL<RemoveContactMutation, RemoveContactMutationVariables>
         (CONTACT_REMOVE_MUTATION, {
             id: id,
@@ -113,7 +116,31 @@ export async function deleteContactAction(prevState: PrevState<CreateContactInpu
         console.log(error);
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Slider deletion failed',
+            message: error instanceof Error ? error.message : 'Contact deletion failed',
+            id: null
+        };
+    }
+}
+
+export async function deleteContactsAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevState<{ids: string[]}>> {
+    const constactsIds = formData.getAll('ids') as string[];
+    try {
+
+        const res = await queryGraphQL<RemoveContactsMutation, RemoveContactsMutationVariables>
+        (CONTACTS_REMOVE_MUTATION, {
+            ids: constactsIds
+        });
+        return {
+            success: true,
+            message: `Contacts with ids ${constactsIds.join(', ')} deleted successfully`,
+            id: res.removeContacts
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : `Contacts with ids ${constactsIds.join(', ')} deletion failed`,
             id: null
         };
     }

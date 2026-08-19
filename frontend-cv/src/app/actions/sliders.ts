@@ -5,6 +5,9 @@ import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { SLIDER_CREATE_MUTATION, SLIDER_REMOVE_MUTATION, SLIDER_UPDATE_MUTATION } from "@/graphql/slider.graphql";
 import { PrevState, PrevStateFull } from "./action.type";
+import { RemoveSlidersMutation } from "@/gql/graphql";
+import { RemoveSlidersMutationVariables } from "@/gql/graphql";
+import { SLIDERS_REMOVE_MUTATION } from "@/graphql/slider.graphql";
 
 const SLIDER_IMAGE = 'sliderImage';
 
@@ -97,7 +100,6 @@ export async function updateSliderImageAction(prevState: PrevStateFull<CreateSli
 export async function deleteSliderAction(prevState: PrevState<CreateSliderInput>| undefined, formData: FormData,  initialValues: UpdateSliderInput, id: string)
 :Promise<PrevState<CreateSliderInput>> {
     const sliderId = formData.get('id')?.toString() as string;
-    console.log(sliderId, initialValues.id, id);
     try {
        if (initialValues.id !== sliderId || id !== initialValues.id) throw Error("The id incorrect");
         const res = await queryGraphQL<RemoveSliderMutation, RemoveSliderMutationVariables>
@@ -114,6 +116,29 @@ export async function deleteSliderAction(prevState: PrevState<CreateSliderInput>
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Slider deletion failed',
+            id: null
+        };
+    }
+}
+
+export async function deleteSlidersAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevState<CreateSliderInput>> {
+    const sliderIds = formData.getAll('ids') as string[];
+    try {
+        const res = await queryGraphQL<RemoveSlidersMutation, RemoveSlidersMutationVariables>
+        (SLIDERS_REMOVE_MUTATION, {
+            ids: sliderIds,
+        });
+        return {
+            success: true,
+            message: `Sliders with ids ${sliderIds.join(', ')} deleted successfully`,
+            id: res.removeSliders
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : `Sliders with ids ${sliderIds.join(', ')} deletion failed`,
             id: null
         };
     }

@@ -35,7 +35,7 @@
     --admin-tx0: #000000;
     --admin-gr0: #fafafa;
     --admin-gr33: #FFFFFF;
-    --admin-tx100: #D1D5DB;
+    --admin-tx100: #c1c5cc;
     --admin-gr100: #F8FAFC;
     --font-display: "BBH Bartle", sans-serif;
     /* #1e7de9; */
@@ -203,6 +203,21 @@
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
+
+.image-mask-top-photo {
+  mask-image: linear-gradient(to top, black 80%, transparent 99%);
+  -webkit-mask-image: linear-gradient(to top, black 80%, transparent 99%);
+   -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+
 
 .image-mask-left-photo {
   mask-image: linear-gradient(to left, black 80%, transparent 99%);

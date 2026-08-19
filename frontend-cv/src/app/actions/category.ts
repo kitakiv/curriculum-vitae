@@ -2,7 +2,9 @@
 import { CreateTechCategoryInput, CreateTechCategoryMutation, CreateTechCategoryMutationVariables, RemoveTechCategoryMutation, RemoveTechCategoryMutationVariables, UpdateTechCategoryInput, UpdateTechCategoryMutation, UpdateTechCategoryMutationVariables, TechCategory } from "@/gql/graphql"
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState } from "./action.type";
-import { TECHCATEGORY_CREATE_MUTATION, TECHCATEGORY_DELETE_MUTATION, TECHCATEGORY_UPDATE_MUTATION } from "@/graphql/techCategory.graphql";
+import { TECHCATEGORY_CREATE_MUTATION, TECHCATEGORY_DELETE_MUTATION, TECHCATEGORY_UPDATE_MUTATION, TECHCATEGORIES_DELETE_MUTATION} from "@/graphql/techCategory.graphql";
+import { RemoveTechCategoriesMutation } from "@/gql/graphql";
+import { RemoveTechCategoriesMutationVariables } from "@/gql/graphql";
 
 
 export async function updateTechCategoryAction(prevState: PrevState<UpdateTechCategoryInput>| undefined, formData: FormData, intitalValues: TechCategory, id: string):
@@ -106,8 +108,33 @@ export async function deleteTechCategoryAction(prevState: PrevState<UpdateTechCa
         console.log(error);
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'TechStack deletion failed',
+            message: error instanceof Error ? error.message : 'TechCategory deletion failed',
             id: null
         };
     }
 }
+
+export async function deleteTechCategoriesAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevState<{ids: string[]}>> {
+    const techCategoriesIds = formData.getAll('ids') as string[];
+    try {
+        const res = await queryGraphQL<RemoveTechCategoriesMutation, RemoveTechCategoriesMutationVariables>
+        (TECHCATEGORIES_DELETE_MUTATION, {
+            id: techCategoriesIds,
+        });
+        return {
+            success: true,
+            message: `TechCategories with ids ${techCategoriesIds.join(', ')} deleted successfully`,
+            id: res.removeTechCategories
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : `TechCategories with ids ${techCategoriesIds.join(', ')} deletion failed`,
+            id: null
+        };
+    }
+}
+
+

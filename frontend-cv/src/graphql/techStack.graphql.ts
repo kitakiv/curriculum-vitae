@@ -83,6 +83,12 @@ const TECHSTACK_DELETE_MUTATION = gql`
     }
 `;
 
+const TECHSTACKS_DELETE_MUTATION = gql`
+    mutation DeleteTechStacks($ids: [ID!]!) {
+        removeTechStacks(ids: $ids)
+    }
+`;
+
 const TECHSTACK_GET_ONE_QUERY = gql`
     query GetTechStack($id: ID!) {
         techstack(id: $id) {
@@ -101,9 +107,12 @@ const TECHSTACK_GET_ONE_QUERY = gql`
     }
 `;
 
-export { TECHSTACK_PROJECTS_QUERY,
-     TECHSTACKS_GET_QUERY,
-      TECHSTACK_DELETE_MUTATION,
-       TECHSTACK_CREATE_MUTATION,
-        TECHSTACK_UPDATE_MUTATION,
-         TECHSTACK_GET_ONE_QUERY };
+export {
+    TECHSTACK_PROJECTS_QUERY,
+    TECHSTACKS_GET_QUERY,
+    TECHSTACK_DELETE_MUTATION,
+    TECHSTACK_CREATE_MUTATION,
+    TECHSTACK_UPDATE_MUTATION,
+    TECHSTACK_GET_ONE_QUERY,
+    TECHSTACKS_DELETE_MUTATION
+};

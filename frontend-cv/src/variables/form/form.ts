@@ -1,6 +1,29 @@
 
 
 
+ enum Resource {
+  USER = 'user',
+  CONTACT = 'contact',
+  PROJECT = 'project',
+  TECHSTACK = 'techstack',
+  SLIDER = 'slider',
+  PROFILE = 'profile',
+  ROLE = 'role',
+  IMAGE = 'image',
+  REFRESH = 'refresh',
+  CATEGORY = 'category',
+  CERTIFICATE = 'certificate',
+}
+
+
+
+ enum Action {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  DELETEMANY = 'deleteMany'
+}
 
 const form = {
     loginForm: {
@@ -64,6 +87,7 @@ const form = {
     sliderForm: {
         type: "add",
         initialValues: { sliderName: "", sliderText: "", sliderImage: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         initialValuesDelete: { id: "" },
         inputsAdd: [
             { id: "sliderName", label: "Slider Name", name: "sliderName", placeholder: "Slider Name", type: "text" },
@@ -79,6 +103,9 @@ const form = {
         ],
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         title: "Slider settings",
         name: "Slider",
@@ -87,16 +114,17 @@ const form = {
     techStackForm: {
         initialValues: { techName: "", techSvg: "", projects: [], techCategories: [] },
         initialValuesDelete: { id: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         inputsAdd: [
             { id: "techName", label: "Tech Stack Name", name: "techName", placeholder: "Tech Stack Name", type: "text" },
             { id: "techSvg", label: "Tech Stack Svg", name: "techSvg", placeholder: "Tech Stack Svg", type: "file" },
-            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [] },
-            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [] },
+            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [], link: `${Resource.PROJECT}/${Action.CREATE}`, linkName: "Create Project" },
+            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [], link: `${Resource.CATEGORY}/${Action.CREATE}`, linkName: "Create Tech Category" },
         ],
         inputsEdit: [
             { id: "techName", label: "Tech Stack Name", name: "techName", placeholder: "Tech Stack Name", type: "text" },
-            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [] },
-            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [] },
+            { id: "projects", label: "Projects", name: "projects", placeholder: "Projects", type: "checkbox", options: [], link: `${Resource.PROJECT}/${Action.CREATE}`, linkName: "Create Project" },
+            { id: "techCategories", label: "Tech Categories", name: "techCategories", placeholder: "Tech Categories", type: "checkbox", options: [], link: `${Resource.CATEGORY}/${Action.CREATE}`, linkName: "Create Tech Category" },
         ],
         inputsEditImage: [
             { id: "techSvg", label: "Tech Stack Svg", name: "techSvg", placeholder: "Tech Stack Svg", type: "file" },
@@ -104,19 +132,23 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
         title: "Tech Stack settings",
         name: "Tech Stack",
         id: "techstack-admin",
     },
     projectForm: {
         initialValuesDelete: { id: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         initialValues: { projectTitle: "", projectDescription: "", projectImages: [], projectGithubLink: "", projectDemoLink: "" , techStacks: [] },
         inputsAdd: [
             { id: "projectTitle", label: "Title", name: "projectTitle", placeholder: "Title", type: "text" },
             { id: "projectDescription", label: "Description", name: "projectDescription", placeholder: "Description", type: "text", as: "textarea" },
             { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "url" },
             { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "url" },
-            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [] },
+            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [], link: `${Resource.TECHSTACK}/${Action.CREATE}`, linkName: "Create Tech Stack" },
             { id: "projectImages", label: "Project Images", name: "projectImages", placeholder: "Project Images", type: "files" },
             
         ],
@@ -125,7 +157,7 @@ const form = {
             { id: "projectDescription", label: "Description", name: "projectDescription", placeholder: "Description", type: "text", as: "textarea" },
             { id: "projectGithubLink", label: "Github Link", name: "projectGithubLink", placeholder: "Github Link", type: "url" },
             { id: "projectDemoLink", label: "Demo Link", name: "projectDemoLink", placeholder: "Demo Link", type: "url" },
-            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [] },
+            { id: "techStacks", label: "Projects Tech Stacks", name: "techStacks", placeholder: "Tech Stack", type: "checkbox", options: [], link: `${Resource.TECHSTACK}/${Action.CREATE}`, linkName: "Create Tech Stack" },
         ],
         inputsEditImage: [
             { id: "projectImage", label: "Image", name: "projectImage", placeholder: "Image", type: "file" },
@@ -136,12 +168,16 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
         title: "Project settings",
         name: "Project",
         id: "project-admin",
     },
     contactsForm: {
         initialValuesDelete: { id: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         initialValues: { contactName: "", contactSvg: "", contactLink: "" },
         inputsAdd:[
             { id: "contactName", label: "Contact Name", name: "contactName", placeholder: "Contact Name", type: "text" },
@@ -158,12 +194,16 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
         title: "Contact settings",
         name: "Contacts",
         id: "contact-admin",
     },
     certificatesForm: {
         initialValuesDelete: { id: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         initialValues: { certificateTitle: "", certificateCompany: "", certificateDescription: "", certificateLink: "", certificateImage: "", certificatePeriodStart: new Date(), certificatePeriodEnd: new Date() },
         inputsAdd: [
             { id: "certificateTitle", label: "Certificate Title", name: "certificateTitle", placeholder: "Certificate Title", type: "text" },
@@ -188,6 +228,9 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
     },
     mainImageForm: {
         initialValues: { mainImage: "" },
@@ -207,17 +250,22 @@ const form = {
     categoryForm: {
         initialValuesDelete: { id: "" },
         initialValues: { categoryName: "", techStacks: [] },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         inputs: [
             { id: "categoryName", label: "Category Name", name: "categoryName", placeholder: "Category Name", type: "text" },
-            { id: "techStacks", label: "Tech Stacks", name: "techStacks", placeholder: "Tech Stacks", type: "checkbox", options: [] },
+            { id: "techStacks", label: "Tech Stacks", name: "techStacks", placeholder: "Tech Stacks", type: "checkbox", options: [], link: `${Resource.TECHSTACK}/${Action.CREATE}`, linkName: "Create Tech Stack" },
         ],
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
+        ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     },
     userForm: {
         initialValuesDelete: { id: "" },
         initialValues: { userId: "", roleId: "" },
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         inputs: [
             { id: "userId", label: "User ID", name: "userId", placeholder: "User ID", type: "text" },
             { id: "roleId", label: "Role ID", name: "roleId", placeholder: "Role ID", type: "text" },
@@ -225,9 +273,13 @@ const form = {
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
     },
     roleForm: {
         initialValuesDelete: { id: ""},
+        initialValuesDeleteMany: { ids: [], phrase: "" },
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
@@ -235,6 +287,9 @@ const form = {
         inputs: [
             { id: "name", label: "Role Name", name: "name", placeholder: "Role Name", type: "text" },
             { id: "permissions", label: "Permissions", name: "permissions", placeholder: "Resource", type: "table", options: [] },
+        ],
+        inputsDeleteMany: [
+            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     }
 }

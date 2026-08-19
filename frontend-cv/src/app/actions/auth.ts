@@ -1,12 +1,15 @@
 'use server'
 import { AttachRoleInput, AttachRoleToUserMutation, AttachRoleToUserMutationVariables, DeleteUserMutation, DeleteUserMutationVariables, LoginInput, SignUpInput, User, LogoutMutation, LogoutMutationVariables } from "@/gql/graphql"
-import { USER_ATTACH_ROLE_MUTATION, USER_DELETE_QUERY, LOGOUT_AUTH_QUERY } from "@/graphql/auth.graphql";
+import { USER_ATTACH_ROLE_MUTATION, USER_DELETE_QUERY, LOGOUT_AUTH_QUERY, USERS_DELETE_QUERY } from "@/graphql/auth.graphql";
 import { loginUser, signUpUser } from "@/query/auth.query";
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { clearTokens } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import header from "@/variables/header/header";
+import { DeleteUsersMutation } from "@/gql/graphql";
+import { DeleteUsersMutationVariables } from "@/gql/graphql";
+
 
 export type LoginFormState = {
     message?: string;
@@ -74,6 +77,7 @@ export async function login(prevState: LoginFormState | undefined, formData: For
         };
     } finally {
         if (success) {
+            
             redirect(redirectUrl);
         }
     }
@@ -180,6 +184,39 @@ export async function deleteUserAction(prevState: PrevState<{ id: string }> | un
         };
     }
 };
+
+
+export async function deleteUsersAction(prevState: PrevState<{ ids: string[] }> | undefined, formData: FormData): Promise<PrevState<{ ids: string[] }>> {
+    const userIdsFromForm = formData.getAll('ids') as string[];
+    const userId = formData.get('resourceId') as string;
+    if (!userId) throw new Error('User ID not found');
+    if (!userIdsFromForm.includes(userId)) {
+        return {
+            id: userId,
+            success: false,
+            message: 'Your user ID is in the list of user IDs to delete'
+        };
+    }
+    try {
+        const result = await queryGraphQL<DeleteUsersMutation, DeleteUsersMutationVariables>(
+            USERS_DELETE_QUERY,
+            { ids: userIdsFromForm }
+        );
+
+        return {
+            id: result.removeUsers,
+            success: true,
+            message: `Users with ids ${userIdsFromForm.join(', ')} deleted successfully`
+        };
+    } catch (error) {
+        return {
+            id: userId,
+            success: false,
+            message: error instanceof Error ? error.message : `Users with ids ${userIdsFromForm.join(', ')} deletion failed`
+        };
+    }
+};
+
 
 
 

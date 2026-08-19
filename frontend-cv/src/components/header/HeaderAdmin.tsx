@@ -5,6 +5,8 @@ import header from "@/variables/header/header";
 import MainLink from "./components/MainLink";
 import { getProfileCached } from "@/query/profile.query";
 import { GetProfileQuery } from "@/gql/graphql";
+import LogoutForm from "@/components/admin/logout/LogoutForm";
+
 
 export default async function HeaderAdmin() {
     
@@ -12,7 +14,7 @@ export default async function HeaderAdmin() {
     return (
         <HeaderSection>
                <MainLink href="/" profile={profile}/>
-                <ThemeIcon key={header.keyIcons} />
+                 <LogoutForm />
         </HeaderSection>
     );
-}
+} 

@@ -5,6 +5,7 @@ import { hasPermission } from "@/query/permissions";
 import {getInitialValues, getInputsValues } from "@/query/query";
 import { Resource, Action } from "@/variables/admin/resource";
 import { InputType } from "@/types/index";
+import ResourceDeleteManySection from "@/components/admin/components/ResourceDeleteManySection";
 
 type Props = {
     params: Promise<{ resource: Resource, action: string }>
@@ -13,7 +14,6 @@ export default async function Page({ params }: Props) {
     const user = await getMe() as GetUserMutation['getUser'];
     const currentResource = (await params).resource;
     const action = (await params).action;
-
     // create action
     if (action === Action.CREATE) {
         const canCreate = user ? hasPermission(user, currentResource, [Action.CREATE]) : false;
@@ -23,7 +23,13 @@ export default async function Page({ params }: Props) {
         return <ResourceCreateSection user={user} currentResource={currentResource} inputs={inputsAdd as InputType[] | null} initalValues={initalValues} />
     }
 
+    if (action === Action.DELETEMANY) {
+        const canDelete = user ? hasPermission(user, currentResource, [Action.DELETE]) : false;
+        if (!canDelete) return <div>Access Denied</div>
+        return <ResourceDeleteManySection currentResource={currentResource} />
+    }
+
 
     // no acitons
-    return <div>Invalid action</div>
+    return <div>INVALID ACTION</div>
 }

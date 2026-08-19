@@ -93,4 +93,21 @@ export class ProjectsResolver {
     }
     return id;
   }
+
+   @PermissionGuard([
+    { resource: Resource.PROJECT, actions: [Action.DELETE] },
+  ])
+  @Mutation(() => [ID])
+  async removeProjects(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    try {
+      const urls = await this.projectsImageService.getImageKeysIds(ids);
+      await this.projectsService.removeMany(ids);
+      await this.s3Service.deleteFilesFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('Projects'), {
+        cause: error,
+      });
+    }
+    return ids;
+  }
 }

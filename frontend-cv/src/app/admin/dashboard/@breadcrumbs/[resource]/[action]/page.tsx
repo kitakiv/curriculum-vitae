@@ -19,15 +19,15 @@ export default async function Page({ params }: Props) {
     const resource = (await params).resource;
     const action = (await params).action;
     return (
-        <div className="flex gap-2 text-adminGr0 transition-all duration-700 px-11 py-4">
-            <Link className="flex gap-2 hover:text-adminTx underline transition-all duration-700" href={adminVariables.pathAdminPage}>
+        <div className="flex gap-2 text-adminTx transition-all duration-700 px-11 py-4 flex-wrap">
+            <Link className="flex gap-2 hover:text-adminTx underline transition-all duration-700 text-adminTx100" href={adminVariables.pathAdminPage}>
             <HomeIcon />
             <MiddleText>
                 {adminVariables.dashBoard}
             </MiddleText>
             </Link>
             /
-            <Link className="flex gap-2 hover:text-adminTx underline transition-all duration-700" href={adminVariables.pathAdminPage + '/' + resource}>
+            <Link className="flex gap-2 hover:text-adminTx underline transition-all duration-700 text-adminTx100" href={adminVariables.pathAdminPage + '/' + resource}>
             <MiddleText tailwind="capitalize">
                 {resource}
             </MiddleText>

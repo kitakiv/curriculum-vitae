@@ -9,7 +9,7 @@ import photo from "@/variables/photo/photo";
 
 export default async function PhotoSection() {
     const sliders = await getSlidersCached();
-    return <section className='flex flex-col w-full items-center justify-center padding gap-4 ' id={photo.id}>
+    return <section className='flex flex-col w-full items-center justify-center gap-4 ' id={photo.id}>
         <FadeInSection>
             <TextPortfolio tailwind="text-center">{photo.portfolio}</TextPortfolio>
             <TextHeading>{photo.heading}</TextHeading>

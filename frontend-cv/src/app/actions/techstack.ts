@@ -5,6 +5,9 @@ import { uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { TECHSTACK_CREATE_MUTATION, TECHSTACK_DELETE_MUTATION, TECHSTACK_UPDATE_MUTATION } from "@/graphql/techStack.graphql";
+import { DeleteTechStacksMutation } from "@/gql/graphql";
+import { DeleteTechStacksMutationVariables } from "@/gql/graphql";
+import { TECHSTACKS_DELETE_MUTATION } from "@/graphql/techStack.graphql";
 
 const TECHSTACK_SVG = 'techSvg';
 
@@ -104,9 +107,9 @@ export async function createTechStackAciton(prevState: PrevState<CreateTechStack
 }
 export async function deleteTechStackAciton(prevState: PrevState<UpdateTechStackInput>| undefined, formData: FormData,  initialValues: TechStack, id: string)
 :Promise<PrevState<UpdateTechStackInput>> {
-    const projectId = formData.get('id')?.toString() as string;
+    const techStackId = formData.get('id')?.toString() as string;
     try {
-       if (initialValues.id !== projectId || id !== initialValues.id) throw Error("The id incorrect");
+       if (initialValues.id !== techStackId || id !== initialValues.id) throw Error("The id incorrect");
         const res = await queryGraphQL<DeleteTechStackMutation, DeleteTechStackMutationVariables>
         (TECHSTACK_DELETE_MUTATION, {
             id: id,
@@ -121,6 +124,30 @@ export async function deleteTechStackAciton(prevState: PrevState<UpdateTechStack
         return {
             success: false,
             message: error instanceof Error ? error.message : 'TechStack deletion failed',
+            id: null
+        };
+    }
+}
+
+
+export async function deleteTechStacksAciton(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevState<{ids: string[]}>> {
+    const techStackIds = formData.getAll('ids') as string[];
+    try {
+        const res = await queryGraphQL<DeleteTechStacksMutation, DeleteTechStacksMutationVariables>
+        (TECHSTACKS_DELETE_MUTATION, {
+           ids: techStackIds
+        });
+        return {
+            success: true,
+            message: `TechStacks with ids ${techStackIds.join(', ')} deleted successfully`,
+            id: res.removeTechStacks
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message :  `TechStacks with ids ${techStackIds.join(', ')} deletion failed`,
             id: null
         };
     }

@@ -73,4 +73,21 @@ export class SlidersResolver {
     }
     return id;
   }
+
+   @PermissionGuard([
+    { resource: Resource.SLIDER, actions: [Action.DELETE] },
+  ])
+  @Mutation(() => [ID])
+  async removeSliders(@Args('ids', { type: () => [ID] }) ids: string[]) {
+    try {
+      const urls = await this.sliderImageService.getImageKeys(ids);
+      await this.slidersService.removeMany(ids);
+      await this.s3Service.deleteFileFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('Sliders'), {
+        cause: error,
+      });
+    }
+    return ids;
+  }
 }

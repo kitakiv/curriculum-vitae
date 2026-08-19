@@ -99,6 +99,12 @@ const USER_DELETE_QUERY = gql`
 }
 `;
 
+const USERS_DELETE_QUERY = gql`
+    mutation DeleteUsers($ids: [ID!]!) {
+    removeUsers(ids: $ids) 
+}
+`;
+
 const USER_GET_ONE_QUERY = gql`
     query GetOneUser($id: ID!) {
     userById(id: $id) {
@@ -134,6 +140,7 @@ export { SIGNUP_AUTH_QUERY,
         USERS_GET_QUERY,
          USER_ATTACH_ROLE_MUTATION,
         USER_DELETE_QUERY,
+        USERS_DELETE_QUERY,
         USER_GET_ONE_QUERY,
         LOGOUT_AUTH_QUERY
 };

@@ -563,7 +563,7 @@ const table: Table = {
                 type: 'string',
                 renderCell: (params) => {
                     return (<Link href={`${adminVariables.pathAdminPage}/${Resource.ROLE}/${adminVariables.view.path}/${(params.value as Role)?.id}`}>
-                        {params.value.name}
+                        {(params.value as Role)?.name || 'No role'}
                     </Link>)
                 }
             }
@@ -614,7 +614,6 @@ const table: Table = {
                 type: 'string',
                 renderCell: (params) => {
                     const permissions = params.value as Permission[];
-                    console.log(permissions, 'permissions');
                     return (
                         <div
                             style={{

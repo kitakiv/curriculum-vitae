@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SignUpInput } from './dto/signUp.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginInput } from './dto/login.input';
@@ -397,6 +397,26 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException(errors.NOT_DELETED('User'));
     }
     return userId;
+  }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const users = await this.userRepository.findBy({ id: In(ids) });
+    if (users.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Users'));
+    if (users.length !== ids.length) {
+      const foundIds = users.map((u) => u.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('User with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager.delete(User, ids);
+      });
+      return ids;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Users with ids: ' + ids.join(', ')));
+    }
   }
 
   async canActivateCurrentPermissions(

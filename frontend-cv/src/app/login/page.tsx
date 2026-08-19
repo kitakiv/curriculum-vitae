@@ -7,7 +7,7 @@ export default async function Page() {
     return (
         <>
             <HeaderLogin />
-            <main className="overflow-hidden w-full h-screen gradient-box relative">
+            <main className="overflow-hidden w-full h-min-screen gradient-box relative">
                 <StartPage tailwind="padding flex items-center justify-center">
                     <LoginPage />
                 </StartPage>

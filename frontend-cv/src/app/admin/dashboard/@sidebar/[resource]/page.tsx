@@ -1,6 +1,7 @@
 import { getMe } from "@/query/auth.query"
 import Sidebar from "@/components/admin/components/Sidebar";
 import { GetUserMutation } from "@/gql/graphql";
+import MenuLoader from "@/components/loader/MenuLoader";
 
 interface Props {
     params: Promise<{ resource: string }>

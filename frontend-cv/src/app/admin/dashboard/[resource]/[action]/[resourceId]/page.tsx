@@ -6,6 +6,8 @@ import { getEditInitialValues, getResourceById, getResouseInputsEdit } from "@/q
 import {Action, Resource } from "@/variables/admin/resource";
 import ResourceDeleteSection from "@/components/admin/components/ResourceDeleteSection";
 import { InputType } from "@/types/index";
+import LoadingForm from "@/components/loader/LoadingForm";
+
 
 type Props = {
     params: Promise<{ resource: Resource, action: Action, resourceId: string }>

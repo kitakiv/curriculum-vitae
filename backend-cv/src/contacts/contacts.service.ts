@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateContactInput } from './dto/create-contact.input';
 import { UpdateContactInput } from './dto/update-contact.input';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { errors } from '../errors/errors.config';
@@ -86,5 +86,27 @@ export class ContactsService {
       throw new BadRequestException(errors.NOT_DELETED('Contact'));
     }
     return { id };
+  }
+
+   async removeMany(ids: string[]) {
+    const contacts = await this.contactsRepository.findBy({ id: In(ids) });
+    if (contacts.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Contacts'));
+    if (contacts.length !== ids.length) {
+      const contactIds = contacts.map((c) => c.id);
+      const notFoundIds = ids.filter((id) => !contactIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Contact with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      const deletedIds = await this.dataSource.transaction(async (manager) => {
+        await manager.remove(Contact, contacts);
+        return ids;
+      });
+      await this.deleteCache();
+      return deletedIds;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Contacts with ids: ' + ids.join(', ')));
+    }
   }
 }

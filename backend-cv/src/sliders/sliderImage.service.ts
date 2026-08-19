@@ -4,12 +4,13 @@ import {
   NotFoundException,
   Logger
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import uploadVariables from '../variables/upload.variables';
 import { errors } from '../errors/errors.config';
 import { SingleImage, SingleImageBaseClass } from 'src/upload/interface/singleImage.abstract';
+import { SingleImagesFromIds } from '../upload/interface/singleImage.abstract';
 @Injectable()
 export class SliderImageService extends SingleImageBaseClass {
   public name: string;
@@ -41,5 +42,17 @@ export class SliderImageService extends SingleImageBaseClass {
       return slider.sliderImage;
     }
     return null;
+  }
+
+  async getImageKeys(ids: string[]): Promise<(SingleImagesFromIds)[]> {
+    const sliders = await this.slidersRepository.findBy({ id: In(ids) });
+    if (sliders.length === 0) throw new NotFoundException(errors.NOT_FOUND('Sliders'));
+    const imageKeys = sliders.reduce((acc: (SingleImagesFromIds)[], slider) => {
+      if (slider.sliderImage) {
+        acc.push({ resourceId: slider.id, imageKey: slider.sliderImage });
+      }
+      return acc;
+    }, []);
+    return imageKeys;
   }
 }

@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  Logger
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { CreateSliderInput } from './dto/create-slider.input';
 import { UpdateSliderInput } from './dto/update-slider.input';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Slider } from './entities/slider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { errors } from '../errors/errors.config';
@@ -85,5 +80,27 @@ export class SlidersService {
       throw new BadRequestException(errors.NOT_DELETED('Slider'));
     }
     return { id };
+  }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const sliders = await this.slidersRepository.findBy({ id: In(ids) });
+    if (sliders.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Sliders'));
+    if (sliders.length !== ids.length) {
+      const foundIds = sliders.map((s) => s.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Slider with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      const deletedIds = await this.dataSource.transaction(async (manager) => {
+        await manager.remove(Slider, sliders);
+        return ids;
+      });
+      await this.deleteCache();
+      return deletedIds;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Sliders with ids: ' + ids.join(', ')));
+    }
   }
 }

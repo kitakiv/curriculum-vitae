@@ -3,11 +3,10 @@
 import { GetUserMutation } from '@/gql/graphql';
 import { getUserResources } from '@/query/permissions';
 import { Resource, resourceConfig } from '@/variables/admin/resource';
-import BurgerIconAdmin from './BurgerIconAdmin';
 import Link from 'next/link';
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { toggleBurgerMenu } from "@/features/position/PositionSlice";
 import SideBarWrapper from './SideBarWrapper';
+import ThemeIcon from '@/components/header/components/ThemeIcon';
+import header from '@/variables/header/header';
 
 interface SidebarProps {
   user: GetUserMutation['getUser'];
@@ -19,6 +18,8 @@ export default function Sidebar({ user, currentResource }: SidebarProps) {
 
   return (  
     <SideBarWrapper>
+      <>
+       <div className="flex items-center justify-center"><span><ThemeIcon key={header.keyIcons} /></span></div>
         {userResources.map((resource: Resource) => {
           // @ts-ignore
           const config = resource ? resourceConfig[resource]: null;
@@ -31,7 +32,7 @@ export default function Sidebar({ user, currentResource }: SidebarProps) {
               key={resource}
               href={config.path}
               className={`flex items-center w-full gap-3 padding-button rounded-lg transition-colors ${isActive
-                  ? 'bg-adminGr0 text-light font-extrabold'
+                  ? 'bg-adminGr0 text-adminTx font-extrabold'
                   : 'hover:bg-adminGr33 text-adminTx100'
                 }`}
             >
@@ -39,6 +40,7 @@ export default function Sidebar({ user, currentResource }: SidebarProps) {
             </Link>
           );
         })}
+        </>
       </SideBarWrapper>
   );
 }

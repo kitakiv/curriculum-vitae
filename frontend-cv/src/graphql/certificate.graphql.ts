@@ -52,6 +52,12 @@ const CERTIFICATE_REMOVE_MUTATION = gql`
     }
 `;
 
+const CERTIFICATES_REMOVE_MUTATION = gql`
+    mutation RemoveCertificates($ids: [ID!]!) {
+      removeCertificates(ids: $ids)
+    }
+`;
+
 const CERTIFICATE_UPDATE_MUTATION = gql`
     mutation UpdateCertificate($updateCertificateInput: UpdateCertificateInput!) {
       updateCertificate(updateCertificateInput: $updateCertificateInput) {
@@ -68,4 +74,4 @@ const CERTIFICATE_UPDATE_MUTATION = gql`
 `;
 
 
-export { CERTIFICATE_GET_QUERY, CERTIFICATE_GET_ONE_QUERY, CERTIFICATE_CREATE_MUTATION, CERTIFICATE_REMOVE_MUTATION, CERTIFICATE_UPDATE_MUTATION };
+export { CERTIFICATE_GET_QUERY, CERTIFICATE_GET_ONE_QUERY, CERTIFICATE_CREATE_MUTATION, CERTIFICATE_REMOVE_MUTATION, CERTIFICATES_REMOVE_MUTATION, CERTIFICATE_UPDATE_MUTATION };

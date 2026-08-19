@@ -5,6 +5,9 @@ import MiddleText from "../text/MiddleText";
 import { useDropzone } from 'react-dropzone'
 import SmallText from "../text/SmallText";
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import AdminButton from "@/components/button/AdminButton";
+import Link from "next/link";
+import { adminVariables } from "@/variables/admin/resource";
 
 interface Props {
     inputData: InputType,
@@ -141,6 +144,11 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
         return (
             <>
                 <label htmlFor={id}><MiddleText tailwind="text-footerTx">{label}</MiddleText></label>
+                {inputData.options.length === 0 && inputData.link && inputData.linkName &&
+                    <Link href={`${adminVariables.pathAdminPage}/${inputData.link}`} className="text-adminTx100">
+                        <AdminButton type="button">{inputData.linkName}</AdminButton>
+                    </Link>
+                }
                 {inputData.options.map((option) => (
                     <div key={`option-${name}-${option.value}`}>
                         <label className="text-adminTx100">

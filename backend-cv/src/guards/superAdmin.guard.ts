@@ -46,6 +46,14 @@ export class SuperAdminGuard implements CanActivate {
           throw new ForbiddenException('Super admin cannot be updated or deleted');
       }
       const role = await this.authService.findAllRoles(adminUser.id);
+      if (args.ids) {
+          if (args.ids.includes(adminUser.id)) {
+              throw new ForbiddenException('Super admin cannot be updated or deleted');
+          }
+          if (args.ids.includes(role.id)) {
+              throw new ForbiddenException('Super admin role cannot be updated or deleted');
+          }
+      }
       if (args.id === role.id) {
           throw new ForbiddenException('Super admin role cannot be updated or deleted');
       }

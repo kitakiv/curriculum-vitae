@@ -6,6 +6,9 @@ import { queryGraphQL } from "@/query/graphql";
 import {  } from "@/graphql/profile.graphql";
 import { PrevState, PrevStateFull } from "./action.type";
 import { PROJECT_UPDATE_MUTATION, PROJECT_CREATE_MUTATION, PROJECT_REMOVE_MUTATION } from "@/graphql/project.graphql";
+import { PROJECTS_REMOVE_MUTATION } from "@/graphql/project.graphql";
+import { RemoveProjectsMutation } from "@/gql/graphql";
+import { RemoveProjectsMutationVariables } from "@/gql/graphql";
 
 const PROJECT_IMAGES = 'projectImages';
 const PROJECT_IMAGE = 'projectImage';
@@ -200,6 +203,31 @@ export async function deleteProjectAction(prevState: PrevState<UpdateProjectInpu
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Project deletion failed',
+            id: null
+        };
+    }
+}
+
+
+export async function deleteProjectsAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevState<{ids: string[]}>> {
+    console.log(formData);
+    const projectsIds = formData.getAll('ids') as string[];
+    try {
+        const res = await queryGraphQL<RemoveProjectsMutation, RemoveProjectsMutationVariables>
+        (PROJECTS_REMOVE_MUTATION, {
+            ids: projectsIds
+        });
+        return {
+            success: true,
+            message: `Projects with ids ${projectsIds.join(', ')} deleted successfully`,
+            id: res.removeProjects
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : `Projects with ids ${projectsIds.join(', ')} deletion failed`,
             id: null
         };
     }

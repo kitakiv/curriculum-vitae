@@ -61,7 +61,7 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
             }}
         >
             {({ setFieldValue, resetForm, values }) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
+                <Form className={`${tailwind} bg-adminGr33 flex flex-col pt-20 pb-2 lg:px-4 md:px-3 sm:px-3 px-2 gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
                         <>

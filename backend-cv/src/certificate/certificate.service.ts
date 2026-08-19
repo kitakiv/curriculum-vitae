@@ -9,7 +9,7 @@ import { UpdateCertificateInput } from './dto/update-certificate.input';
 import uploadVariables from '../variables/upload.variables';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Certificate } from './entities/certificate.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { RedisCacheService } from '../cache/cache.service';
 import { errors } from 'src/errors/errors.config';
 
@@ -97,6 +97,28 @@ export class CertificateService {
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Certificate'));
+    }
+  }
+
+  async removeMany(ids: string[]) {
+    const certificates = await this.certificateRepository.findBy({ id: In(ids) });
+    if (certificates.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Certificates'));
+    if (certificates.length !== ids.length) {
+      const certIds = certificates.map((c) => c.id);
+      const notFoundIds = ids.filter((id) => !certIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Certificate with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      const deletedIds = await this.dataSource.transaction(async (manager) => {
+        await manager.remove(Certificate, certificates);
+        return ids;
+      });
+      await this.deleteCache();
+      return deletedIds;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Certificates with ids: ' + ids.join(', ')));
     }
   }
 }

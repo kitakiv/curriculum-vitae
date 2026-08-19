@@ -41,6 +41,8 @@ class InputType {
     options?: Array<{value: string, label: string}> = [];
     tableHeader?: Array<string> = [];
     tableLeftColumn?: Array<string> = [];
+    link?: string = "";
+    linkName?: string = "";
 }
 
 class MenuType {

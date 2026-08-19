@@ -1,7 +1,7 @@
-import LoadingTable from '@/components/loader/LoadingTable';
+import DataTableSkeleton from '@/components/loader/DataTableSkeleton';
 
 
 export default function Loading() {
   // Or a custom loading skeleton component
-  return <LoadingTable />;
+  return <DataTableSkeleton />;
 }

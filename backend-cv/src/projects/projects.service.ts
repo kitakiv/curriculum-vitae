@@ -183,4 +183,36 @@ export class ProjectsService {
     }
     return { id };
   }
+
+  async removeMany(ids: string[]): Promise<string[]> {
+    const projects = await this.projectsRepository.findBy({ id: In(ids) });
+    if (projects.length === 0)
+      throw new NotFoundException(errors.NOT_FOUND('Projects'));
+    if (projects.length !== ids.length) {
+      const foundIds = projects.map((p) => p.id);
+      const notFoundIds = ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(errors.NOT_FOUND('Project with id: ' + notFoundIds.join(', ')));
+    }
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('project_tech_stacks_tech_stack')
+          .where('projectId IN (:...ids)', { ids })
+          .execute();
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('project')
+          .where('id IN (:...ids)', { ids })
+          .execute();
+      });
+      await this.deleteCache();
+      return ids;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_DELETED('Projects with ids: ' + ids.join(', ')));
+    }
+  }
 }

@@ -29,35 +29,35 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
     switch (currentResource) {
        case Resource.CONTACT:
             return (
-                <>
+                <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1">
                     <UpdateFormContact initialValues={resource as Contact} resourceId={resourceId}/>
                     <UpdateFormContactImage initialValues={resource as Contact} resourceId={resourceId}/>
-                </>
+                </div>
             )
         case Resource.SLIDER:
             return (
-                <>
+                <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1">
                     <UpdateFormSlider initialValues={resource as Slider} resourceId={resourceId}/>
                     <UpdateFormSliderImage initialValues={resource as Slider} resourceId={resourceId}/>
-                </>
+                </div>
             )
         case Resource.CERTIFICATE:
             return (
-                <>
+                <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1">
                     <UpdateFormCertificate initialValues={resource as Certificate} resourceId={resourceId} />
                     <UpdateFormCertificateImage initialValues={resource as Certificate} resourceId={resourceId} />
-                </>
+                </div>
             )
         case Resource.PROFILE:
             return (
-                <div className="grid grid-cols-2">
+                <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1">
                     <UpdateFormProfile initialValues={resource as Profile} resourceId={resourceId}/>
                     <UpdateFormProfileImage initialValues={resource as Profile} resourceId={resourceId}/>
                 </div >
             )
         case Resource.PROJECT:
             return (
-                <div className="grid grid-cols-2">
+                <div className="lg:grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1">
                     <UpdateFormProject initialValues={resource as Project} resourceId={resourceId} inputs={inputs}/>
                     <UpdateFormProjectImage initialValues={resource as Project} resourceId={resourceId}/>
                 </div>
