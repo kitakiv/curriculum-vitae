@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import '@/styles/globals.css'
 import ProviderStore from "@/components/provider/ProviderStore";
 import ThemeWrapper from "@/components/wrapper/ThemeWrapper";
+import QueryWrapper from "@/components/wrapper/QueryWrapper";
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 import PositionWrapper from "@/components/wrapper/PositionWrapper";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   description: "Profile application about me",
 };
 
+
 export default function RootLayout({
   children,
   model
@@ -23,6 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.className} scroll-smooth overflow-y-scroll`}>
+    <QueryWrapper>
     <ProviderStore>
       <ThemeWrapper>
           <PositionWrapper>
@@ -31,6 +34,7 @@ export default function RootLayout({
           </PositionWrapper>
       </ThemeWrapper>
     </ProviderStore>
+    </QueryWrapper>
     </html>
   )
 }

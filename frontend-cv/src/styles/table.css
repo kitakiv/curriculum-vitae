@@ -1,0 +1,78 @@
+& .MuiDataGrid-toolbar {
+  background-color: var(--admin-gr33);
+}
+
+& .MuiDataGrid-columnHeaderDraggableContainer {
+  background-color: var(--admin-gr33);
+}
+
+& .MuiDataGrid-columnHeaderTitle {
+  color: var(--admin-tx0);
+}
+
+& .MuiDataGrid-cell {
+  color: white;
+  background-color: var(--admin-gr33);
+}
+
+& .MuiToolbar-root {
+  background-color: var(--admin-gr33);
+} 
+
+& .MuiTablePagination-displayedRows {
+  color: var(--admin-tx0);
+}
+
+& .MuiSvgIcon-root {
+  color: var(--admin-tx100);
+}
+
+& .MuiDataGrid-columnSeparator {
+  background: var(--admin-gr33);
+}
+
+& .MuiDataGrid-columnHeader{
+  background-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+& .MuiDataGrid-footerContainer {
+  background-color: var(--admin-gr33);
+  color: var(--admin-tx0);
+}
+
+& .MuiSelect-select  {
+  color: var(--admin-tx0);
+}
+
+& .MuiTablePagination-selectLabel {
+  color: var(--admin-tx0);
+}
+
+& .MuiDataGrid-cell
+{
+  color: var(--admin-tx0);
+  background-color: var(--admin-gr33);
+}
+
+& .MuiDataGrid-sortButton {
+  background-color: #0F0F23;
+}
+
+& .MuiDataGrid-columnHeader {
+  background-color: var(--admin-gr33);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+& .MuiButtonBase-root {
+  color: var(--admin-tx0);
+  background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(50px);
+    cursor: pointer;
+}
+
+& .MuiSvgIcon-root {
+  color: var(--admin-tx100);
+}

@@ -15,6 +15,9 @@ import { USER_GET_ONE_QUERY } from "@/graphql/auth.graphql";
 import { RESOURCES_GET_QUERY, ROLE_GET_ONE_QUERY } from "@/graphql/role.graphql";
 import { getAllPermissions } from "./permission.query";
 import { formCreateFormatValues, formUpdateFormatValues } from "@/app/actions/role";
+import { GetRolesQuery } from "@/gql/graphql";
+import { GetRolesQueryVariables } from "@/gql/graphql";
+import { ROLES_GET_QUERY } from "@/graphql/role.graphql";
 export async function getResourceById(resource: Resource, resourceId: string) {
     switch (resource) {
         case Resource.CONTACT:
@@ -100,6 +103,16 @@ export async function getResouseInputsEdit(resource: Resource) {
             }
             return input;
         });
+        case Resource.USER:
+            const inputsEditUser = resourceConfig[Resource.USER].attachRole.inputs;
+            const roles = (await queryGraphQL<GetRolesQuery, GetRolesQueryVariables>(ROLES_GET_QUERY)).roles;
+            return inputsEditUser.map((input: InputType) => {
+                if (input.name === 'roleId') {
+                    input.options = roles.map(role => ({ value: role.id, label: role.name }));
+                    input.options.push({ value: undefined, label: 'None' });
+                }
+                return input;
+            });
         case Resource.TECHSTACK:
         const intputsEdit = resourceConfig[Resource.TECHSTACK].editForm;
         const techCategories = (await queryGraphQL<GetTechCategoriesQuery, GetTechCategoriesQueryVariables>(TECHCATEGORIES_GET_QUERY)).techCategories.map(category => ({ value: category.id, label: category.categoryName }));
@@ -132,6 +145,7 @@ export async function getResouseInputsEdit(resource: Resource) {
             };
             const finalInputs = resourceConfig[Resource.ROLE].createForm.inputs.filter(input => input.name !== 'permissions');
             return [...finalInputs, permissionInput];
+
        default:
        return undefined;
     }

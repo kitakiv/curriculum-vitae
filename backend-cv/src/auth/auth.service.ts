@@ -281,6 +281,7 @@ export class AuthService implements OnModuleInit {
 
   async attachRole(attachRoleInput: AttachRoleInput) {
     const { userId, roleId } = attachRoleInput;
+    if (!roleId) return await this.detachRole(userId);
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user)
       throw new NotFoundException(errors.NOT_FOUND(`User with id ${userId}`));
@@ -289,6 +290,19 @@ export class AuthService implements OnModuleInit {
       throw new NotFoundException(errors.NOT_FOUND(`Role with id ${roleId}`));
     try {
       await this.userRepository.update(user.id, { role });
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_UPDATED('User'));
+    }
+    return await this.findUserById(userId);
+  }
+
+  private async detachRole(userId: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user)
+      throw new NotFoundException(errors.NOT_FOUND(`User with id ${userId}`));
+    try {
+      await this.userRepository.update(user.id, { role: null });
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_UPDATED('User'));
@@ -431,7 +445,7 @@ export class AuthService implements OnModuleInit {
         );
         if (!userHasPermission)
           throw new ForbiddenException({
-            message: `User does not have sufficient permissions to access "${routePermission.resource}" resource.`,
+            message: `User ${userId} does not have sufficient permissions to access "${routePermission.resource}" resource.`,
           });
 
         const allActionsAvailable = routePermission.actions.every((action) => {
@@ -439,7 +453,7 @@ export class AuthService implements OnModuleInit {
         });
         if (!allActionsAvailable) {
           throw new ForbiddenException({
-            message: `User does not have sufficient permissions to access "${routePermission.resource}" resource.`,
+            message: `User ${userId} does not have sufficient permissions to access "${routePermission.resource}" resource.`,
           });
         }
       }

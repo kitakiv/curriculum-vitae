@@ -13,6 +13,9 @@ import { TechStack } from '../techstack/entities/techstack.entity';
 import { errors } from '../errors/errors.config';
 import { RedisCacheService } from '../cache/cache.service';
 import uploadVariables from '../variables/upload.variables';
+import { PaginationArgs } from '../arguments/pagination.args';
+import { PaginationResponse } from '../arguments/pagination.type';
+import { ProjectPaginationResponse } from './entities/projectPagination.type';
 
 @Injectable()
 export class ProjectsService {
@@ -94,8 +97,8 @@ export class ProjectsService {
     return { entities, notFoundIds };
   }
 
-  async findAll() {
-    const cachedProjects = await this.redisCacheService.get(
+  async findAllProjects(): Promise<Project[]> {
+     const cachedProjects = await this.redisCacheService.get(
       this.PROJECT_CACHE_KEY,
     );
     if (cachedProjects) {
@@ -108,6 +111,53 @@ export class ProjectsService {
       this.PROJECT_CACHE_TIME,
     );
     return projects;
+  }
+
+  async findAllByTechStack({ limit, page, techId }: { limit: number, page: number, techId: string }):
+   Promise<ProjectPaginationResponse>
+  {
+    const skip = (page - 1) * limit;
+    const take = limit;
+    const [projects, count] = await this.projectsRepository.findAndCount({
+      where: {
+        techStacks: {
+          id: techId,
+        },
+      },
+      skip,
+      take,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    const paginationResponse = new ProjectPaginationResponse(
+      {
+        items: projects,
+        total: count,
+        page,
+        limit,
+      });
+    return paginationResponse;
+  }
+
+  async findAll({ limit, page }: PaginationArgs): Promise<ProjectPaginationResponse> {
+    const skip = (page - 1) * limit;
+    const take = limit;
+    const [projects, count] = await this.projectsRepository.findAndCount({
+      skip,
+      take,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    const paginationResponse = new ProjectPaginationResponse(
+      {
+        items: projects,
+        total: count,
+        page,
+        limit,
+      });
+    return paginationResponse;
   }
 
   async findOne(id: string) {

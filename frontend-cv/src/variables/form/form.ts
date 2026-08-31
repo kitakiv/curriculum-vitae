@@ -268,7 +268,7 @@ const form = {
         initialValuesDeleteMany: { ids: [], phrase: "" },
         inputs: [
             { id: "userId", label: "User ID", name: "userId", placeholder: "User ID", type: "text" },
-            { id: "roleId", label: "Role ID", name: "roleId", placeholder: "Role ID", type: "text" },
+            { id: "roleId", label: "Role ID", name: "roleId", placeholder: "Role ID", type: "radio" , options: [{value: null, label: "Without Role"}], link: `${Resource.ROLE}/${Action.CREATE}`, linkName: "Create Role" },
         ],
         inputsDelete: [
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },

@@ -31,7 +31,7 @@ export default function SvgLiquidGlass() {
           surfaceScale="5"
           specularConstant="1"
           specularExponent="100"
-          lighting-color="white"
+          lightingColor="white"
           result="specLight"
         >
           <fePointLight x="-200" y="-200" z="300" />

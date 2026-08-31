@@ -78,7 +78,7 @@ export default function ResourceUpdateSection<R>({currentResource, resourceId, r
         case Resource.USER:
              return (
                 <>
-                    <AttachFormRoleUser initialValues={resource as User} resourceId={resourceId}/>
+                    <AttachFormRoleUser initialValues={resource as User} resourceId={resourceId} inputs={inputs}/>
                 </>
             )
         case Resource.ROLE:

@@ -3,6 +3,7 @@ import MainText from "@/components/text/MainText";
 import FormDelete from "../components/FormDelete";
 import MiddleText from "@/components/text/MiddleText";
 import { User } from "@/gql/graphql";
+import UserInfo from "@/components/admin/UserInfo";
 
 interface Props {
     resource: User;
@@ -27,9 +28,7 @@ export default function DeleteFormUser({resource, resourceId }: Props) {
                 <MainText tailwind="text-center">
                     {userDelete.title}
                 </MainText>
-                <MiddleText tailwind=" text-txFirst0" >
-                    {resource.login}
-                </MiddleText>
+                <UserInfo user={resource}/>
                  </>
             </FormDelete>
      </>  

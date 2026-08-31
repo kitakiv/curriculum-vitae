@@ -19,7 +19,9 @@ export default function PhotoCards({slider, tailwind, tailwindParent}: Props) {
     const color = getRandomColor();
     const color2 = getRandomColor();
     return <div className={`scroll-photo absolute inset-0 h-screen w-screen flex ${tailwindParent}`} style={{background: `linear-gradient(0.50turn, var(${color}), var(${color2}))`}}>
-        <img className={`${tailwind} image-mask-top-photo`}    src={slider.sliderImage as string} alt={slider.sliderName} />
+        <div className={`w-full h-full flex ${tailwind}`}>
+        <img  className="lg:h-full lg:w-auto md:h-full md:w-auto sm:w-full sm:h-auto w-full h-auto transition duration-700 image-mask-top-photo"   src={slider.sliderImage as string} alt={slider.sliderName} />
+        </div>
         <FadeInSection resetOnExit={true} tailwind="w-full h-full flex justify-center items-center">
         <span className="text-photo font-elegant w-full  flex justify-center items-center text-wrap text-center text-txSecond lg:text-2xl md:text-2xl text-xl">
            {slider.sliderText}

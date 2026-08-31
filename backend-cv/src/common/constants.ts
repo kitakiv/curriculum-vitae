@@ -1,6 +1,6 @@
 const MAX_FILE_IMAGES = Number(process.env.MAX_IMAGE_COUNT) || 10;
 const KB = 1000;
-const MB = KB * 1000;
+const MB = KB * 1000 * 10
 const REFRESH_TOKEN_EXPIRATION_DAYS =
   Number(process.env.REFRESH_TOKEN_VALIDITY_DURATION_IN_DAYS) || 3;
 const FILE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp', 'svg+xml'];

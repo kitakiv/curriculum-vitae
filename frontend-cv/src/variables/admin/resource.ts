@@ -49,6 +49,10 @@ const adminVariables = {
   searchParamResourse: 'resource',
   dashBoard: 'Dashboard',
   pathAdminPage: '/admin/dashboard',
+  denied: 'Access Denied',
+  invalid: 'Invalid Action',
+  notFound: 'Resource not found',
+  invalidResource: 'Invalid Resource',
   edit: {
     button: 'Edit',
     title: 'Edit',
@@ -74,7 +78,7 @@ const adminVariables = {
   attachRole: {
     button: 'Attach Role',
     title: 'Attach Role to user',
-    path: Action.CREATE
+    path: Action.UPDATE
   },
   deleteMany: {
     button: 'Delete Selected',

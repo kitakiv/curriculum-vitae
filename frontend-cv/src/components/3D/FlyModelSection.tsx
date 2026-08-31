@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import FlyModel from "@/components/3D/butterfly/FlyModel";
 import flyModel from "@/variables/3d/flymodel";
 import { Canvas } from "@react-three/fiber";
@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import ScrollTrigger from "gsap/ScrollTrigger";
 import header from "@/variables/header/header";
+import { useEffect } from "react";
 import * as THREE from 'three';
 
 
@@ -17,10 +18,11 @@ gsap.registerPlugin(ScrollTrigger)
 export default function FlyModelSection() {
   const block = useRef<HTMLDivElement>(null!);
   const [rotateY, setRotateY] = useState(0);
-  const screenHeight = window.innerHeight;
+  const [screenHeight, setScreenHeight] = useState(0);
+  const [width, setWidth] = useState(0);
   const objectWidth = 25;
   const objectHeight = 30;
-  const screenWidth = window.innerWidth - screenHeight / 100 * objectWidth;
+  const screenWidth = width - screenHeight / 100 * objectWidth;
   const threeScreenOfObject = 2.3;
   const prevX = useRef(0);
   const prevY = useRef(0);
@@ -30,6 +32,23 @@ export default function FlyModelSection() {
   const maxScale = 1.5;
   const centerX = screenWidth / 2;
   const maxDistance = screenWidth;
+
+
+  useEffect(() => {
+    setScreenHeight(window.innerHeight);
+    setWidth(window.innerWidth);
+    const handleResize = () => {
+      setScreenHeight(window.innerHeight);
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   useGSAP(() => {
     gsap.to({}, {
       scrollTrigger: {
@@ -66,7 +85,7 @@ export default function FlyModelSection() {
         },
       }
     })
-  }, [document.documentElement.scrollWidth]);
+  }, [screenHeight, width]);
   return <section className="w-full" id={flyModel.id}>
     <div ref={block} className="absolute z-[35] pointer-events-none left-0 top-[15vh] w-[25vh] h-[30vh] rotate-90 transition-all duration-100" id={`canvas-container-${flyModel.id}`}>
       <Suspense fallback={<Loader />}>

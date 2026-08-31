@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 import CardProject from "@/components/projects/components/CardProject";
 import FadeInSection from "@/components/animation/FadeInSection";
@@ -7,32 +7,55 @@ import flyModel from "@/variables/3d/flymodel";
 import SkillButton from "@/components/button/SkillButton";
 import { getProjectsByTechStackCached } from "@/query/techStack.query";
 import { getProjectsCached } from "@/query/project.query";
-import { GetProjectsByTechStackQuery, GetProjectsQuery } from "@/gql/graphql";
+import { GetProjectsByTechStackQuery, GetProjectsQuery , GetProjectsPaginationQuery} from "@/gql/graphql";
+import { getProjectsAll } from "@/query/project.query";
+import { DataArrayOutlined } from "@mui/icons-material";
+import { Project } from "@/gql/graphql";
+import { useQuery } from "@tanstack/react-query";
+import Pagination from '@mui/material/Pagination';
+import React from "react";
+import LoadingProject from "@/components/loader/LoadingProject";
+
 type ProjectsProps = {
     columns?: number;
     techId?: string;
 };
 
-export default async function ProjectComponent({ columns = 2, techId = techStack.all }: ProjectsProps) {
+export default function ProjectComponent({ columns = 2, techId = techStack.all }: ProjectsProps) {
+    const [page, setPage] = React.useState(1);
+    const defaultLimit = 10;
     const colsClass =
         columns === 1
             ? "grid-cols-1"
             : columns === 2
             ? "lg:grid-cols-2 md:grid-cols-2 grid-cols-1"
             : `lg:grid-cols-${columns}`;
-    console.log("techId: ", techId)
-    const allProjects: GetProjectsQuery["projects"] = (await getProjectsCached()) || [];
-    const projectsToShow: GetProjectsQuery["projects"] | GetProjectsByTechStackQuery["techstack"]["projects"] =
-        techId === techStack.all ? allProjects : (await getProjectsByTechStackCached(techId)) || [];
 
-    const shownCount = projectsToShow?.length ?? 0;
-    const totalCount = allProjects?.length ?? 0;
 
+    const techStackId = techId === techStack.all ? undefined : techId;
+    const { data, isFetching, error } = 
+    useQuery(getProjectsAll({limit: defaultLimit, page: page, techId: techStackId}));
+    console.log(data, "data");
     return (
         <>
+            {isFetching ? (
+        <div className={`grid ${colsClass} gap-4 w-full`}>{
+            columns === 1 ? (
+                <LoadingProject />
+            ) : (
+            Array.from({ length: columns }).map((_, index) => (
+                <LoadingProject key={`project-${index}`} />
+            )
+            ))
+        }
+        </div>
+            ) : error ? (
+        <div>Error: {error.message}</div>
+      ) : (
+        <>
             <div id={flyModel.stopId} className={`grid ${colsClass} gap-4 w-full`}>
-                {shownCount > 0 ? (
-                    projectsToShow.map((project, index) => (
+                {data?.items.length > 0 ? (
+                    data?.items.map((project, index) => (
                         <FadeInSection key={`project-${project?.id ?? index}`}>
                             <CardProject project={project} />
                         </FadeInSection>
@@ -44,12 +67,16 @@ export default async function ProjectComponent({ columns = 2, techId = techStack
                     </div>
                 )}
             </div>
-
+            {data?.totalPages > 1 && (
+                <Pagination count={data.totalPages} page={page} onChange={(e, page) => setPage(page)} />
+            )}
             <SkillButton active={true} key={`techStack-${buttons[0]}-button`}>
                 <div className="flex gap-2 items-center justify-center">
-                    {`Showing ${shownCount} of ${totalCount} projects`}
+                    {`Showing ${data?.items.length} of ${data?.total} projects`}
                 </div>
             </SkillButton>
+        </>
+    )}
         </>
     );
 }

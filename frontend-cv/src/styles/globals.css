@@ -1,6 +1,8 @@
+@import "./table.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 @font-face {
   font-family: "BBH Bartle";
@@ -43,7 +45,7 @@
 }
 .theme-black {
   --color-bg-100: #27355c;
-  --color-bg-33: #21213b;
+  --color-bg-33: var(--admin-gr33);
   --color-bg-0: #0F0F23;
   --color-round-100: #9C27B0;
   --color-round-0: #653cc4;
@@ -605,3 +607,6 @@
 .pin-spacer {
   pointer-events: none;
 }
+
+
+

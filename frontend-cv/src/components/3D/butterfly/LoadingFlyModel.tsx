@@ -44,7 +44,7 @@ export default function LoadingFlyModel() {
     {
       numberOfButterflies > 0 && Array.from({ length: numberOfButterflies }).map((_, index) => (
         <div key={index} className="butterfly-image absolute w-16 h-16">
-          <Image src={flymodel.loadingButterflySvg} width={widthButterfly - (index * 4)} height={widthButterfly -(index + 1)}  className="flex justify-center items-center rotate-[90deg]" />
+          <Image alt="loading butterfly" src={flymodel.loadingButterflySvg} width={widthButterfly - (index * 4)} height={widthButterfly -(index + 1)}  className="flex justify-center items-center rotate-[90deg]" />
         </div>
       ))
     }

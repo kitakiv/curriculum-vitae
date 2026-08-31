@@ -72,10 +72,10 @@ export class RolesService implements OnModuleInit {
     const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) throw new NotFoundException('Role not found');
     if (updateRoleInput.name) {
-      const roleExist = await this.roleRepository.findOneBy({
-        name: updateRoleInput.name,
+      const roleExist = await this.roleRepository.findOne({
+        where: { name: updateRoleInput.name },
       });
-      if (roleExist.id !== id)
+      if (roleExist && roleExist.id !== id)
         throw new BadRequestException('Role with this name already exist');
     }
     if (updateRoleInput.permissions) {

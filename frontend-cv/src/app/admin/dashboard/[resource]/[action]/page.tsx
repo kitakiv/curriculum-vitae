@@ -6,6 +6,9 @@ import {getInitialValues, getInputsValues } from "@/query/query";
 import { Resource, Action } from "@/variables/admin/resource";
 import { InputType } from "@/types/index";
 import ResourceDeleteManySection from "@/components/admin/components/ResourceDeleteManySection";
+import TextWhite from "@/components/text/TextWhite";
+import { adminVariables }from "@/variables/admin/resource";
+import ErrorMessage from "@/components/admin/components/ErrorMessage";
 
 type Props = {
     params: Promise<{ resource: Resource, action: string }>
@@ -17,7 +20,7 @@ export default async function Page({ params }: Props) {
     // create action
     if (action === Action.CREATE) {
         const canCreate = user ? hasPermission(user, currentResource, [Action.CREATE]) : false;
-        if (!canCreate) return <div>Access Denied</div>
+        if (!canCreate) return <TextWhite>{adminVariables.denied}</TextWhite>
         const inputsAdd = await getInputsValues(currentResource);
         const initalValues = await getInitialValues(currentResource);
         return <ResourceCreateSection user={user} currentResource={currentResource} inputs={inputsAdd as InputType[] | null} initalValues={initalValues} />
@@ -25,11 +28,11 @@ export default async function Page({ params }: Props) {
 
     if (action === Action.DELETEMANY) {
         const canDelete = user ? hasPermission(user, currentResource, [Action.DELETE]) : false;
-        if (!canDelete) return <div>Access Denied</div>
+        if (!canDelete) return <TextWhite>{adminVariables.denied}</TextWhite>
         return <ResourceDeleteManySection currentResource={currentResource} />
     }
 
 
     // no acitons
-    return <div>INVALID ACTION</div>
+    return <ErrorMessage>{adminVariables.invalidAction}</ErrorMessage>
 }

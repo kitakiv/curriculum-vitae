@@ -38,6 +38,7 @@ export default function CardProject({project}: {project: ProjectFromTechStack}) 
               </div>
             )
           }
+          <div className="flex gap-2">
           {
             // @ts-ignore
             project?.techStacks?.map((tech) => (
@@ -47,6 +48,7 @@ export default function CardProject({project}: {project: ProjectFromTechStack}) 
               </TechBlock>
             ))
           }
+          </div>
           <div className="flex gap-2">
           <Link href={project.projectDemoLink} target="_blank">
                 <PinkButton tailwind="hover:shadow-lg hover:shadow-txSecond transition duration-700 lg:px-8 md:px-8 sm:px-4 px-2 lg:py-3 md:py-3  sm:py-1 py-1 lg:text-lg  sm:text-sm text-xs">

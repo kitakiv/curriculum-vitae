@@ -3,13 +3,16 @@ import { Resource, resourceConfig } from "@/variables/admin/resource";
 import MainText from "@/components/text/MainText";
 import { InputType } from "@/types/index";
 import FormUpdate from "../components/FormUpdate";
+import UserInfo from "@/components/admin/UserInfo";
 
 interface Props {
     initialValues: User,
     resourceId: string,
+    inputs: InputType[]
 }
 
-export default function AttachFormRoleUser({initialValues, resourceId }: Props) {
+export default function AttachFormRoleUser({initialValues, resourceId, inputs }: Props) {
+    
     const userAttachForm = resourceConfig[Resource.USER].attachRole;
     const intialValuesAttachRole = {
         userId: initialValues.id,
@@ -17,7 +20,7 @@ export default function AttachFormRoleUser({initialValues, resourceId }: Props) 
     }
     return (
         <FormUpdate<AttachRoleInput>
-            inputs={userAttachForm.inputs as InputType[]}
+            inputs={inputs as InputType[]}
             intialValues={intialValuesAttachRole}
             actionForm={(formData) =>
                 userAttachForm.action(
@@ -30,9 +33,13 @@ export default function AttachFormRoleUser({initialValues, resourceId }: Props) 
             schema={userAttachForm.schema(resourceId)}
             title={userAttachForm.title}
         >
+            <>
             <MainText tailwind="text-center">
                 {userAttachForm.title}
             </MainText>
+             
+            <UserInfo user={initialValues}/>
+          </> 
         </FormUpdate>
     )
 

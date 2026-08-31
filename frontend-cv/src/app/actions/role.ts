@@ -50,11 +50,13 @@ export async function updateRoleAction(prevState: PrevStateFull<UpdateRoleInput>
     const permissions = await correctFormatPermissions(JSON.parse(formData.get('permissions') as string));
     updateInput.name = formData.get('name')?.toString();
     updateInput.permissions = permissions;
+    console.log(updateInput);
     try {
         const res = await queryGraphQL<UpdateRoleMutation, UpdateRoleMutationVariables>
             (ROLE_UPDATE_MUTATION, {
                 updateRoleInput: {
-                    ...updateInput
+                    ...updateInput,
+                    id: id
                 },
             });
         return {

@@ -4,7 +4,7 @@ import { useState, useCallback } from "react"
 import MiddleText from "../text/MiddleText";
 import { useDropzone } from 'react-dropzone'
 import SmallText from "../text/SmallText";
-import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Checkbox, FormControlLabel, Radio, RadioGroup, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import AdminButton from "@/components/button/AdminButton";
 import Link from "next/link";
 import { adminVariables } from "@/variables/admin/resource";
@@ -144,16 +144,16 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
         return (
             <>
                 <label htmlFor={id}><MiddleText tailwind="text-footerTx">{label}</MiddleText></label>
-                {inputData.options.length === 0 && inputData.link && inputData.linkName &&
+                {inputData.link && inputData.linkName &&
                     <Link href={`${adminVariables.pathAdminPage}/${inputData.link}`} className="text-adminTx100">
                         <AdminButton type="button">{inputData.linkName}</AdminButton>
                     </Link>
                 }
                 {inputData.options.map((option) => (
                     <div key={`option-${name}-${option.value}`}>
-                        <label className="text-adminTx100">
+                        <label className="text-adminTx100 flex gap-2">
                             <Field className="checked:bg-txFirst100 indeterminate:bg-adminTx100" type="checkbox" name={name} id={option.value} disabled={readonly} value={option.value} />
-                            {option.label}
+                             <MiddleText tailwind="text-footerTx">{option.label}</MiddleText>
                         </label>
                     </div>
                 ))}
@@ -162,6 +162,33 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
         )
     }
 
+    if (type === "radio" && inputData.options) {
+        return (
+            <>
+            <label style={{color: `${readonly ? `var(--admin-tx0)` : 'var(--footer-tx)'}`}}>
+                {inputData.link && inputData.linkName &&
+                    <Link href={`${adminVariables.pathAdminPage}/${inputData.link}`} className="text-adminTx100">
+                        <AdminButton type="button">{inputData.linkName}</AdminButton>
+                    </Link>
+                }
+             <MiddleText>
+                        {label}
+                    </MiddleText>
+                </label>
+                <div role="group" aria-labelledby="my-radio-group" className="flex flex-col gap-2">
+                    {inputData.options.map((option, index) => (
+                        <label className="text-adminTx100 flex gap-2" key={`option-${name}-${option.value}-${index}`}>
+                            <Field className="checked:bg-txFirst100 indeterminate:bg-adminTx100" type={inputData.type} disabled={readonly} name={inputData.name} id={option.value} value={option.value} />
+                            <MiddleText tailwind="text-footerTx">{option.label}</MiddleText>
+                        </label>
+                    ))
+                    }
+                </div>
+                 <Error name={name}>{handleError}</Error>
+                 
+            </>
+        )
+    }
 
     // table input
     else if (type === "table" && tableHeader && tableLeftColumn) {
@@ -230,7 +257,7 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
             </>
         )
     }
-      // readonly 
+    // readonly 
     else if (type !== "file" && readonly) {
         return (<>
             <label htmlFor={id}>

@@ -6,6 +6,7 @@ import {
   ID,
   Parent,
   ResolveField,
+  Int,
 } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
@@ -13,7 +14,7 @@ import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { S3Service } from '../s3/s3.service';
 import { ProjectsImageService } from './projectsImage.service';
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Get, UseGuards } from '@nestjs/common';
 import { Public } from '../decorators/public.decorator';
 import { AuthorizationGuard } from '../guards/authorization.guard';
 import { PermissionGuard } from '../decorators/permission.decorator';
@@ -23,6 +24,9 @@ import { errors } from '../errors/errors.config';
 import { TechStack } from '../techstack/entities/techstack.entity';
 import uploadVariables from 'src/variables/upload.variables';
 
+import { PaginationResponse } from '../arguments/pagination.type';
+import { ProjectPaginationResponse } from './entities/projectPagination.type';
+
 @UseGuards(AuthorizationGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
@@ -31,7 +35,7 @@ export class ProjectsResolver {
     private readonly projectsService: ProjectsService,
     private readonly s3Service: S3Service,
     private readonly projectsImageService: ProjectsImageService,
-  ) {}
+  ) { }
 
 
   @PermissionGuard([{ resource: Resource.PROJECT, actions: [Action.CREATE] }])
@@ -42,11 +46,31 @@ export class ProjectsResolver {
   ) {
     return await this.projectsService.create(createProjectInput);
   }
+  
+  @Public()
+  @Query(() => ProjectPaginationResponse, { name: 'projectsPagination' })
+  async findAll(
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit?: number,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page?: number,
+  ) {
+    return await this.projectsService.findAll({ limit, page });
+  }
 
   @Public()
+  @Query(() => ProjectPaginationResponse, { name: 'projectsByTechStack' })
+  async findAllByTechStack(
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit?: number,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page?: number,
+    @Args('techId', { type: () => ID }) techId?: string
+  ) {
+    return await this.projectsService.findAllByTechStack({ limit, page, techId });
+  }
+
+
+  @PermissionGuard([{ resource: Resource.PROJECT, actions: [Action.READ] }])
   @Query(() => [Project], { name: 'projects' })
-  async findAll() {
-    return await this.projectsService.findAll();
+  async findAllProjects() {
+    return await this.projectsService.findAllProjects();
   }
 
   @Public()
@@ -86,7 +110,7 @@ export class ProjectsResolver {
         await this.s3Service.deleteFiles(urls, this.serviceName, id);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new BadRequestException(errors.NOT_DELETED('Project'), {
         cause: error,
       });
@@ -94,7 +118,7 @@ export class ProjectsResolver {
     return id;
   }
 
-   @PermissionGuard([
+  @PermissionGuard([
     { resource: Resource.PROJECT, actions: [Action.DELETE] },
   ])
   @Mutation(() => [ID])

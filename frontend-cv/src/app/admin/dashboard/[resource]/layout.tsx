@@ -1,14 +1,16 @@
 export default function RootLayout({
   children,
-  modal
+  modal,
+  form,
 }: {
   children: React.ReactNode,
-  modal?: React.ReactNode
-
+  modal?: React.ReactNode,
+  form?: React.ReactNode
 }) {
   return (
     <> 
        {modal}
+       {form}
        {children}
   </>
   )

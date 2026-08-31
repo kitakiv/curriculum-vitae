@@ -1,12 +1,12 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 @InputType()
 export class AttachRoleInput {
   @Field(() => String)
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
-  roleId: string;
+  roleId: string | null | undefined;
 
   @Field(() => String)
   @IsNotEmpty()

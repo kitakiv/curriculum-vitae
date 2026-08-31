@@ -5,7 +5,7 @@ import { attach } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { profile } from "console";
 import { sign } from "crypto";
 import * as Yup from "yup";
-const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1mb
+const MAX_FILE_SIZE = 1 * 1024 * 1024 * 10; // 10mb
 const FILE_TYPES = [
   "image/jpeg",
   "image/png",
@@ -172,7 +172,8 @@ const attachRoleSchema = (expectedId: string) =>
       .required("User ID is required")
       .oneOf([expectedId], `User ID must be ${expectedId}`),
 
-    roleId: uuid,
+    roleId: Yup.string()
+      .required("Role ID is required"),
   });
 
 

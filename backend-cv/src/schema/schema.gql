@@ -237,6 +237,14 @@ type Project {
   techStacks: [TechStack!]
 }
 
+type ProjectPaginationResponse {
+  items: [Project!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
 type Query {
   certificate(id: ID!): Certificate!
   certificates: [Certificate!]!
@@ -246,6 +254,8 @@ type Query {
   profile: Profile!
   project(id: ID!): Project!
   projects: [Project!]!
+  projectsByTechStack(limit: Int! = 10, page: Int! = 1, techId: ID!): ProjectPaginationResponse!
+  projectsPagination(limit: Int! = 10, page: Int! = 1): ProjectPaginationResponse!
   role(id: ID!): Role!
   roles: [Role!]!
   slider(id: ID!): Slider!

@@ -6,7 +6,9 @@ import { getEditInitialValues, getResourceById, getResouseInputsEdit } from "@/q
 import {Action, Resource } from "@/variables/admin/resource";
 import ResourceDeleteSection from "@/components/admin/components/ResourceDeleteSection";
 import { InputType } from "@/types/index";
-import LoadingForm from "@/components/loader/LoadingForm";
+import TextWhite from "@/components/text/TextWhite";
+import { adminVariables } from "@/variables/admin/resource";
+import ErrorMessage from "@/components/admin/components/ErrorMessage";
 
 
 type Props = {
@@ -20,9 +22,9 @@ export default async function Page({ params }: Props) {
     
     if (action === Action.UPDATE) {
         const canUpdate = hasPermission(user, currentResource, [Action.UPDATE]);
-        if (!canUpdate) return <div>Access Denied</div>
+        if (!canUpdate) return <ErrorMessage>{adminVariables.denied}</ErrorMessage>
         const resource = await getResourceById(currentResource, resourceId);
-        if (!resource) return <div>Resource not found</div>;
+        if (!resource) return <ErrorMessage>{adminVariables.notFound}</ErrorMessage>
         const inputs = await getResouseInputsEdit(currentResource);
         const initialValues = await getEditInitialValues(currentResource, resource);
         return (
@@ -31,11 +33,11 @@ export default async function Page({ params }: Props) {
     }
     if (action === Action.DELETE) {
         const canDelete = hasPermission(user, currentResource, [Action.DELETE]);
-        if (!canDelete) return <div>Access Denied</div>
+        if (!canDelete) return <ErrorMessage>{adminVariables.denied}</ErrorMessage>
         const resource = await getResourceById(currentResource, resourceId);
         return (
             <ResourceDeleteSection<typeof resource> resource={resource} resourceId={resourceId} currentResource={currentResource} />
         )
     }
-    return null
+    return <ErrorMessage>{adminVariables.invalidAction}</ErrorMessage>
 }

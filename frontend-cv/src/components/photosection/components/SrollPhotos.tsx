@@ -62,9 +62,9 @@ export default function SrollPhotos({sliders}: Props) {
     <div className="scroll-wrapper h-screen relative w-full  overflow-hidden" >
       {
         sliders.map((slider, index) => {
-          const mask = (index + 2) % 2 === 0 ? "image-mask-right-photo" : "image-mask-left-photo";
+          const mask = (index + 2) % 2 === 1 ? "image-mask-right-photo justify-start" : "image-mask-left-photo justify-end";
             return (
-                <PhotoCards tailwindParent={` flex items-stretch items-stretch sm:flex-col flex-col-reverse  ${index === 0 ? "lg:flex-row md:flex-row" : "lg:flex-row-reverse md:flex-row-reverse "}`} tailwind={`lg:h-full lg:w-auto md:h-full md:w-auto sm:w-full sm:h-auto w-full h-auto transition duration-700 ${mask}`} key={slider.id} slider={slider} />
+                <PhotoCards tailwindParent={` flex items-stretch items-stretch sm:flex-col flex-col-reverse  ${(index + 2) % 2 === 1 ? "lg:flex-row md:flex-row" : "lg:flex-row-reverse md:flex-row-reverse "}`} tailwind={`${mask}`} key={slider.id} slider={slider} />
 
             )
         })

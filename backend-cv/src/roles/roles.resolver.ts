@@ -56,7 +56,7 @@ export class RolesResolver {
   async findOne(@Args('id', { type: () => ID }) id: string) {
     return await this.rolesService.findOne(id);
   }
-
+  
   @PermissionGuard([{ resource: Resource.ROLE, actions: [Action.READ] }])
   @ResolveField(() => [Permission], { nullable: true })
   async permissions(@Parent() role: Role) {
