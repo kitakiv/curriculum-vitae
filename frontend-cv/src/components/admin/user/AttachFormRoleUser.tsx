@@ -8,7 +8,7 @@ import UserInfo from "@/components/admin/UserInfo";
 interface Props {
     initialValues: User,
     resourceId: string,
-    inputs: InputType[]
+    inputs: InputType[] | null
 }
 
 export default function AttachFormRoleUser({initialValues, resourceId, inputs }: Props) {
@@ -37,8 +37,8 @@ export default function AttachFormRoleUser({initialValues, resourceId, inputs }:
             <MainText tailwind="text-center">
                 {userAttachForm.title}
             </MainText>
-             
-            <UserInfo user={initialValues}/>
+            {/* @ts-ignore */}
+            <UserInfo user={initialValues as User}/>
           </> 
         </FormUpdate>
     )

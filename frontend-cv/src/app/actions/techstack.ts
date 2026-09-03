@@ -130,8 +130,8 @@ export async function deleteTechStackAciton(prevState: PrevState<UpdateTechStack
 }
 
 
-export async function deleteTechStacksAciton(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
-:Promise<PrevState<{ids: string[]}>> {
+export async function deleteTechStacksAciton(prevState: PrevStateFull<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevStateFull<{ids: string[]}>> {
     const techStackIds = formData.getAll('ids') as string[];
     try {
         const res = await queryGraphQL<DeleteTechStacksMutation, DeleteTechStacksMutationVariables>
@@ -141,14 +141,18 @@ export async function deleteTechStacksAciton(prevState: PrevState<{ids: string[]
         return {
             success: true,
             message: `TechStacks with ids ${techStackIds.join(', ')} deleted successfully`,
-            id: res.removeTechStacks
+            data: {
+                ids: res.removeTechStacks
+            }
         };
     } catch (error) {
         console.log(error);
         return {
             success: false,
             message: error instanceof Error ? error.message :  `TechStacks with ids ${techStackIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

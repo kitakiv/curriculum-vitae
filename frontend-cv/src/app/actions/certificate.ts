@@ -1,5 +1,5 @@
 'use server'
-import {  Certificate, CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, RemoveCertrificatesMutationVariables,  RemoveCertificateMutation, RemoveCertrificateMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
+import {  Certificate, CreateCertificateInput, CreateCertificateMutation, CreateCertificateMutationVariables, RemoveCertificatesMutationVariables,  RemoveCertificateMutation, RemoveCertificateMutationVariables, UpdateCertificateInput, UpdateCertificateMutation, UpdateCertificateMutationVariables, UpdateSliderInput, UpdateSliderMutation, UpdateSliderMutationVariables} from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
@@ -106,7 +106,7 @@ export async function deleteCertificateAction(prevState: PrevState<CreateCertifi
     const certificateId = formData.get('id')?.toString() as string;
     try {
        if (initialValues.id !== certificateId || id !== initialValues.id) throw Error("The id incorrect");
-        const res = await queryGraphQL<RemoveCertificateMutation, RemoveCertrificateMutationVariables>
+        const res = await queryGraphQL<RemoveCertificateMutation, RemoveCertificateMutationVariables>
         (CERTIFICATE_REMOVE_MUTATION, {
             id: id,
         });
@@ -125,25 +125,29 @@ export async function deleteCertificateAction(prevState: PrevState<CreateCertifi
     }
 }
 
-export async function deleteCertificatesAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
-:Promise<PrevState<{ids: string[]}>> {
+export async function deleteCertificatesAction(prevState: PrevStateFull<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevStateFull<{ids: string[]}>> {
     const certificatesIds = formData.getAll('ids') as string[];
     try {
-        const res = await queryGraphQL<RemoveCertificatesMutation, RemoveCertrificatesMutationVariables>
+        const res = await queryGraphQL<RemoveCertificatesMutation, RemoveCertificatesMutationVariables>
         (CERTIFICATES_REMOVE_MUTATION, {
             ids: certificatesIds,
         });
         return {
             success: true,
             message: `Certificate with ids ${certificatesIds.join(', ')} deleted successfully`,
-            id: res.removeCertificates
+            data: {
+                ids: res.removeCertificates
+            }
         };
     } catch (error) {
         console.log(error);
         return {
             success: false,
             message: error instanceof Error ? error.message : `Certificate with ids ${certificatesIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

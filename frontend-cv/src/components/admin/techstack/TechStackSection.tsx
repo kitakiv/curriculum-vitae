@@ -24,10 +24,9 @@ export default function TechStackSection({ user, rows }: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.TECHSTACK}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.TECHSTACK}
                 canDelete={canDelete}
             />
         </>

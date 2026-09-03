@@ -88,10 +88,10 @@ export async function logoutUserAction(): Promise<PrevStateFull<boolean>> {
      try {
         const result = await queryGraphQL<LogoutMutation, LogoutMutationVariables>(
             LOGOUT_AUTH_QUERY, {}
-        );
+        ) as unknown as LogoutMutation;
 
         return {
-            data: result,
+            data: result.logout,
             success: true,
             message: 'Logged out successfully'
         };
@@ -186,13 +186,15 @@ export async function deleteUserAction(prevState: PrevState<{ id: string }> | un
 };
 
 
-export async function deleteUsersAction(prevState: PrevState<{ ids: string[] }> | undefined, formData: FormData): Promise<PrevState<{ ids: string[] }>> {
+export async function deleteUsersAction(prevState: PrevStateFull<{ ids: string[] }> | undefined, formData: FormData): Promise<PrevStateFull<{ ids: string[] }>> {
     const userIdsFromForm = formData.getAll('ids') as string[];
     const userId = formData.get('resourceId') as string;
     if (!userId) throw new Error('User ID not found');
     if (!userIdsFromForm.includes(userId)) {
         return {
-            id: userId,
+            data: {
+                ids: userIdsFromForm
+            },
             success: false,
             message: 'Your user ID is in the list of user IDs to delete'
         };
@@ -201,16 +203,20 @@ export async function deleteUsersAction(prevState: PrevState<{ ids: string[] }> 
         const result = await queryGraphQL<DeleteUsersMutation, DeleteUsersMutationVariables>(
             USERS_DELETE_QUERY,
             { ids: userIdsFromForm }
-        );
+        ) as unknown as DeleteUsersMutation;
 
         return {
-            id: result.removeUsers,
+            data: {
+                ids: result.removeUsers
+            },
             success: true,
             message: `Users with ids ${userIdsFromForm.join(', ')} deleted successfully`
         };
     } catch (error) {
         return {
-            id: userId,
+            data: {
+                ids: userIdsFromForm
+            },
             success: false,
             message: error instanceof Error ? error.message : `Users with ids ${userIdsFromForm.join(', ')} deletion failed`
         };

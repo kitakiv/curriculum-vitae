@@ -104,11 +104,14 @@ export async function getResouseInputsEdit(resource: Resource) {
             return input;
         });
         case Resource.USER:
-            const inputsEditUser = resourceConfig[Resource.USER].attachRole.inputs;
-            const roles = (await queryGraphQL<GetRolesQuery, GetRolesQueryVariables>(ROLES_GET_QUERY)).roles;
+            const inputsEditUser = resourceConfig[Resource.USER].attachRole.inputs as InputType[];
+            const roles = (await queryGraphQL<GetRolesQuery, GetRolesQueryVariables>(ROLES_GET_QUERY)).roles as Role[];
             return inputsEditUser.map((input: InputType) => {
-                if (input.name === 'roleId') {
+                if (input.name === 'roleId' && roles) {
                     input.options = roles.map(role => ({ value: role.id, label: role.name }));
+                    if (!input.options) {
+                        input.options = [];
+                    }
                     input.options.push({ value: undefined, label: 'None' });
                 }
                 return input;

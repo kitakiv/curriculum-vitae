@@ -8,7 +8,7 @@ interface Props {
     resourceId: string,
 }
 export default function UpdateFormSlider({initialValues, resourceId }: Props) {
-    const sliderUpdate = resourceConfig[Resource.SLIDER].editFrom;
+    const sliderUpdate = resourceConfig[Resource.SLIDER].editForm;
     const initialValuesEmpty = sliderUpdate.initialValues;
     Object.keys(initialValuesEmpty).forEach((key: string) => {
         // @ts-ignore

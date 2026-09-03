@@ -24,10 +24,9 @@ export default function TechCategorySection({ user, rows }: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.CATEGORY}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.CATEGORY}
                 canDelete={canDelete}
             />
         </>

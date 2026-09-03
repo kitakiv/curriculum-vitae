@@ -5,16 +5,13 @@ import FadeInSection from "@/components/animation/FadeInSection";
 import techStack, { buttons } from "@/variables/techstack/techstack";
 import flyModel from "@/variables/3d/flymodel";
 import SkillButton from "@/components/button/SkillButton";
-import { getProjectsByTechStackCached } from "@/query/techStack.query";
-import { getProjectsCached } from "@/query/project.query";
-import { GetProjectsByTechStackQuery, GetProjectsQuery , GetProjectsPaginationQuery} from "@/gql/graphql";
 import { getProjectsAll } from "@/query/project.query";
-import { DataArrayOutlined } from "@mui/icons-material";
-import { Project } from "@/gql/graphql";
 import { useQuery } from "@tanstack/react-query";
 import Pagination from '@mui/material/Pagination';
 import React from "react";
 import LoadingProject from "@/components/loader/LoadingProject";
+import { ProjectPaginationResponse } from "@/gql/graphql";
+import { Project } from "@/gql/graphql";
 
 type ProjectsProps = {
     columns?: number;
@@ -35,7 +32,6 @@ export default function ProjectComponent({ columns = 2, techId = techStack.all }
     const techStackId = techId === techStack.all ? undefined : techId;
     const { data, isFetching, error } = 
     useQuery(getProjectsAll({limit: defaultLimit, page: page, techId: techStackId}));
-    console.log(data, "data");
     return (
         <>
             {isFetching ? (
@@ -54,8 +50,8 @@ export default function ProjectComponent({ columns = 2, techId = techStack.all }
       ) : (
         <>
             <div id={flyModel.stopId} className={`grid ${colsClass} gap-4 w-full`}>
-                {data?.items.length > 0 ? (
-                    data?.items.map((project, index) => (
+                {(data as ProjectPaginationResponse).items.length > 0 ? (
+                    (data as ProjectPaginationResponse).items.map((project: Project, index: number) => (
                         <FadeInSection key={`project-${project?.id ?? index}`}>
                             <CardProject project={project} />
                         </FadeInSection>
@@ -67,12 +63,12 @@ export default function ProjectComponent({ columns = 2, techId = techStack.all }
                     </div>
                 )}
             </div>
-            {data?.totalPages > 1 && (
-                <Pagination count={data.totalPages} page={page} onChange={(e, page) => setPage(page)} />
+            {(data as ProjectPaginationResponse).totalPages > 1 && (
+                <Pagination count={(data as ProjectPaginationResponse).totalPages} page={page} onChange={(e, page) => setPage(page)} />
             )}
             <SkillButton active={true} key={`techStack-${buttons[0]}-button`}>
                 <div className="flex gap-2 items-center justify-center">
-                    {`Showing ${data?.items.length} of ${data?.total} projects`}
+                    {`Showing ${ (data as ProjectPaginationResponse).items.length } of ${ (data as ProjectPaginationResponse).total } projects`}
                 </div>
             </SkillButton>
         </>

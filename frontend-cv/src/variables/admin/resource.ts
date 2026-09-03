@@ -50,7 +50,7 @@ const adminVariables = {
   dashBoard: 'Dashboard',
   pathAdminPage: '/admin/dashboard',
   denied: 'Access Denied',
-  invalid: 'Invalid Action',
+  invalidAction: 'Invalid Action',
   notFound: 'Resource not found',
   invalidResource: 'Invalid Resource',
   edit: {
@@ -149,7 +149,7 @@ const resourceConfig = {
     deleteManyForm: {
       title: 'Delete Projects',
       action: deleteProjectsAction ,
-      schema: schema.project.projectDeleteMany,
+      schema: schema.project.projectsDeleteMany,
       inputs: form.projectForm.inputsDeleteMany,
       initialValues: form.projectForm.initialValuesDeleteMany,
     },
@@ -181,7 +181,7 @@ const resourceConfig = {
       inputs: form.sliderForm.inputsDelete,
       initialValues: form.sliderForm.initialValuesDelete
     },
-    editFrom: {
+    editForm: {
       inputs: form.sliderForm.inputsEdit,
       initialValues: form.sliderForm.initialValues,
       action: updateSliderAction,
@@ -222,7 +222,7 @@ const resourceConfig = {
       uploadConfig: UPLOADSERVICE.CERTIFICATE,
       link: `${adminVariables.pathAdminPage}/${Resource.CERTIFICATE}/${Action.CREATE}`,
     },
-    editFrom: {
+    editForm: {
       inputs: form.certificatesForm.inputsEdit,
       initialValues: form.certificatesForm.initialValues,
       action: updateCertificateAction,
@@ -393,7 +393,7 @@ const resourceConfig = {
       table: table.profileTable
     },
     createForm: null,
-    editFrom: {
+    editForm: {
       inputs: form.profileForm.inputsEdit,
       initialValues: form.profileForm.initialValues,
       action: updateProfileAction,
@@ -428,6 +428,7 @@ const resourceConfig = {
       title: 'Upload new Profile photos',
       uploadConfig: UPLOADSERVICE.PROFILE
     },
+    deleteManyForm: null,
     validationSchema: schema.slider,
     form: form.sliderForm,
   },
@@ -464,7 +465,7 @@ const resourceConfig = {
     deleteManyForm: {
       title: 'Delete Tech Stack Categories',
       action: deleteTechCategoriesAction,
-      schema: schema.category.techCategoryDeleteMany,
+      schema: schema.category.categoryDeleteMany,
       inputs: form.categoryForm.inputsDeleteMany,
       initialValues: form.categoryForm.initialValuesDeleteMany,
     },

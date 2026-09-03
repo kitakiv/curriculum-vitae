@@ -25,10 +25,9 @@ export default function ProjectSection({ user, rows }: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.PROJECT}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.PROJECT}
                 canDelete={canDelete}
             />
         </>

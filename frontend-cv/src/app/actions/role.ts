@@ -103,8 +103,8 @@ export async function deleteRoleAction(prevState: PrevState<UpdateRoleInput> | u
     }
 }
 
-export async function deleteRolesAction(prevState: PrevState<{ids: string[]}> | undefined, formData: FormData)
-    : Promise<PrevState<{ids: string[]}>> {
+export async function deleteRolesAction(prevState: PrevStateFull<{ids: string[]}> | undefined, formData: FormData)
+    : Promise<PrevStateFull<{ids: string[]}>> {
     const rolesIds = formData.getAll('ids') as string[];
     try {
         const res = await queryGraphQL<RemoveRolesMutation, RemoveRolesMutationVariables>
@@ -114,14 +114,18 @@ export async function deleteRolesAction(prevState: PrevState<{ids: string[]}> | 
         return {
             success: true,
             message: `Roles with ids ${rolesIds.join(', ')} deleted successfully`,
-            id: res.removeRoles
+            data: {
+                ids: res.removeRoles
+            }
         };
     } catch (error) {
         console.error(error);
         return {
             success: false,
             message: error instanceof Error ? error.message : `Roles with ids ${rolesIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

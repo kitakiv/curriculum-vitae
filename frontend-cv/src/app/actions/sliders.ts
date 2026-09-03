@@ -121,8 +121,8 @@ export async function deleteSliderAction(prevState: PrevState<CreateSliderInput>
     }
 }
 
-export async function deleteSlidersAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
-:Promise<PrevState<CreateSliderInput>> {
+export async function deleteSlidersAction(prevState: PrevStateFull<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevStateFull<{ids: string[]}>> {
     const sliderIds = formData.getAll('ids') as string[];
     try {
         const res = await queryGraphQL<RemoveSlidersMutation, RemoveSlidersMutationVariables>
@@ -132,14 +132,18 @@ export async function deleteSlidersAction(prevState: PrevState<{ids: string[]}>|
         return {
             success: true,
             message: `Sliders with ids ${sliderIds.join(', ')} deleted successfully`,
-            id: res.removeSliders
+            data: {
+                ids: res.removeSliders
+            }
         };
     } catch (error) {
         console.log(error);
         return {
             success: false,
             message: error instanceof Error ? error.message : `Sliders with ids ${sliderIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

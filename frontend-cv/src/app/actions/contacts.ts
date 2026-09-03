@@ -122,8 +122,8 @@ export async function deleteContactAction(prevState: PrevState<CreateContactInpu
     }
 }
 
-export async function deleteContactsAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
-:Promise<PrevState<{ids: string[]}>> {
+export async function deleteContactsAction(prevState: PrevStateFull<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevStateFull<{ids: string[]}>> {
     const constactsIds = formData.getAll('ids') as string[];
     try {
 
@@ -134,14 +134,18 @@ export async function deleteContactsAction(prevState: PrevState<{ids: string[]}>
         return {
             success: true,
             message: `Contacts with ids ${constactsIds.join(', ')} deleted successfully`,
-            id: res.removeContacts
+            data: {
+                ids: res.removeContacts
+            }
         };
     } catch (error) {
         console.log(error);
         return {
             success: false,
             message: error instanceof Error ? error.message : `Contacts with ids ${constactsIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/store/store'
 import {Resource} from '@/variables/admin/resource'
+import { GridRowId } from '@mui/x-data-grid';
 // Define a type for the slice state
 export interface FormState {
     formDeleteMany: {
-        ids: string[];
+        ids: GridRowId[];
         isOpen: boolean;
         resourceType: Resource | null;
     }
@@ -19,13 +20,13 @@ const initialState: FormState = {
     }
 }
 
-enum FORMS {
+export enum FORMS {
     formDeleteMany = 'formDeleteMany'
 }
 
 interface AddIds {
     form: FORMS;
-    ids: string[];
+    ids: GridRowId[];
 }
 
 interface ChangeResource {
@@ -36,7 +37,7 @@ interface ChangeResource {
 interface ChangeResourceIds {
     form: FORMS;
     resourceType: Resource;
-    ids: string[];
+    ids: GridRowId[];
 }
 
 export const formSlice = createSlice({

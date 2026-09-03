@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import HelpButtons from "./HelpButtons";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { changeResourceIds } from "@/features/form/FormSlice";
+import { FORMS } from "@/features/form/FormSlice";
 
 
 interface Props {
@@ -19,7 +20,6 @@ interface Props {
   resource: Resource,
   columns: GridColDef[],
   rows: object[],
-  resouce: Resource,
   paginationModel?: { page: number; pageSize: number; }
 }
 
@@ -74,7 +74,7 @@ export default function Table({
             dispatch(changeResourceIds({
               resourceType: resource,
               ids: ids,
-              form: 'formDeleteMany'
+              form: FORMS.formDeleteMany
             }));
           }}
           showToolbar

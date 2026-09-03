@@ -11,6 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ProgressRounds from "@/components/experience/components/Rounds";
 import ArrowWrapper from "@/components/experience/components/ArrowWrapper";
 import { GetCertificatesQuery } from "@/gql/graphql";
+import { Certificate } from "@/gql/graphql";
 
 gsap.registerPlugin(ScrollTrigger);
 export default function Cards({ certificates }: { certificates: GetCertificatesQuery["certificates"]}) {
@@ -57,14 +58,16 @@ export default function Cards({ certificates }: { certificates: GetCertificatesQ
         })
     }, []);
     const colors = ["gradient-round-two", "gradient-round-three", "gradient-round-one"];
+
     return <div className=" xl:col-span-3 xl:col-start-2 xl:col-end-5 lg:col-span-4 lg:col-start-2 lg:col-end-6 md:col-span-4 md:col-start-2 md:col-end-6 col-span-5 col-start-2 col-end-7 md:mr-9 sm:mr-9 mr-9 flex flex-col gap-4">{
-        certificates.map((certificate, index) => {
+        certificates.map((certificate: Certificate, index: number) => {
             const colorRound = colors[index % colors.length];
+            const image = certificate.certificateImage ? certificate.certificateImage : experiences.defaultImage;
             return (
-                <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={certificate.id} href={`/${certificate.id}?${experiences.redirectQuery}=${encodeURI(certificate.certificateImage)}`} passHref>
+                <Link className="timeline-card relative z-10 xl:grid lg:grid xl:grid-cols-3 lg:grid-cols-3 flex-col  hover:shadow-lg hover:shadow-txSecond xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl transition-all duration-700 liquidGlass-elem" key={certificate.id} href={`/${certificate.id}?${experiences.redirectQuery}=${encodeURI(image)}`} passHref>
                     <ProgressRounds tailwind="timeline-round" colorRound={colorRound} />
                     <ArrowWrapper tailwind="grid col-span-1">
-                        <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={certificate.certificateImage as string} alt={certificate.certificateTitle} />
+                        <img className=" xl:rounded-s-3xl lg:rounded-s-3xl md:rounded-t-3xl sm:rounded-t-3xl rounded-t-3xl object-cover  image-mask-right xl:h-full lg:h-full md:w-full sm:w-full w-full" src={image} alt={certificate.certificateTitle} />
                     </ArrowWrapper>
                     <CardWrapper tailwind="col-span-2 grid grid-rows-6 padding-elements liquid-glass-burger">
                     <MainText tailwind="row-span-1">{certificate.certificateTitle}</MainText>

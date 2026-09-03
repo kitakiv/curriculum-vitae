@@ -24,10 +24,9 @@ export default function ProfileSection({ user, rows }: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.SLIDER}
                 rows={[rows]}
                 columns={columns}
-                resouce={Resource.SLIDER}
                 canDelete={canDelete}
             />
         </>

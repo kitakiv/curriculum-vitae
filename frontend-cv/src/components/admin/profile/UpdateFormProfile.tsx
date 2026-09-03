@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function UpdateFormProfile({initialValues, resourceId }: Props) {
-    const profileUpdate = resourceConfig[Resource.PROFILE].editFrom;
+    const profileUpdate = resourceConfig[Resource.PROFILE].editForm;
     return (
         <FormUpdate<Profile>
             inputs={profileUpdate.inputs}

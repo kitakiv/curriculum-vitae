@@ -105,7 +105,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         title: "Slider settings",
         name: "Slider",
@@ -133,7 +133,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         title: "Tech Stack settings",
         name: "Tech Stack",
@@ -169,7 +169,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         title: "Project settings",
         name: "Project",
@@ -195,7 +195,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         title: "Contact settings",
         name: "Contacts",
@@ -229,7 +229,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     },
     mainImageForm: {
@@ -259,7 +259,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     },
     userForm: {
@@ -274,7 +274,7 @@ const form = {
             { id: "id", label: "ID", name: "id", placeholder: "ID", type: "text" },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     },
     roleForm: {
@@ -289,7 +289,7 @@ const form = {
             { id: "permissions", label: "Permissions", name: "permissions", placeholder: "Resource", type: "table", options: [] },
         ],
         inputsDeleteMany: [
-            { phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+            { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
     }
 }

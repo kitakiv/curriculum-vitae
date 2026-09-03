@@ -25,10 +25,9 @@ export default function CertificateSection({ user, rows }: Props) {
        canCreate={canCreate}
        canRead={canRead}
        canUpdate={canUpdate}
-       resource={resource}
+       resource={Resource.CERTIFICATE}
        rows={rows}
        columns={columns}
-       resouce={Resource.CERTIFICATE}
        canDelete={canDelete} />
     )
 }

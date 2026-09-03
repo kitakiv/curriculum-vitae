@@ -25,10 +25,9 @@ export default function RoleSection({ user, rows }: Props) {
                 canCreate={canCreate}
                 canRead={canRead}
                 canUpdate={canUpdate}
-                resource={resource}
+                resource={Resource.ROLE}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.PROJECT}
                 canDelete={canDelete}
             />
         </>

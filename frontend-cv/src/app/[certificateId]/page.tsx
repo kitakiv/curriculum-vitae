@@ -19,7 +19,10 @@ export default async function Page({
    if (!link) {
     return <Modal><p className="text-center text-txSecond">No certificate link found</p></Modal>
    }
-   return <div className="flex justify-center items-center overflow-scroll">  
+   if (typeof link === "string") {
+     return <div className="flex justify-center items-center overflow-scroll">  
     <img src={decodeURI(link) || `${id}`} alt={id} className="rounded-3xl overflow-scroll w-full h-auto object-contain" />
     </div>
+  }
+   return null
  } 

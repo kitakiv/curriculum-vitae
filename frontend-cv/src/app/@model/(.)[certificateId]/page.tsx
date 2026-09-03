@@ -22,7 +22,10 @@ export default async function Page({
     return <Modal><p className="text-center text-txSecond">No certificate link found</p></Modal>
   }
   if (typeof link === "string") {
-     return <Modal><img src={decodeURI(link) || `${id}`} alt={id} className="rounded-3xl xl:w-1/3 lg:w-1/3 md:w-2/3 w-full h-auto object-contain" /></Modal>
+     return <Modal>
+        <img src={decodeURI(link || "") || `${id}`} alt={id} className="rounded-3xl xl:w-1/3 lg:w-1/3 md:w-2/3 w-full h-auto object-contain" />
+
+      </Modal>
   }
   return null
  } 

@@ -7,9 +7,10 @@ import { queryGraphQL } from "./graphql";
 import { PROJECTS_GET_PAGINATED_QUERY, PROJECTS_GET_BY_TECH_QUERY } from "@/graphql/project.graphql";
 import {
   GetProjectsPaginationQuery,
-  GetProjectsByTechStackQueryVariables,
+  ProjectsByTechStackQueryVariables,
   GetProjectsPaginationQueryVariables,
-  GetProjectsByTechStackQuery
+  ProjectsByTechStackQuery,
+  ProjectPaginationResponse
 } from "@/gql/graphql";
 import { TypedDocumentNode } from "@apollo/client";
 
@@ -18,13 +19,14 @@ import { TypedDocumentNode } from "@apollo/client";
 function getProjectsAll({ limit, page, techId }: { limit: number, page: number, techId?: string }) {
   return queryOptions({
     queryKey: ['projects', { limit, page, techId }],
-    queryFn: ({ queryKey }) => {
+    queryFn: ({ queryKey }): Promise<ProjectPaginationResponse> => {
       const [_, { limit, page, techId }] = queryKey as [string, { limit: number, page: number, techId?: string }];
       return getProjectsQuery({ limit, page, techId });
     },
     placeholderData: keepPreviousData,
   })
 }
+
 
 
 
@@ -58,17 +60,16 @@ function fetchGraphQL<
   return fetcher();
 }
 
-const fetchProjects = async ({ limit, page }: { limit: number, page: number }): Promise<GetProjectsPaginationQuery["projectsPagination"]> => {
+const fetchProjects = async ({ limit, page }: { limit: number, page: number }): Promise<ProjectPaginationResponse> => {
   const responce = await fetchGraphQL<GetProjectsPaginationQuery, GetProjectsPaginationQueryVariables>(PROJECTS_GET_PAGINATED_QUERY, { variables: { limit, page } });
-  console.log(responce);
   if (responce.data.projectsPagination) {
     return responce.data.projectsPagination;
   }
   throw new Error("Failed to fetch projects");
 }
 
-const fetchProjectsByTechStack = async ({ limit, page, techId }: { limit: number, page: number, techId: string }): Promise<GetProjectsByTechStackQuery["techstack"]["projects"]> => {
-  const responce = await fetchGraphQL<GetProjectsByTechStackQuery, GetProjectsByTechStackQueryVariables>(PROJECTS_GET_BY_TECH_QUERY, { variables: { limit, page, techId } });
+const fetchProjectsByTechStack = async ({ limit, page, techId }: { limit: number, page: number, techId: string }): Promise<ProjectPaginationResponse> => {
+  const responce = await fetchGraphQL<ProjectsByTechStackQuery, ProjectsByTechStackQueryVariables>(PROJECTS_GET_BY_TECH_QUERY, { variables: { limit, page, techId } });
   if (responce.data.projectsByTechStack) {
     return responce.data.projectsByTechStack;
   }
@@ -89,7 +90,7 @@ const fetchProjectsByTechStack = async ({ limit, page, techId }: { limit: number
 //     throw error;
 //   }
 // }
-async function getProjectsQuery({ limit, page, techId }: { limit: number, page: number, techId?: string }) {
+async function getProjectsQuery({ limit, page, techId }: { limit: number, page: number, techId?: string }): Promise<ProjectPaginationResponse> {
   if (techId) {
     return await fetchProjectsByTechStack({ limit, page, techId });
   }

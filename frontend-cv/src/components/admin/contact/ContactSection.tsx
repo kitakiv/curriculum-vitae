@@ -31,7 +31,6 @@ export default function ContactSection({ user, rows }: Props) {
                 resource={Resource.CONTACT}
                 rows={rows}
                 columns={columns}
-                resouce={Resource.CONTACT}
                 canDelete={canDelete}
             />
         </>
@@ -58,12 +57,12 @@ export function createFormContact() {
 }
 
 export function createUpdateFrom(intialValues: Contact, id: string) {
-    const initialValuesEmpty = resourceConfig[Resource.CONTACT].editFrom.initialValues;
+    const initialValuesEmpty = resourceConfig[Resource.CONTACT].editForm.initialValues;
     Object.keys(initialValuesEmpty).forEach((key: string) => {
         // @ts-ignore
         initialValuesEmpty[key] = intialValues[key] as string;
     })
-    const contactUpdate = resourceConfig[Resource.CONTACT].editFrom;
+    const contactUpdate = resourceConfig[Resource.CONTACT].editForm;
 
     return (
         <FromUpdate<CreateContactInput>

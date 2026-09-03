@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function UpdateFormContact({initialValues, resourceId }: Props) {
-    const contactUpdate = resourceConfig[Resource.CONTACT].editFrom;
+    const contactUpdate = resourceConfig[Resource.CONTACT].editForm;
     const initialValuesEmpty = contactUpdate.initialValues;
     Object.keys(initialValuesEmpty).forEach((key: string) => {
         // @ts-ignore

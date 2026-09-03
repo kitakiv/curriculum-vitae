@@ -38,7 +38,7 @@ class InputType {
     type: string = "";
     as?: string = "";
     readonly?: boolean = false;
-    options?: Array<{value: string, label: string}> = [];
+    options?: Array<{value: string | undefined, label: string}> = [];
     tableHeader?: Array<string> = [];
     tableLeftColumn?: Array<string> = [];
     link?: string = "";

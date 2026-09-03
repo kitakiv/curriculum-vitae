@@ -13,5 +13,5 @@ export default async function Page({ params }: Props) {
     const currentResource = (await params).resource;
     const canDelete = user ? hasPermission(user, currentResource, [Action.DELETE]) : false;
         if (!canDelete) return <div>Access Denied</div>
-        return <ResourceDeleteManySection currentResource={currentResource} />
+        return <ResourceDeleteManySection currentResource={currentResource} resourceId={user.id} />
 }

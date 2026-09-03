@@ -29,7 +29,7 @@ export default async function Page({ params }: Props) {
     if (action === Action.DELETEMANY) {
         const canDelete = user ? hasPermission(user, currentResource, [Action.DELETE]) : false;
         if (!canDelete) return <TextWhite>{adminVariables.denied}</TextWhite>
-        return <ResourceDeleteManySection currentResource={currentResource} />
+        return <ResourceDeleteManySection currentResource={currentResource} resourceId={user.id} />
     }
 
 

@@ -1,5 +1,5 @@
 'use server'
-import {  CreateProjectInput, Project, UpdateProjectMutationVariables, UpdateProjectInput, UpdateProjectMutation, CreateProjectMutation, CreateProjectMutationVariables, RemoveProjectMutation, RemoveProjectMutationVariables, Profile } from "@/gql/graphql"
+import {  CreateProjectInput, Project, UpdateProjectInput, UpdateProjectMutation, UpdateProjectMutationVariables, CreateProjectMutation, CreateProjectMutationVariables, RemoveProjectMutation, RemoveProjectMutationVariables } from "@/gql/graphql"
 import { Resource, resourceConfig } from "@/variables/admin/resource";
 import { addFile, deleteFileIndex, uploadFile, uploadFiles } from "@/query/upload.http";
 import { queryGraphQL } from "@/query/graphql";
@@ -9,6 +9,7 @@ import { PROJECT_UPDATE_MUTATION, PROJECT_CREATE_MUTATION, PROJECT_REMOVE_MUTATI
 import { PROJECTS_REMOVE_MUTATION } from "@/graphql/project.graphql";
 import { RemoveProjectsMutation } from "@/gql/graphql";
 import { RemoveProjectsMutationVariables } from "@/gql/graphql";
+import { MutationUpdateProjectArgs } from "@/gql/graphql";
 
 const PROJECT_IMAGES = 'projectImages';
 const PROJECT_IMAGE = 'projectImage';
@@ -209,9 +210,8 @@ export async function deleteProjectAction(prevState: PrevState<UpdateProjectInpu
 }
 
 
-export async function deleteProjectsAction(prevState: PrevState<{ids: string[]}>| undefined, formData: FormData)
-:Promise<PrevState<{ids: string[]}>> {
-    console.log(formData);
+export async function deleteProjectsAction(prevState: PrevStateFull<{ids: string[]}>| undefined, formData: FormData)
+:Promise<PrevStateFull<{ids: string[]}>> {
     const projectsIds = formData.getAll('ids') as string[];
     try {
         const res = await queryGraphQL<RemoveProjectsMutation, RemoveProjectsMutationVariables>
@@ -221,14 +221,18 @@ export async function deleteProjectsAction(prevState: PrevState<{ids: string[]}>
         return {
             success: true,
             message: `Projects with ids ${projectsIds.join(', ')} deleted successfully`,
-            id: res.removeProjects
+            data: {
+                ids: res.removeProjects
+            }
         };
     } catch (error) {
         console.log(error);
         return {
             success: false,
             message: error instanceof Error ? error.message : `Projects with ids ${projectsIds.join(', ')} deletion failed`,
-            id: null
+            data: {
+                ids: []
+            }
         };
     }
 }

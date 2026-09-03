@@ -8,7 +8,7 @@ interface Props {
     resourceId: string,
 }
 export default function UpdateFormCertificate({initialValues, resourceId }: Props) {
-    const certificateUpdate = resourceConfig[Resource.CERTIFICATE].editFrom;
+    const certificateUpdate = resourceConfig[Resource.CERTIFICATE].editForm;
 
     return (
         <FormUpdate<CreateCertificateInput>

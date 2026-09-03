@@ -7,36 +7,45 @@ import React, { useActionState, startTransition, useEffect } from 'react';
 import SmallText from '@/components/text/SmallText';
 import { PrevState } from '@/app/actions/action.type';
 import CustomizedSnackbars from '@/components/animation/Alert';
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { resourceConfig } from '@/variables/admin/resource';
-import { Resource } from '@/variables/admin/resource';
+import { useAppSelector } from '@/store/hooks'
+import { resourceConfig, Resource } from '@/variables/admin/resource';
 import MainText from '@/components/text/MainText';
 import { useRouter } from 'next/navigation';
+import { PrevStateFull } from '@/app/actions/action.type';
 
 export default function FormDeleteMany({ tailwind, resourceId, currentResource }: { tailwind?: string, resourceId?: string, currentResource: Resource }) {
-    const resource = currentResource.toLowerCase();
+    const resource: keyof typeof resourceConfig = currentResource.toLowerCase() as keyof typeof resourceConfig;
     const resourceIds = useAppSelector(state => state.form.formDeleteMany.ids) as string[];
-    const inputs = resourceConfig[resource].deleteManyForm.inputs as InputType[];
-    const formInitialValues = resourceConfig[resource].deleteManyForm.initialValues;
-    const actionForm = resourceConfig[resource].deleteManyForm.action;
     const router = useRouter();
+    const inputs = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.inputs : [];
+    const formInitialValues = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.initialValues : {};
+    const schema = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.schema : null;
+    const title = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.title : '';
+    // @ts-ignore
+    const actionForm = resourceConfig[resource].deleteManyForm.action;
+    // @ts-ignore
+    const [state, action, pending] = useActionState(actionForm, undefined);
+    // @ts-ignore
     const initialValues = {
         ...formInitialValues,
         ids: resourceIds
     };
-    const [state, action, pending] = useActionState(actionForm, undefined);
 
     useEffect(() => {
         if (state?.success) {
             router.back();
             router.refresh();
         }
-    }, [state?.success, router])
+    }, [state?.success, router]);
+
+     if (!resourceConfig[resource].deleteManyForm) {
+        return <></>;
+    }
 
     return (
         <Formik
             initialValues={initialValues}
-            validationSchema={resourceConfig[resource.toLowerCase()].deleteManyForm.schema}
+            validationSchema={schema}
             onSubmit={async () => {
                 const formData = new FormData();
                 resourceIds.forEach((id) => {
@@ -53,7 +62,7 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
             {({ setFieldValue }) => (
                 <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     <MainText tailwind="text-center">
-                        {resourceConfig[resource].deleteManyForm.title}
+                        {title}
                     </MainText>
                     {state?.message && (
                         <>
@@ -73,7 +82,7 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
                         />
                     ))}
                     <SubmitButton pending={pending}>
-                        {resourceConfig[resource.toLowerCase()].deleteManyForm.title}
+                        {title}
                     </SubmitButton>
                 </Form>
             )}

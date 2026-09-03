@@ -28,6 +28,7 @@ export default function DeleteFormUser({resource, resourceId }: Props) {
                 <MainText tailwind="text-center">
                     {userDelete.title}
                 </MainText>
+                {/* @ts-ignore */}
                 <UserInfo user={resource}/>
                  </>
             </FormDelete>
