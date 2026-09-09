@@ -8,6 +8,7 @@ import { Checkbox, FormControlLabel, Radio, RadioGroup, Table, TableBody, TableC
 import AdminButton from "@/components/button/AdminButton";
 import Link from "next/link";
 import { adminVariables } from "@/variables/admin/resource";
+import CheckButton from "@/components/button/CheckButton";
 
 interface Props {
     inputData: InputType,
@@ -18,7 +19,8 @@ interface Props {
 
 export default function InputElement({ inputData, setFieldValue, readonly = false, values }: Props) {
     const { id, label, name, placeholder, type, as, tableHeader, tableLeftColumn } = inputData;
-    const [_, setHasError] = useState<boolean>(false)
+    const [_, setHasError] = useState<boolean>(false);
+    const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const { errors, touched } = useFormikContext<any>();
     const [fileImages, setFileImages] = useState<{ file: File; preview: string; }[]>([]);
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -158,6 +160,20 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
                     </div>
                 ))}
                 <span className={`${errors[name] && touched[name] ? 'text-red-500' : 'hidden'} transition-all duration-300 ease-in-out`}>{handleError(errors[name] as string)}</span>
+            </>
+        )
+    }
+
+    if (type === "password") {
+        return (
+            <>
+            <label htmlFor={id}>
+                <MiddleText tailwind="text-adminTx">{label}</MiddleText>
+            </label>
+            <div className="relative">
+            <Field className="w-full focus:outline-none border-2 border-zOpacity bg-adminGr0 text-adminTx100 px-2 py-3 rounded-md" type={showPassword ? "text" : type} name={name} id={id} placeholder={placeholder} readOnly={readonly} as={as} />
+            <CheckButton onClick={() => setShowPassword((prev) => !prev)} showPassword={showPassword} className="absolute right-4 top-1/2 transform -translate-y-1/2"/>
+            </div>
             </>
         )
     }

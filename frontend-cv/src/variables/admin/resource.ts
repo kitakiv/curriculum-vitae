@@ -19,6 +19,8 @@ import { deleteTechStacksAciton } from "@/app/actions/techstack";
 import { deleteUsersAction } from "@/app/actions/auth";
 import { deleteTechCategoriesAction } from "@/app/actions/category";
 import { deleteRolesAction } from "@/app/actions/role";
+import { updateUserAction } from "@/app/actions/auth";
+import { updateUserImageAction } from "@/app/actions/auth";
 
 export enum Resource {
   USER = 'user',
@@ -379,6 +381,21 @@ const resourceConfig = {
       schema: schema.user.userDeleteMany,
       inputs: form.userForm.inputsDeleteMany,
       initialValues: form.userForm.initialValuesDeleteMany,
+    },
+    editForm: {
+      inputs: form.userForm.inputsEdit,
+      initialValues: form.userForm.initialValuesEdit,
+      action: updateUserAction,
+      schema: schema.user.userEdit,
+      title: 'Edit user',
+    },
+    editFormImage: {
+      inputs: form.userForm.inputsEditImage,
+      initialValues: form.userForm.initialValues,
+      action: updateUserImageAction,
+      schema: schema.user.userEditImage,
+      title: 'Edit user image',
+      uploadConfig: UPLOADSERVICE.USER
     },
     validationSchema: null,
     form: null,

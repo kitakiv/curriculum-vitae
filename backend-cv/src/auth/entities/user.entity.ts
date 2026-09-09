@@ -5,6 +5,7 @@ import { RefreshToken } from './refreshToken.entity';
 import { Role } from '../../roles/entities/role.entity';
 import { Exclude } from 'class-transformer';
 import { UserProvider } from 'src/common/types/types';
+import { ResetToken } from './resetToken.entity';
 
 @ObjectType()
 @Entity()
@@ -52,6 +53,11 @@ export class User extends AbstractEntity<User> {
   @Field(() => RefreshToken, { description: 'Refresh token', nullable: true })
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshToken: RefreshToken;
+
+  @Exclude()
+  @Field(() => ResetToken, { description: 'Reset token', nullable: true })
+  @OneToOne(() => ResetToken, (resetToken) => resetToken.user)
+  resetToken: ResetToken;
 
   @Field(() => Role, { nullable: true, description: 'User role' })
   @ManyToOne(() => Role, (role) => role.users, {

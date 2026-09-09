@@ -11,6 +11,7 @@ import { SingleImage, SingleImageBaseClass } from './interface/singleImage.abstr
 import { MultiImageBaseClass } from './interface/multiImage.abstract';
 import { RedisCacheService } from 'src/cache/cache.service';
 import { MAX_FILE_IMAGES } from 'src/common/constants';
+import { UserImageService } from '../auth/authImage.server';
 
 
 @Injectable()
@@ -24,6 +25,7 @@ export class UploadService {
     private readonly projectsImageService: ProjectsImageService,
     private readonly profileImageService: ProfileImageService,
     private readonly certificateImageService: CertificateImageService,
+    private readonly userImageService: UserImageService,
     private readonly cacheService: RedisCacheService,
     private readonly logger: Logger = new Logger(UploadService.name),
   ) {
@@ -34,6 +36,7 @@ export class UploadService {
       [uploadVariables.projects.name]: this.projectsImageService,
       [uploadVariables.profile.name]: this.profileImageService,
       [uploadVariables.certificate.name]: this.certificateImageService,
+      [uploadVariables.user.name]: this.userImageService,
     };
   }
 

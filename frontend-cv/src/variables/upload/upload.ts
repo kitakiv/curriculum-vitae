@@ -21,6 +21,7 @@ enum UPLOADSERVICE {
     TECHSTACK = 'techstack',
     PROFILE = 'profile',
     CERTIFICATE = 'certificate',
+    USER = 'user',
 }
 
 const uploadVariables = {
@@ -46,6 +47,10 @@ const uploadVariables = {
   },
   [UPLOADSERVICE.CERTIFICATE]: {
     name: UPLOADSERVICE.CERTIFICATE,
+    multiFile: false,
+  },
+  [UPLOADSERVICE.USER]: {
+    name: UPLOADSERVICE.USER,
     multiFile: false,
   },
 };

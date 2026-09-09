@@ -164,8 +164,7 @@ type Mutation {
   removeTechStacks(ids: [ID!]!): [ID!]!
   removeUser(id: ID!): ID!
   removeUsers(ids: [ID!]!): [ID!]!
-  signup(signUpInput: SignUpInput!): Boolean!
-  update(updateUserInput: UpdateUserInput!): User!
+  signup(signUpInput: SignUpInput!): SignupData!
   updateCertificate(updateCertificateInput: UpdateCertificateInput!): Certificate!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
   updateProfile(updateProfileInput: UpdateProfileInput!): Profile!
@@ -174,6 +173,7 @@ type Mutation {
   updateSlider(updateSliderInput: UpdateSliderInput!): Slider!
   updateTechCategory(updateTechCategoryInput: UpdateTechCategoryInput!): TechCategory!
   updateTechStack(updateTechStackInput: UpdateTechStackInput!): TechStack!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Permission {
@@ -254,8 +254,7 @@ type Query {
   profile: Profile!
   project(id: ID!): Project!
   projects: [Project!]!
-  projectsByTechStack(limit: Int! = 10, page: Int! = 1, techId: ID!): ProjectPaginationResponse!
-  projectsPagination(limit: Int! = 10, page: Int! = 1): ProjectPaginationResponse!
+  projectsPagination(limit: Int! = 10, page: Int! = 1, techId: ID): ProjectPaginationResponse!
   role(id: ID!): Role!
   roles: [Role!]!
   slider(id: ID!): Slider!
@@ -263,6 +262,7 @@ type Query {
   techCategories: [TechCategory!]!
   techCategory(id: ID!): TechCategory!
   techstack(id: ID!): TechStack!
+  techstackPagination(categoryId: ID, limit: Int! = 10, page: Int! = 1): TechStackPaginationResponse!
   techstacks: [TechStack!]!
   user(login: String!): User!
   userById(id: ID!): User!
@@ -307,6 +307,17 @@ input SignUpInput {
   password: String!
 }
 
+type SignupData {
+  """User login"""
+  login: String!
+
+  """message of successful registration"""
+  message: String!
+
+  """registration status"""
+  success: Boolean!
+}
+
 type Slider {
   """Slider unique identifier"""
   id: ID!
@@ -343,6 +354,14 @@ type TechStack {
 
   """Tech stack svg for example: React svg"""
   techSvg: String
+}
+
+type TechStackPaginationResponse {
+  items: [TechStack!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
 }
 
 input UpdateCertificateInput {

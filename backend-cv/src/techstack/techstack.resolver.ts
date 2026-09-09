@@ -6,6 +6,7 @@ import {
   ID,
   ResolveField,
   Parent,
+  Int,
 } from '@nestjs/graphql';
 import { TechStackService } from './techstack.service';
 import { TechStack } from './entities/techstack.entity';
@@ -23,6 +24,7 @@ import { errors } from '../errors/errors.config';
 import { Project } from '../projects/entities/project.entity';
 import { TechCategory } from '../tech-category/entities/tech-category.entity';
 import uploadVariables from 'src/variables/upload.variables';
+import { TechStackPaginationResponse } from './entities/techstackPagination.type';
 
 
 @UseGuards(AuthorizationGuard)
@@ -48,8 +50,18 @@ export class TechStackResolver {
 
   @Public()
   @Query(() => [TechStack], { name: 'techstacks' })
-  async findAll() {
-    return await this.techStackService.findAll();
+  async findAllTechStacks() {
+    return await this.techStackService.findAllTechStacks();
+  }
+
+  @Public()
+  @Query(() => TechStackPaginationResponse, { name: 'techstackPagination' })
+  async findAll(
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit?: number,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page?: number,
+    @Args('categoryId', { type: () => ID , nullable: true }) categoryId?: string | null
+  ) {
+    return await this.techStackService.findAll({ limit, page, categoryId });
   }
 
   @Public()

@@ -15,6 +15,9 @@ import { RedisCacheService } from '../cache/cache.service';
 import { Project } from '../projects/entities/project.entity';
 import { DataSource } from 'typeorm';
 import { TechCategory } from '../tech-category/entities/tech-category.entity';
+import { TechStackPaginationResponse } from './entities/techstackPagination.type';
+import { ProjectPaginationResponse } from '../projects/entities/projectPagination.type';
+import { PaginationArgs } from '../arguments/pagination.args';
 
 @Injectable()
 export class TechStackService {
@@ -32,7 +35,7 @@ export class TechStackService {
     private readonly redisCacheService: RedisCacheService,
   ) { }
 
-   private async deleteCache() {
+  private async deleteCache() {
     await this.redisCacheService.del(this.TECHSTACK_CACHE_KEY);
   }
   async create(createTechStackInput: CreateTechStackInput) {
@@ -64,7 +67,7 @@ export class TechStackService {
     }
   }
 
-  async findAll() {
+  async findAllTechStacks(): Promise<TechStack[]> {
     const techStack = await this.redisCacheService.get(
       this.TECHSTACK_CACHE_KEY,
     );
@@ -81,6 +84,66 @@ export class TechStackService {
       this.TECHSTACK_CACHE_TIME,
     );
     return newTechStack;
+  }
+
+  async findAll({ limit, page, categoryId }: { limit: number, page: number, categoryId?: string }):
+    Promise<TechStackPaginationResponse> {
+    if (!categoryId) {
+      return await this.findTechStacksAll({ limit, page });
+    } else if (categoryId) {
+      return await this.findAllByTechCategory({ limit, page, categoryId });
+    } else {
+      return null
+    }
+  }
+
+  private async findTechStacksAll({ limit, page, }: { limit: number, page: number}): Promise<TechStackPaginationResponse> {
+    const skip = (page - 1) * limit;
+    const take = limit;
+      const [techStacks, count] = await this.techStackRepository.findAndCount({
+        skip,
+        take,
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+      const paginationResponse = new TechStackPaginationResponse(
+        {
+          items: techStacks,
+          total: count,
+          page,
+          limit,
+        });
+      return paginationResponse;
+  }
+
+
+ private async findAllByTechCategory({ limit, page, categoryId }: { limit: number, page: number, categoryId: string }):
+   Promise<TechStackPaginationResponse> {
+    const exist = await this.techCategoryRepository.existsBy({ id: categoryId });
+    if (!exist) throw new NotFoundException(errors.NOT_FOUND('TechCategory'));
+    const skip = (page - 1) * limit;
+    const take = limit;
+    const [techStacks, count] = await this.techStackRepository.findAndCount({
+      where: {
+        techCategories: {
+          id: categoryId,
+        },
+      },
+      skip,
+      take,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    const paginationResponse = new TechStackPaginationResponse(
+      {
+        items: techStacks,
+        total: count,
+        page,
+        limit,
+      });
+    return paginationResponse;
   }
 
   async findOne(id: string): Promise<TechStack | NotFoundException> {

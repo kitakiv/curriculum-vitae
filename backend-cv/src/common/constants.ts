@@ -4,6 +4,8 @@ const MB = KB * 1000 * 10
 const REFRESH_TOKEN_EXPIRATION_DAYS =
   Number(process.env.REFRESH_TOKEN_VALIDITY_DURATION_IN_DAYS) || 3;
 const FILE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp', 'svg+xml'];
+const NANO_ID_LENGTH = 64;
+const EXPIRE_DATE_RESET_TOKEN = 1 * 60 * 60 * 1000; // 1 hour
 const directives: Record<string, string[]> =  {
   imgSrc: [
     `'self'`,
@@ -14,14 +16,20 @@ const directives: Record<string, string[]> =  {
   manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
   frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
 }
-const expiryDate = (days: number) =>
-  new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+function expiryDate(days: number) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
 export {
   MAX_FILE_IMAGES,
   KB,
   MB,
   FILE_EXTENSIONS,
   REFRESH_TOKEN_EXPIRATION_DAYS,
+  NANO_ID_LENGTH,
+  EXPIRE_DATE_RESET_TOKEN,
   expiryDate,
   directives,
 };

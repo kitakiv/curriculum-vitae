@@ -124,4 +124,16 @@ export class UploadController {
   ) {
     return await this.uploadService.uploadFileMore({ file, service, id });
   }
+
+   @Post('file/user/:id')
+  @UseInterceptors(FileInterceptor('File'))
+  async uploadPublicFile(
+    @UploadedFile(new FileValidationPipe())
+    file: Express.Multer.File,
+    service: string = 'user',
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return await this.uploadService.uploadFile({ file, service, id });
+  }
+
 }

@@ -113,11 +113,15 @@ export class ProjectsService {
     return projects;
   }
 
-  async findAllByTechStack({ limit, page, techId }: { limit: number, page: number, techId: string }):
+  private async findAllByTechStack({ limit, page, techId }: { limit: number, page: number, techId: string }):
    Promise<ProjectPaginationResponse>
   {
     const skip = (page - 1) * limit;
     const take = limit;
+    const exits = await this.techStackRepository.existsBy({ id: techId });
+    if (!exits) {
+      throw new NotFoundException(errors.NOT_FOUND(`TechStack with id: ${techId}`));
+    }
     const [projects, count] = await this.projectsRepository.findAndCount({
       where: {
         techStacks: {
@@ -140,7 +144,7 @@ export class ProjectsService {
     return paginationResponse;
   }
 
-  async findAll({ limit, page }: PaginationArgs): Promise<ProjectPaginationResponse> {
+  private async findProjectsAll({ limit, page}: { limit: number, page: number }): Promise<ProjectPaginationResponse> {
     const skip = (page - 1) * limit;
     const take = limit;
     const [projects, count] = await this.projectsRepository.findAndCount({
@@ -158,6 +162,15 @@ export class ProjectsService {
         limit,
       });
     return paginationResponse;
+  }
+
+  async findAll({ limit, page, techId }: { limit: number, page: number, techId?: string | null }): Promise<ProjectPaginationResponse> {
+    if (techId) {
+      return await this.findAllByTechStack({ limit, page, techId });
+    } else if (!techId) {
+      return await this.findProjectsAll({ limit, page });
+    }
+    return null;
   }
 
   async findOne(id: string) {

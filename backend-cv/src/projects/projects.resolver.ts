@@ -23,8 +23,6 @@ import { Action } from '../roles/enums/action.enum';
 import { errors } from '../errors/errors.config';
 import { TechStack } from '../techstack/entities/techstack.entity';
 import uploadVariables from 'src/variables/upload.variables';
-
-import { PaginationResponse } from '../arguments/pagination.type';
 import { ProjectPaginationResponse } from './entities/projectPagination.type';
 
 @UseGuards(AuthorizationGuard)
@@ -52,18 +50,9 @@ export class ProjectsResolver {
   async findAll(
     @Args('limit', { type: () => Int, defaultValue: 10 }) limit?: number,
     @Args('page', { type: () => Int, defaultValue: 1 }) page?: number,
+    @Args('techId', { type: () => ID, nullable: true }) techId?: string | null,
   ) {
-    return await this.projectsService.findAll({ limit, page });
-  }
-
-  @Public()
-  @Query(() => ProjectPaginationResponse, { name: 'projectsByTechStack' })
-  async findAllByTechStack(
-    @Args('limit', { type: () => Int, defaultValue: 10 }) limit?: number,
-    @Args('page', { type: () => Int, defaultValue: 1 }) page?: number,
-    @Args('techId', { type: () => ID }) techId?: string
-  ) {
-    return await this.projectsService.findAllByTechStack({ limit, page, techId });
+    return await this.projectsService.findAll({ limit, page, techId });
   }
 
 

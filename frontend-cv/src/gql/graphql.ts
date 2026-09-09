@@ -164,8 +164,7 @@ export type Mutation = {
   removeTechStacks: Array<Scalars['ID']['output']>;
   removeUser: Scalars['ID']['output'];
   removeUsers: Array<Scalars['ID']['output']>;
-  signup: Scalars['Boolean']['output'];
-  update: User;
+  signup: SignupData;
   updateCertificate: Certificate;
   updateContact: Contact;
   updateProfile: Profile;
@@ -174,6 +173,7 @@ export type Mutation = {
   updateSlider: Slider;
   updateTechCategory: TechCategory;
   updateTechStack: TechStack;
+  updateUser: User;
 };
 
 
@@ -312,11 +312,6 @@ export type MutationSignupArgs = {
 };
 
 
-export type MutationUpdateArgs = {
-  updateUserInput: UpdateUserInput;
-};
-
-
 export type MutationUpdateCertificateArgs = {
   updateCertificateInput: UpdateCertificateInput;
 };
@@ -354,6 +349,11 @@ export type MutationUpdateTechCategoryArgs = {
 
 export type MutationUpdateTechStackArgs = {
   updateTechStackInput: UpdateTechStackInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  updateUserInput: UpdateUserInput;
 };
 
 export type Permission = {
@@ -424,7 +424,6 @@ export type Query = {
   profile: Profile;
   project: Project;
   projects: Array<Project>;
-  projectsByTechStack: ProjectPaginationResponse;
   projectsPagination: ProjectPaginationResponse;
   role: Role;
   roles: Array<Role>;
@@ -433,6 +432,7 @@ export type Query = {
   techCategories: Array<TechCategory>;
   techCategory: TechCategory;
   techstack: TechStack;
+  techstackPagination: TechStackPaginationResponse;
   techstacks: Array<TechStack>;
   user: User;
   userById: User;
@@ -455,16 +455,10 @@ export type QueryProjectArgs = {
 };
 
 
-export type QueryProjectsByTechStackArgs = {
-  limit?: Scalars['Int']['input'];
-  page?: Scalars['Int']['input'];
-  techId: Scalars['ID']['input'];
-};
-
-
 export type QueryProjectsPaginationArgs = {
   limit?: Scalars['Int']['input'];
   page?: Scalars['Int']['input'];
+  techId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -485,6 +479,13 @@ export type QueryTechCategoryArgs = {
 
 export type QueryTechstackArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryTechstackPaginationArgs = {
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
+  limit?: Scalars['Int']['input'];
+  page?: Scalars['Int']['input'];
 };
 
 
@@ -533,6 +534,16 @@ export type SignUpInput = {
   password: Scalars['String']['input'];
 };
 
+export type SignupData = {
+  __typename?: 'SignupData';
+  /** User login */
+  login: Scalars['String']['output'];
+  /** message of successful registration */
+  message: Scalars['String']['output'];
+  /** registration status */
+  success: Scalars['Boolean']['output'];
+};
+
 export type Slider = {
   __typename?: 'Slider';
   /** Slider unique identifier */
@@ -565,6 +576,15 @@ export type TechStack = {
   techName: Scalars['String']['output'];
   /** Tech stack svg for example: React svg */
   techSvg?: Maybe<Scalars['String']['output']>;
+};
+
+export type TechStackPaginationResponse = {
+  __typename?: 'TechStackPaginationResponse';
+  items: Array<TechStack>;
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
 };
 
 export type UpdateCertificateInput = {
@@ -689,7 +709,7 @@ export type SignupMutationVariables = Exact<{
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: boolean };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'SignupData', login: string, success: boolean, message: string } };
 
 export type RefreshTheTokensMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -712,6 +732,13 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, login: string, name: string, avatarPhoto?: string | null, isEmailVerified: boolean, role?: { __typename?: 'Role', id: string, name: string, permissions: Array<{ __typename?: 'Permission', actions: Array<string>, id: string, resource: string }> } | null }> };
+
+export type UpdateUserMutationVariables = Exact<{
+  updateUserInput: UpdateUserInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', avatarPhoto?: string | null, id: string, login: string, name: string } };
 
 export type AttachRoleToUserMutationVariables = Exact<{
   attachRoleInput: AttachRoleInput;
@@ -846,19 +873,11 @@ export type GetProjectsQuery = { __typename?: 'Query', projects: Array<{ __typen
 export type GetProjectsPaginationQueryVariables = Exact<{
   limit: Scalars['Int']['input'];
   page: Scalars['Int']['input'];
+  techId?: InputMaybe<Scalars['ID']['input']>;
 }>;
 
 
 export type GetProjectsPaginationQuery = { __typename?: 'Query', projectsPagination: { __typename?: 'ProjectPaginationResponse', limit: number, page: number, total: number, totalPages: number, items: Array<{ __typename?: 'Project', id: string, projectDemoLink: string, projectDescription: string, projectGithubLink: string, projectImages?: Array<string> | null, projectTitle: string, techStacks?: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> | null }> } };
-
-export type ProjectsByTechStackQueryVariables = Exact<{
-  limit: Scalars['Int']['input'];
-  page: Scalars['Int']['input'];
-  techId: Scalars['ID']['input'];
-}>;
-
-
-export type ProjectsByTechStackQuery = { __typename?: 'Query', projectsByTechStack: { __typename?: 'ProjectPaginationResponse', limit: number, page: number, total: number, totalPages: number, items: Array<{ __typename?: 'Project', id: string, projectDemoLink: string, projectDescription: string, projectGithubLink: string, projectImages?: Array<string> | null, projectTitle: string, techStacks?: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> | null }> } };
 
 export type GetProjectQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1032,6 +1051,15 @@ export type GetTechStacksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetTechStacksQuery = { __typename?: 'Query', techstacks: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null, projects?: Array<{ __typename?: 'Project', id: string, projectTitle: string }> | null, techCategories?: Array<{ __typename?: 'TechCategory', id: string, categoryName: string }> | null }> };
 
+export type TechstackPaginationQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type TechstackPaginationQuery = { __typename?: 'Query', techstackPagination: { __typename?: 'TechStackPaginationResponse', limit: number, page: number, total: number, totalPages: number, items: Array<{ __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null }> } };
+
 export type CreateTechStackMutationVariables = Exact<{
   createTechStackInput: CreateTechStackInput;
 }>;
@@ -1068,11 +1096,12 @@ export type GetTechStackQueryVariables = Exact<{
 export type GetTechStackQuery = { __typename?: 'Query', techstack: { __typename?: 'TechStack', id: string, techName: string, techSvg?: string | null, projects?: Array<{ __typename?: 'Project', id: string, projectTitle: string }> | null, techCategories?: Array<{ __typename?: 'TechCategory', id: string, categoryName: string }> | null } };
 
 
-export const SignupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Signup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SignUpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"signUpInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}}}]}]}}]} as unknown as DocumentNode<SignupMutation, SignupMutationVariables>;
+export const SignupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Signup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SignUpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"signUpInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signUpInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<SignupMutation, SignupMutationVariables>;
 export const RefreshTheTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RefreshTheTokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTheTokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}}]}}]}}]} as unknown as DocumentNode<RefreshTheTokensMutation, RefreshTheTokensMutationVariables>;
 export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatarPhoto"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"actions"}},{"kind":"Field","name":{"kind":"Name","value":"resource"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserMutation, GetUserMutationVariables>;
 export const GetUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatarPhoto"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"actions"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resource"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUsersQuery, GetUsersQueryVariables>;
+export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUserInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateUserInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUserInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"avatarPhoto"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
 export const AttachRoleToUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AttachRoleToUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"attachRoleInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AttachRoleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"attachRoleInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"attachRoleInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatarPhoto"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"actions"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resource"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AttachRoleToUserMutation, AttachRoleToUserMutationVariables>;
 export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
 export const DeleteUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}]}}]} as unknown as DocumentNode<DeleteUsersMutation, DeleteUsersMutationVariables>;
@@ -1093,8 +1122,7 @@ export const UpdateContactDocument = {"kind":"Document","definitions":[{"kind":"
 export const GetProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"surname"}},{"kind":"Field","name":{"kind":"Name","value":"profilePhotos"}},{"kind":"Field","name":{"kind":"Name","value":"typingText"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]} as unknown as DocumentNode<GetProfileQuery, GetProfileQueryVariables>;
 export const UpdateProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateProfileInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateProfileInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateProfileInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"surname"}},{"kind":"Field","name":{"kind":"Name","value":"profilePhotos"}},{"kind":"Field","name":{"kind":"Name","value":"typingText"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]} as unknown as DocumentNode<UpdateProfileMutation, UpdateProfileMutationVariables>;
 export const GetProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsQuery, GetProjectsQueryVariables>;
-export const GetProjectsPaginationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsPagination"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsPaginationQuery, GetProjectsPaginationQueryVariables>;
-export const ProjectsByTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ProjectsByTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"techId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsByTechStack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"techId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"techId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ProjectsByTechStackQuery, ProjectsByTechStackQueryVariables>;
+export const GetProjectsPaginationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsPagination"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"techId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"techId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"techId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsPaginationQuery, GetProjectsPaginationQueryVariables>;
 export const GetProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectQuery, GetProjectQueryVariables>;
 export const UpdateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateProjectInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateProjectInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateProjectInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateProjectMutation, UpdateProjectMutationVariables>;
 export const RemoveProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RemoveProjectMutation, RemoveProjectMutationVariables>;
@@ -1121,6 +1149,7 @@ export const RemoveTechCategoriesDocument = {"kind":"Document","definitions":[{"
 export const UpdateTechCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTechCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateTechCategoryInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTechCategoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTechCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateTechCategoryInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateTechCategoryInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateTechCategoryMutation, UpdateTechCategoryMutationVariables>;
 export const GetProjectsByTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsByTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techstack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}},{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectDemoLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectDescription"}},{"kind":"Field","name":{"kind":"Name","value":"projectGithubLink"}},{"kind":"Field","name":{"kind":"Name","value":"projectImages"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}},{"kind":"Field","name":{"kind":"Name","value":"techStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectsByTechStackQuery, GetProjectsByTechStackQueryVariables>;
 export const GetTechStacksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTechStacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techstacks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}},{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"techCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}}]}}]}}]} as unknown as DocumentNode<GetTechStacksQuery, GetTechStacksQueryVariables>;
+export const TechstackPaginationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TechstackPagination"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"techstackPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"categoryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}}]}}]}}]}}]} as unknown as DocumentNode<TechstackPaginationQuery, TechstackPaginationQueryVariables>;
 export const CreateTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createTechStackInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateTechStackInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTechStack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createTechStackInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createTechStackInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}},{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"techCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}}]}}]}}]} as unknown as DocumentNode<CreateTechStackMutation, CreateTechStackMutationVariables>;
 export const UpdateTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateTechStackInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTechStackInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTechStack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateTechStackInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateTechStackInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"techName"}},{"kind":"Field","name":{"kind":"Name","value":"techSvg"}},{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"projectTitle"}}]}},{"kind":"Field","name":{"kind":"Name","value":"techCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateTechStackMutation, UpdateTechStackMutationVariables>;
 export const DeleteTechStackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteTechStack"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeTechStack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteTechStackMutation, DeleteTechStackMutationVariables>;

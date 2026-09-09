@@ -1,6 +1,25 @@
 'use server'
-import { AttachRoleInput, AttachRoleToUserMutation, AttachRoleToUserMutationVariables, DeleteUserMutation, DeleteUserMutationVariables, LoginInput, SignUpInput, User, LogoutMutation, LogoutMutationVariables } from "@/gql/graphql"
-import { USER_ATTACH_ROLE_MUTATION, USER_DELETE_QUERY, LOGOUT_AUTH_QUERY, USERS_DELETE_QUERY } from "@/graphql/auth.graphql";
+import {
+    AttachRoleInput,
+    AttachRoleToUserMutation,
+    AttachRoleToUserMutationVariables,
+    DeleteUserMutation,
+    DeleteUserMutationVariables,
+    LoginInput,
+    SignUpInput,
+    User,
+    LogoutMutation,
+    LogoutMutationVariables,
+    UpdateUserMutation,
+    UpdateUserMutationVariables
+} from "@/gql/graphql"
+import {
+    USER_ATTACH_ROLE_MUTATION,
+    USER_DELETE_QUERY,
+    LOGOUT_AUTH_QUERY,
+    USERS_DELETE_QUERY,
+    USER_UPDATE_MUTATION
+} from "@/graphql/auth.graphql";
 import { loginUser, signUpUser } from "@/query/auth.query";
 import { queryGraphQL } from "@/query/graphql";
 import { PrevState, PrevStateFull } from "./action.type";
@@ -9,7 +28,13 @@ import { redirect } from "next/navigation";
 import header from "@/variables/header/header";
 import { DeleteUsersMutation } from "@/gql/graphql";
 import { DeleteUsersMutationVariables } from "@/gql/graphql";
+import { SignupMutation } from "@/gql/graphql";
+import { UpdateUserInput } from "@/gql/graphql";
+import { resourceConfig, Resource } from "@/variables/admin/resource";
+import { uploadFile } from "@/query/upload.http";
 
+
+const USER_IMAGE = 'avatarPhoto';
 
 export type LoginFormState = {
     message?: string;
@@ -38,10 +63,10 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
                 name,
                 password
             }
-        });
+        }) as SignupMutation['signup'];
         return {
-            success: true,
-            message: 'Signup successful!'
+            success: result.success,
+            message: result.message
         };
     } catch (error) {
         console.error('Signup error:', error);
@@ -77,7 +102,7 @@ export async function login(prevState: LoginFormState | undefined, formData: For
         };
     } finally {
         if (success) {
-            
+
             redirect(redirectUrl);
         }
     }
@@ -85,7 +110,7 @@ export async function login(prevState: LoginFormState | undefined, formData: For
 
 export async function logoutUserAction(): Promise<PrevStateFull<boolean>> {
     'use server'
-     try {
+    try {
         const result = await queryGraphQL<LogoutMutation, LogoutMutationVariables>(
             LOGOUT_AUTH_QUERY, {}
         ) as unknown as LogoutMutation;
@@ -151,6 +176,67 @@ export async function attachRoleToUserAction(prevState: PrevState<AttachRoleInpu
             message: error instanceof Error ? error.message : 'Role attachment failed'
         };
 
+    }
+}
+
+
+export async function updateUserAction(prevState: PrevState<UpdateUserInput> | undefined, formData: FormData, intitalValues: UpdateUserInput, id: string):
+    Promise<PrevState<UpdateUserInput>> {
+
+    const updateInput: UpdateUserInput = {};
+
+    Object.entries(intitalValues).forEach(([key, value]) => {
+        if (formData.get(key) !== value && key !== USER_IMAGE) {
+            updateInput[key as keyof UpdateUserInput] = formData.get(key)?.toString() as string;
+        }
+    });
+    if (Object.keys(updateInput).length === 0) {
+        return {
+            success: false,
+            message: 'No changes detected',
+            id: null
+        };
+    };
+    try {
+        const res = await queryGraphQL<UpdateUserMutation, UpdateUserMutationVariables>
+            (USER_UPDATE_MUTATION, {
+                updateUserInput: {
+                    ...updateInput
+                },
+            });
+        return {
+            success: true,
+            message: 'Profile updated successfully!',
+            id: res.updateUser.id
+        };
+    } catch (error) {
+        console.error('Signup error:', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'User Update failed',
+            id: null
+        };
+    }
+
+}
+
+export async function updateUserImageAction(prevState: PrevStateFull<string | null> | undefined, formData: FormData, id: string):
+    Promise<PrevStateFull<string | null>> {
+    try {
+        const res = await uploadFile(resourceConfig[Resource.USER].editFormImage.uploadConfig, formData, USER_IMAGE, id);
+
+        return {
+            success: true,
+            message: 'Profile updated successfully!',
+            data: (res.data as User).avatarPhoto
+        };
+    } catch (error) {
+        console.error('Signup error:', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Profile Update failed',
+            data: null
+        };
     }
 }
 

@@ -316,7 +316,13 @@ const schema = {
     user: {
         attachRole: attachRoleSchema,
         userDelete: deleteSchema,
-        userDeleteMany: deleteManySchema
+        userDeleteMany: deleteManySchema,
+        userEdit: Yup.object().shape({
+            name,
+        }),
+        userEditImage: Yup.object().shape({
+            avatarPhoto: image
+        }),
     },
     role: {
         role: Yup.object().shape({

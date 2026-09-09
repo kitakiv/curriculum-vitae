@@ -41,6 +41,22 @@ const TECHSTACKS_GET_QUERY = gql`
     }
 `;
 
+const TECHSTACK_GET_PAGINATED_QUERY = gql`
+query TechstackPagination($limit: Int, $page: Int, $categoryId: ID) {
+    techstackPagination(limit: $limit, page: $page, categoryId: $categoryId) {
+        limit
+        page
+        total
+        totalPages
+        items {
+            id
+            techName
+            techSvg
+        }
+    }
+}`
+
+
 const TECHSTACK_CREATE_MUTATION = gql`
     mutation CreateTechStack($createTechStackInput: CreateTechStackInput!) {
         createTechStack(createTechStackInput: $createTechStackInput) {
@@ -114,5 +130,6 @@ export {
     TECHSTACK_CREATE_MUTATION,
     TECHSTACK_UPDATE_MUTATION,
     TECHSTACK_GET_ONE_QUERY,
-    TECHSTACKS_DELETE_MUTATION
+    TECHSTACKS_DELETE_MUTATION,
+    TECHSTACK_GET_PAGINATED_QUERY
 };

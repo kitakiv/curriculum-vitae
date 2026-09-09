@@ -35,20 +35,29 @@ import { RefreshToken } from './entities/refreshToken.entity';
 import { CurrentUserId } from '../decorators/currentuserid.decorator';
 import { SuperAdminGuard } from '../guards/superAdmin.guard';
 import { SuperAdmin } from '../decorators/superadmin.deconrator';
+import { SignupData } from './entities/signupData.type';
+import uploadVariables from '../variables/upload.variables';
+import { S3Service } from '../s3/s3.service';
+import { UserImageService } from './authImage.server';
+import { ForgotPasswordInput } from './dto/forgotPassword.input';
+import { PasswordData } from './entities/forgotPasswordData.type';
 
 
 @UseGuards(AuthorizationGuard, SuperAdminGuard)
 @Resolver(() => User)
 export class AuthResolver {
   private refreshTokenName = 'refreshToken';
+   private readonly serviceName = uploadVariables.user.name
   constructor(
     private readonly cookiesService: CookiesService,
     private readonly authService: AuthService,
+     private readonly userImageService: UserImageService,
+    private readonly s3Service: S3Service,
     private readonly logger: Logger,
   ) {}
 
   @Public()
-  @Mutation(() => Boolean)
+  @Mutation(() => SignupData)
   async signup(
     @Args('signUpInput', { type: () => SignUpInput }) signUpInput: SignUpInput,
   ) {
@@ -89,6 +98,15 @@ export class AuthResolver {
     return result;
   }
 
+  @Public()
+  @Mutation(() => PasswordData)
+  async forgotPassword(
+    @Args('forgotPasswordInput', { type: () => ForgotPasswordInput })
+    forgotPasswordInput: ForgotPasswordInput,
+  ) {
+    return await this.authService.forgotPassword(forgotPasswordInput);
+  }
+
   @Mutation(() => Boolean)
   async logout(
     @Context() { res }: { res: Response },
@@ -109,8 +127,8 @@ export class AuthResolver {
     return await this.authService.changePassword(changePasswordInput, userId);
   }
 
-  @Mutation(() => User)
   @SuperAdmin()
+  @Mutation(() => User, { name: 'updateUser' })
   async update(
     @Args('updateUserInput', { type: () => UpdateUserInput })
     updateUserInput: UpdateUserInput,
@@ -133,7 +151,17 @@ export class AuthResolver {
   @SuperAdmin()
   @Mutation(() => ID)
   async removeUser(@Args('id', { type: () => ID }) id: string) {
-    return await this.authService.remove(id);
+     try {
+      const url = await this.userImageService.getImageKey(id);
+      await this.authService.remove(id);
+      if (url) await this.s3Service.deleteFile(url, this.serviceName, id);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(errors.NOT_DELETED('User'), {
+        cause: error,
+      });
+    }
+    return id;
   }
 
   @PermissionGuard([
@@ -143,7 +171,16 @@ export class AuthResolver {
   @SuperAdmin()
   @Mutation(() => [ID])
   async removeUsers(@Args('ids', { type: () => [ID] }) ids: string[]) {
-    return await this.authService.removeMany(ids);
+    try {
+      const urls = await this.userImageService.getImageKeys(ids);
+      await this.authService.removeMany(ids);
+      await this.s3Service.deleteFileFromIds(this.serviceName, urls);
+    } catch (error) {
+      throw new BadRequestException(errors.NOT_DELETED('Users'), {
+        cause: error,
+      });
+    }
+    return ids;
   }
 
   @PermissionGuard([

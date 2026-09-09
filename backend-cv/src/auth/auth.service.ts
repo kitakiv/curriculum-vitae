@@ -22,7 +22,7 @@ import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { ConfigService } from '@nestjs/config';
 import { errors } from '../errors/errors.config';
-import { expiryDate } from '../common/constants';
+import { EXPIRE_DATE_RESET_TOKEN, expiryDate, NANO_ID_LENGTH } from '../common/constants';
 import { DataSource } from 'typeorm';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
 import { CookiesData } from './entities/cookiesData.type';
@@ -33,6 +33,12 @@ import { randomBytes } from 'crypto';
 import { UserProvider } from '../common/types/types';
 import { LoginGoogleInput } from './dto/loginGoogle.input';
 import { EmailService } from '../email/email.service';
+import { SignupData } from './entities/signupData.type';
+import Auth from '../variables/auth.variables';
+import { ForgotPasswordInput } from './dto/forgotPassword.input';
+import { PasswordData } from './entities/forgotPasswordData.type';
+import { ResetToken } from './entities/resetToken.entity';
+import { nanoid } from 'nanoid/non-secure';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -44,12 +50,14 @@ export class AuthService implements OnModuleInit {
     private readonly refreshTokenRepository: Repository<RefreshToken>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
+    @InjectRepository(ResetToken)
+    private readonly resetTokenRepository: Repository<ResetToken>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly logger: Logger = new Logger(AuthService.name),
     private readonly emailService: EmailService
   ) {}
-  async signUp(createAuthInput: SignUpInput): Promise<boolean> {
+  async signUp(createAuthInput: SignUpInput): Promise<SignupData> {
     const emailInUse = await this.userRepository.findOneBy({
       login: createAuthInput.login,
     });
@@ -63,7 +71,10 @@ export class AuthService implements OnModuleInit {
         createdUser.verificationToken,
         createdUser.name
       );
-      return true;
+      return {
+        ...Auth.signup,
+        login: createdUser.login
+      }
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('User'));
@@ -508,6 +519,29 @@ export class AuthService implements OnModuleInit {
       return updatedUser;
     }
     return user;
+  }
+
+
+  async forgotPassword(forgotPasswordInput: ForgotPasswordInput): Promise<PasswordData> {
+    const user = await this.userRepository.findOne({
+      where: {
+        login: forgotPasswordInput.login,
+      },
+    });
+    if (user) {
+      const resetToken = nanoid(NANO_ID_LENGTH);
+      const expiryDate = new Date()
+      expiryDate.setHours(expiryDate.getHours() + EXPIRE_DATE_RESET_TOKEN); // Set expiry date to 1 hour from now
+      const resetTokenEntity = new ResetToken({
+        token: resetToken,
+        expiryDate: expiryDate,
+        user,
+      });
+      await this.resetTokenRepository.save(resetTokenEntity);
+      const link = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`
+      await this.emailService.sendEmail(user.login, 'Password Reset', resetPasswordPage(link));
+    }
+    return {message: 'If the email exists, a password reset link has been sent.'};
   }
 
   async loginGoogle(loginGoogleInput: LoginGoogleInput) {

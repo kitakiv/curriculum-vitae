@@ -39,6 +39,12 @@ const uploadVariables = {
     cacheKey: 'certificate-data',
     cacheTime: 60000,
   },
+  user: {
+    name: 'user',
+    multiFile: false,
+    cacheKey: 'user-data',
+    cacheTime: 60000,
+  }
 };
 
 export default uploadVariables;

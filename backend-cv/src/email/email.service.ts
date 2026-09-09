@@ -1,13 +1,15 @@
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import emailNoreplyConfig from '../config/email.config'
+import emailNoreplyConfig from '../config/email.config';
+import adminConfig from '../config/admin.cofing';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { errors } from 'src/errors/errors.config';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { verifiedEmailPage, emailVerificatioMessage } from '../variables/email.variables';
+import { verifiedEmailPage, emailVerificatioMessage, newUserRegisteredEmail } from '../variables/email.variables';
+import Auth from '../variables/auth.variables';
 
 @Injectable()
 export class EmailService {
@@ -15,10 +17,12 @@ export class EmailService {
 
   constructor(
     @Inject(emailNoreplyConfig.KEY)
-    private emailConfig: ConfigType<typeof emailNoreplyConfig>,
+    private readonly emailConfig: ConfigType<typeof emailNoreplyConfig>,
+    @Inject(adminConfig.KEY)
+    private readonly adminEmailConfig: ConfigType<typeof adminConfig>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private logger: Logger = new Logger(EmailService.name)
+    private readonly userRepository: Repository<User>,
+    private readonly logger: Logger,
   ) {
     const transportOptions: SMTPTransport.Options = {
       host: this.emailConfig.emailHost,
@@ -40,6 +44,18 @@ export class EmailService {
       subject: 'Verify your email',
       html: emailVerificatioMessage(verificationUrl, name),
     }
+    const adminUrl = `${this.adminEmailConfig.backendUrl}${Auth.userRegistration.pathToAdminPage}`;
+    if (this.adminEmailConfig.adminEmail) {
+      await this.sendEmail(
+        this.adminEmailConfig.adminEmail,
+        Auth.userRegistration.subject,
+        newUserRegisteredEmail(email, adminUrl),
+      );
+    } else {
+      this.logger.warn(
+        'Admin email is not configured. Skipping sending new user registration email.',
+      );
+    }
 
     const info = await this.transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -53,6 +69,24 @@ export class EmailService {
     return info;
   }
 
+  async sendEmail(to: string, subject: string, html: string) {
+    const mailOptions = {
+      from: this.emailConfig.emailFrom,
+      to,
+      subject,
+      html,
+    }
+    console.log('Sending email to:', mailOptions);
+    const info = await this.transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        this.logger.error('Error sending email:', error);
+        throw new BadRequestException('Failed to send email');
+      } else {
+        this.logger.log('Email sent successfully:', info);
+      }
+    });
+    return info;
+  }
 
   async verifyEmail(token: string) {
     const user = await this.userRepository.findOne({

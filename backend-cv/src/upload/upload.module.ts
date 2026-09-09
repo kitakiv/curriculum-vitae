@@ -17,6 +17,8 @@ import { AuthModule } from '../auth/auth.module';
 import { Certificate } from '../certificate/entities/certificate.entity';
 import { CertificateImageService } from 'src/certificate/certificateImage.service';
 import { RedisCacheModule } from 'src/cache/cache.module';
+import { UserImageService } from '../auth/authImage.server';
+import { User } from '../auth/entities/user.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { RedisCacheModule } from 'src/cache/cache.module';
       Project,
       Profile,
       Certificate,
+      User
     ]),
     AuthModule,
     RedisCacheModule
@@ -41,6 +44,7 @@ import { RedisCacheModule } from 'src/cache/cache.module';
     ProjectsImageService,
     ProfileImageService,
     CertificateImageService,
+    UserImageService,
     Logger
   ],
 })

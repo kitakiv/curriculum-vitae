@@ -20,8 +20,8 @@ const PROJECTS_GET_QUERY = gql`
 
 
 const PROJECTS_GET_PAGINATED_QUERY = gql`
-    query GetProjectsPagination($limit: Int!, $page: Int!) {
-        projectsPagination(limit: $limit, page: $page) {
+    query GetProjectsPagination($limit: Int!, $page: Int!, $techId: ID) {
+        projectsPagination(limit: $limit, page: $page, techId: $techId) {
          limit
          page
          total
@@ -42,33 +42,6 @@ const PROJECTS_GET_PAGINATED_QUERY = gql`
         }
     }
 `;
-
-const PROJECTS_GET_BY_TECH_QUERY = gql`
-query ProjectsByTechStack($limit: Int!, $page: Int!, $techId: ID!) {
-    projectsByTechStack(
-      limit: $limit,
-      page: $page,
-      techId: $techId
-    ) {
-        limit
-        page
-        total
-        totalPages
-        items {
-            id
-            projectDemoLink
-            projectDescription
-            projectGithubLink
-            projectImages
-            projectTitle
-            techStacks {
-                id
-                techName
-                techSvg
-            }
-        }
-    }
-}`;
 
 
 const PROJECT_GET_ONE_QUERY = gql`
@@ -146,5 +119,4 @@ export {
     PROJECT_CREATE_MUTATION,
     PROJECT_GET_ONE_QUERY,
     PROJECTS_REMOVE_MUTATION,
-    PROJECTS_GET_BY_TECH_QUERY
 };

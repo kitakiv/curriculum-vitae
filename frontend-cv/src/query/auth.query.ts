@@ -6,12 +6,12 @@ import { SIGNUP_AUTH_QUERY, LOGIN_AUTH_QUERY, GET_ME_USER, REFRESH_TOKEN_QUERY }
 import { getRefreshToken } from "@/lib/auth";
 
 
-async function signUpUser(variables: SignupMutationVariables) {
+async function signUpUser(variables: SignupMutationVariables): Promise<SignupMutation['signup']> {
   try {
     const res = await apiClient.fetchGraphQL<{data: SignupMutation}>(SIGNUP_AUTH_QUERY, {
         variables: variables
     });
-    return res.data.data.signup
+    return res.data.data.signup as SignupMutation['signup'];
   } catch (error) {
     console.error("Error while signUp", error);
     throw error;

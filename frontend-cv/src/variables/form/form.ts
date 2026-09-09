@@ -265,6 +265,7 @@ const form = {
     userForm: {
         initialValuesDelete: { id: "" },
         initialValues: { userId: "", roleId: "" },
+        initialValuesEdit: { name: "" },
         initialValuesDeleteMany: { ids: [], phrase: "" },
         inputs: [
             { id: "userId", label: "User ID", name: "userId", placeholder: "User ID", type: "text" },
@@ -275,6 +276,12 @@ const form = {
         ],
         inputsDeleteMany: [
             { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
+        ],
+        inputsEdit: [
+            { id: "name", label: "User Name", name: "name", placeholder: "User Name", type: "text" },
+        ],
+        inputsEditImage: [
+            { id: "avatarPhoto", label: "Avatar Photo", name: "avatarPhoto", placeholder: "Avatar Photo", type: "file" },
         ],
     },
     roleForm: {

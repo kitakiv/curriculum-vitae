@@ -7,14 +7,17 @@ import { RefreshToken } from './entities/refreshToken.entity';
 import { Role } from '../roles/entities/role.entity';
 import { CommonModule } from '../common/common.module';
 import { EmailModule } from '../email/email.module';
+import { UserImageService } from './authImage.server';
+import { S3Service } from '../s3/s3.service';
+import { ResetToken } from './entities/resetToken.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, RefreshToken, Role]),
+    TypeOrmModule.forFeature([User, RefreshToken, Role, ResetToken]),
     CommonModule,
     EmailModule,
   ],
-  providers: [AuthResolver, AuthService, Logger],
+  providers: [AuthResolver, AuthService, Logger, UserImageService, S3Service],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

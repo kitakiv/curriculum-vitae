@@ -2,7 +2,11 @@ import { gql } from "@apollo/client";
 
 const SIGNUP_AUTH_QUERY = gql`
     mutation Signup($signUpInput: SignUpInput!) {
-    signup(signUpInput: $signUpInput)
+    signup(signUpInput: $signUpInput) {
+        login
+        success
+        message
+    }
 }
 `;
 
@@ -70,6 +74,16 @@ const USERS_GET_QUERY = gql`
     }
 }
 `;
+
+const USER_UPDATE_MUTATION = gql`
+    mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+        avatarPhoto
+        id
+        login
+        name
+    }
+}`;
 
 
 const USER_ATTACH_ROLE_MUTATION = gql`
@@ -142,5 +156,6 @@ export { SIGNUP_AUTH_QUERY,
         USER_DELETE_QUERY,
         USERS_DELETE_QUERY,
         USER_GET_ONE_QUERY,
-        LOGOUT_AUTH_QUERY
+        LOGOUT_AUTH_QUERY,
+        USER_UPDATE_MUTATION
 };
