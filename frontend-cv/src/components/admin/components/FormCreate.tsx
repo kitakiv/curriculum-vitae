@@ -49,7 +49,7 @@ export default function FormCreate<V>({ children, tailwind, inputs, intialValues
             }}
         >
             {({ setFieldValue, values }) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg`}>
+                <Form className={`${tailwind} liquidGlass-elem liquidGlass-shadow  flex flex-col padding-elements gap-4 rounded-lg`}>
                     {children}
                     {state?.message && (
                         <>

@@ -174,6 +174,7 @@ export default function InputElement({ inputData, setFieldValue, readonly = fals
             <Field className="w-full focus:outline-none border-2 border-zOpacity bg-adminGr0 text-adminTx100 px-2 py-3 rounded-md" type={showPassword ? "text" : type} name={name} id={id} placeholder={placeholder} readOnly={readonly} as={as} />
             <CheckButton onClick={() => setShowPassword((prev) => !prev)} showPassword={showPassword} className="absolute right-4 top-1/2 transform -translate-y-1/2"/>
             </div>
+             <Error name={name}>{handleError}</Error>
             </>
         )
     }

@@ -129,6 +129,10 @@ input CreateTechStackInput {
 """Date custom scalar type"""
 scalar Date
 
+input ForgotPasswordInput {
+  login: String!
+}
+
 input LoginInput {
   login: String!
   password: String!
@@ -144,6 +148,7 @@ type Mutation {
   createSlider(createSliderInput: CreateSliderInput!): Slider!
   createTechCategory(createTechCategoryInput: CreateTechCategoryInput!): TechCategory!
   createTechStack(createTechStackInput: CreateTechStackInput!): TechStack!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordData!
   getUser: User!
   login(loginInput: LoginInput!): CookiesData!
   logout: Boolean!
@@ -164,6 +169,7 @@ type Mutation {
   removeTechStacks(ids: [ID!]!): [ID!]!
   removeUser(id: ID!): ID!
   removeUsers(ids: [ID!]!): [ID!]!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): Boolean!
   signup(signUpInput: SignUpInput!): SignupData!
   updateCertificate(updateCertificateInput: UpdateCertificateInput!): Certificate!
   updateContact(updateContactInput: UpdateContactInput!): Contact!
@@ -174,6 +180,11 @@ type Mutation {
   updateTechCategory(updateTechCategoryInput: UpdateTechCategoryInput!): TechCategory!
   updateTechStack(updateTechStackInput: UpdateTechStackInput!): TechStack!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type PasswordData {
+  """Password reset message"""
+  message: String!
 }
 
 type Permission {
@@ -277,6 +288,23 @@ type RefreshToken {
   id: ID!
 
   """Refresh token"""
+  token: String!
+  user: User!
+}
+
+input ResetPasswordInput {
+  newPassword: String!
+  resetToken: String!
+}
+
+type ResetToken {
+  """Reset token expiry date"""
+  expiryDate: String!
+
+  """Refresh token id"""
+  id: ID!
+
+  """Reset token"""
   token: String!
   user: User!
 }
@@ -473,6 +501,9 @@ type User {
 
   """Refresh token"""
   refreshToken: RefreshToken
+
+  """Reset token"""
+  resetToken: ResetToken
 
   """User role"""
   role: Role

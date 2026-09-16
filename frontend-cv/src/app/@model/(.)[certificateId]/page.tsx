@@ -1,5 +1,6 @@
 import experiences from "@/variables/experience/experience";
 import { Modal } from "../../../components/wrapper/Modal";
+import { redirect } from "next/navigation";
 
 
 interface PageProps {
@@ -14,6 +15,10 @@ export default async function Page({
   const id = (await params).certificateId;
   const rawLink = (await searchParams)[experiences.redirectQuery];
   const link = Array.isArray(rawLink) ? rawLink[0] ?? "" : rawLink ?? "";
+
+  if (id === "profile") {
+    return redirect("/profile");
+  }
 
   if (!link && !id) {
     return <Modal><p className="text-center text-txSecond">No certificate found</p></Modal>

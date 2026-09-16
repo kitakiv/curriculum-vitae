@@ -16,6 +16,8 @@ const directives: Record<string, string[]> =  {
   manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
   frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
 }
+
+const RESETPASSWORD_URL = 'password/reset';
 function expiryDate(days: number) {
   const date = new Date();
   date.setDate(date.getDate() + days);
@@ -30,6 +32,7 @@ export {
   REFRESH_TOKEN_EXPIRATION_DAYS,
   NANO_ID_LENGTH,
   EXPIRE_DATE_RESET_TOKEN,
+  RESETPASSWORD_URL,
   expiryDate,
   directives,
 };

@@ -37,7 +37,7 @@ export default function FormDelete<V extends { id: string }>({ children, tailwin
             }}
         >
             {({setFieldValue}) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
+                <Form className={`${tailwind} liquidGlass-elem liquidGlass-shadow flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
                         <>

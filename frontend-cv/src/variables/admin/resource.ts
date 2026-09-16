@@ -21,6 +21,10 @@ import { deleteTechCategoriesAction } from "@/app/actions/category";
 import { deleteRolesAction } from "@/app/actions/role";
 import { updateUserAction } from "@/app/actions/auth";
 import { updateUserImageAction } from "@/app/actions/auth";
+import ForgotPassword from "@/components/login/components/ForgotPassword";
+import { forgotPasswordAction } from "@/app/actions/auth";
+import { resetPasswordAction } from "@/app/actions/auth";
+import { changePasswordAction } from "@/app/actions/auth";
 
 export enum Resource {
   USER = 'user',
@@ -86,6 +90,16 @@ const adminVariables = {
     button: 'Delete Selected',
     title: 'Delete Selected Items',
     path: Action.DELETEMANY
+  },
+  forgotPassword: {
+    button: 'Forgot Password',
+    title: 'Forgot Password',
+    path: 'password/forgot'
+  },
+  changePassword: {
+    button: 'Change Password',
+    title: 'Change Password',
+    path: 'password/change'
   }
 }
 
@@ -387,7 +401,6 @@ const resourceConfig = {
       initialValues: form.userForm.initialValuesEdit,
       action: updateUserAction,
       schema: schema.user.userEdit,
-      title: 'Edit user',
     },
     editFormImage: {
       inputs: form.userForm.inputsEditImage,
@@ -524,7 +537,38 @@ const resourceConfig = {
       inputs: form.roleForm.inputsDeleteMany,
       initialValues: form.roleForm.initialValuesDeleteMany,
     },
+  },
+  forgotPassword: {
+    id: 'admin-forgot-password',
+    title: form.forgotPasswordForm.title,
+    path: `${adminVariables.forgotPassword.path}`,
+    action: forgotPasswordAction,
+    schema: schema.forgotPassword,
+    inputs: form.forgotPasswordForm.inputs,
+    initialValues: form.forgotPasswordForm.initialValues,
+    button: form.forgotPasswordForm.button,
+  },
+  resetPassword: {
+    id: 'admin-reset-password',
+    title: form.resetPasswordForm.title,
+    action: resetPasswordAction,
+    schema: schema.resetPassword,
+    inputs: form.resetPasswordForm.inputs,
+    initialValues: form.resetPasswordForm.initialValues,
+    button: form.resetPasswordForm.button,
+  },
+  changePassword: {
+    id: 'admin-change-password',
+    title: form.changePasswordForm.title,
+    action: changePasswordAction,
+    schema: schema.changePassword,
+    inputs: form.changePasswordForm.inputs,
+    initialValues: form.changePasswordForm.initialValues,
+    button: form.changePasswordForm.button,
+    profileInputs: form.changePasswordForm.inputsProfile,
+    profileInitialValues: form.changePasswordForm.initialValuesProfile
   }
+
 };
 
 const logoutForm = {

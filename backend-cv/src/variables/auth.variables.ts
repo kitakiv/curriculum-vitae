@@ -7,6 +7,10 @@ const auth = {
        subject: 'New User Registration',
        pathToAdminPage: '/admin/dashboard/'
     },
+    forgotPassword: {
+        message: 'If an account exists for this email address, you will receive a password reset link at your email address.',
+        subject: 'Password Reset Request'
+    }
 }
 
 export default auth;

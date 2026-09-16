@@ -11,14 +11,19 @@ import {
     LogoutMutation,
     LogoutMutationVariables,
     UpdateUserMutation,
-    UpdateUserMutationVariables
+    UpdateUserMutationVariables,
+    ChangePasswordInput,
+    ChangePasswordMutationVariables,
+    ChangePasswordMutation,
 } from "@/gql/graphql"
 import {
     USER_ATTACH_ROLE_MUTATION,
     USER_DELETE_QUERY,
     LOGOUT_AUTH_QUERY,
     USERS_DELETE_QUERY,
-    USER_UPDATE_MUTATION
+    USER_UPDATE_MUTATION,
+    FORGOT_PASSWORD_MUTATION,
+    CHANGE_PASSWORD_MUTATION
 } from "@/graphql/auth.graphql";
 import { loginUser, signUpUser } from "@/query/auth.query";
 import { queryGraphQL } from "@/query/graphql";
@@ -32,6 +37,13 @@ import { SignupMutation } from "@/gql/graphql";
 import { UpdateUserInput } from "@/gql/graphql";
 import { resourceConfig, Resource } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
+import { ForgotPasswordInput } from "@/gql/graphql";
+import { ForgotPasswordMutation } from "@/gql/graphql";
+import { ForgotPasswordMutationVariables } from "@/gql/graphql";
+import { ResetPasswordInput } from "@/gql/graphql";
+import { ResetPasswordMutation } from "@/gql/graphql";
+import { ResetPasswordMutationVariables } from "@/gql/graphql";
+import { RESET_PASSWORD_MUTATION } from "@/graphql/auth.graphql";
 
 
 const USER_IMAGE = 'avatarPhoto';
@@ -106,6 +118,98 @@ export async function login(prevState: LoginFormState | undefined, formData: For
             redirect(redirectUrl);
         }
     }
+}
+
+export async function resetPasswordAction(prevStateFull: PrevState<ResetPasswordInput> | undefined, formData: FormData, token: string): Promise<prevStateFull<ResetPasswordInput>> {
+    const password = formData.get('newPassword') as string;
+    try {
+        const resetPasswordInput: ResetPasswordInput = {
+            resetToken: token,
+            newPassword: password
+        }
+        const result = await queryGraphQL<ResetPasswordMutation, ResetPasswordMutationVariables>(
+            RESET_PASSWORD_MUTATION,
+            {
+                resetPasswordInput
+            }
+        );
+        if (result.resetPassword) {
+           setTimeout(() => {
+               redirect(header.buttonLogin.link);
+           }, 2000);
+        }
+        return {
+            success: true,
+            message: 'Password reset successfully redirecting to login page',
+            data: {
+                token: null,
+                newPassword: null
+            }
+        };
+    } catch(error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Password reset failed',
+            data: null
+        };
+    }
+}
+
+export async function changePasswordAction(prevStateFull: PrevStateFull<ChangePasswordInput> | undefined, formData: FormData): Promise<PrevStateFull<ChangePasswordInput>> {
+    const currentPassword = formData.get('oldPassword') as string;
+    const newPassword = formData.get('newPassword') as string;
+    try {
+        const changePasswordInput: ChangePasswordInput = {
+            currentPassword,
+            newPassword
+        }
+        await queryGraphQL<ChangePasswordMutation, ChangePasswordMutationVariables>(
+            CHANGE_PASSWORD_MUTATION,
+            {
+                changePasswordInput
+            }
+        );
+        return {
+            success: true,
+            message: 'Password changed successfully',
+            data: null
+        };
+    } catch(error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Change password failed',
+            data: null
+        }
+    }
+}
+    
+
+
+export async function forgotPasswordAction(prevState: PrevStateFull<ForgotPasswordInput> | undefined, formData: FormData): Promise < PrevStateFull < LoginInput >> {
+    const login = formData.get('login') as string;
+    console.log(formData);
+    try {
+        const result = await queryGraphQL<ForgotPasswordMutation, ForgotPasswordMutationVariables>(
+            FORGOT_PASSWORD_MUTATION,
+            {
+                forgotPasswordInput: {
+                    login
+                }
+            }
+        );
+        return {
+            success: true,
+            message: result.forgotPassword.message,
+            data: result.forgotPassword
+        };
+    } catch(error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Password reset failed',
+            data: null
+        };
+    }
+
 }
 
 export async function logoutUserAction(): Promise<PrevStateFull<boolean>> {

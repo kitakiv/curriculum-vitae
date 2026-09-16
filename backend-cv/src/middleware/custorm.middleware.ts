@@ -3,18 +3,23 @@ import { ApolloServerPlugin, GraphQLRequestListener } from '@apollo/server';
 
 @Injectable()
 export class GraphQLLoggerPlugin implements ApolloServerPlugin {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly logger: Logger) { }
 
   private filterSensitiveData(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
     const filtered = { ...obj };
-    const sensitiveFields = [
-      'password',
-      'refreshToken',
-      'secretKey',
-      'token',
-      'accessToken',
-    ];
+    const sensitiveFields =
+      ['password',
+        'refreshToken',
+        'secretKey',
+        'token',
+        'newPassword',
+        'resetToken',
+
+        'oldPassword',
+        'verifyToken',
+        'token',
+        'accessToken'];
     for (const key in filtered) {
       if (sensitiveFields.includes(key)) {
         filtered[key] = '[FILTERED]';

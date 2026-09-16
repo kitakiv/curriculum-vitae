@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SignUpInput } from './dto/signUp.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginInput } from './dto/login.input';
@@ -22,14 +22,14 @@ import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { ConfigService } from '@nestjs/config';
 import { errors } from '../errors/errors.config';
-import { EXPIRE_DATE_RESET_TOKEN, expiryDate, NANO_ID_LENGTH } from '../common/constants';
+import { EXPIRE_DATE_RESET_TOKEN, expiryDate, NANO_ID_LENGTH, RESETPASSWORD_URL } from '../common/constants';
 import { DataSource } from 'typeorm';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
 import { CookiesData } from './entities/cookiesData.type';
 import { Sign } from './entities/sign.type';
 import { CreatePermissionInput } from '../roles/dto/create-role.input';
 import { SignUpGoogleInput } from './dto/signUpGoogle';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import { UserProvider } from '../common/types/types';
 import { LoginGoogleInput } from './dto/loginGoogle.input';
 import { EmailService } from '../email/email.service';
@@ -39,6 +39,10 @@ import { ForgotPasswordInput } from './dto/forgotPassword.input';
 import { PasswordData } from './entities/forgotPasswordData.type';
 import { ResetToken } from './entities/resetToken.entity';
 import { nanoid } from 'nanoid/non-secure';
+import { ResetPasswordInput } from './dto/resetPassword.input';
+import { resetPasswordPage } from '../variables/email.variables';
+import auth from '../variables/auth.variables';
+
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -128,7 +132,7 @@ export class AuthService implements OnModuleInit {
   async checkCredentials(login: string, password: string) {
     const user = await this.userRepository.findOneBy({ login });
     if (!user) {
-      throw new UnauthorizedException(errors.SIGNUP(login));
+      throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password or email'));
     }
     if (!user.isEmailVerified) {
       throw new UnauthorizedException('Please verify your email first');
@@ -136,17 +140,19 @@ export class AuthService implements OnModuleInit {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password'));
+      throw new UnauthorizedException(errors.INVALID_CREDENTIALS('password or email'));
     }
     return user;
   }
 
   private async generateToken(user: User): Promise<Sign> {
     const accessToken = this.jwtService.sign({ userId: user.id });
+    
     const refreshToken = uuid.v4();
     try {
       await this.storeRefreshToken(user, refreshToken);
     } catch (error) {
+      
       throw new BadRequestException(error.message);
     }
     return { accessToken, refreshToken } as Sign;
@@ -164,6 +170,7 @@ export class AuthService implements OnModuleInit {
 
   private async storeRefreshToken(user: User, token: string) {
     const refreshToken = await this.findUserByRefreshToken(user.id);
+    
     if (refreshToken) {
       await this.updateRefreshToken(refreshToken.id, token);
       return;
@@ -529,19 +536,80 @@ export class AuthService implements OnModuleInit {
       },
     });
     if (user) {
-      const resetToken = nanoid(NANO_ID_LENGTH);
-      const expiryDate = new Date()
-      expiryDate.setHours(expiryDate.getHours() + EXPIRE_DATE_RESET_TOKEN); // Set expiry date to 1 hour from now
-      const resetTokenEntity = new ResetToken({
-        token: resetToken,
-        expiryDate: expiryDate,
-        user,
-      });
-      await this.resetTokenRepository.save(resetTokenEntity);
-      const link = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`
+      const resetToken = await this.saveOrUpdateResetToken(user);
+      const link = `${process.env.FRONTEND_URL}/${RESETPASSWORD_URL}?resetoken=${resetToken}`
       await this.emailService.sendEmail(user.login, 'Password Reset', resetPasswordPage(link));
     }
-    return {message: 'If the email exists, a password reset link has been sent.'};
+    return {message: auth.forgotPassword.message};
+  }
+
+  private createHashedValue(value: string) {
+   const hashed = createHash('sha256').update(value).digest('hex');
+   return hashed;
+  }
+
+  private async saveOrUpdateResetToken(user: User) {
+    const resetToken = nanoid(NANO_ID_LENGTH);
+    const hashedResetToken = this.createHashedValue(resetToken);
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + EXPIRE_DATE_RESET_TOKEN);
+    
+    const resultToken = this.dataSource.transaction(async (manager) => {
+      this.logger.log('saveOrUpdateResetToken');
+      const tokenEntity = await manager.findOne(ResetToken, {
+        where: {
+          user: {
+            id: user.id,
+          },
+        },
+      });
+      if (tokenEntity) {
+        tokenEntity.token = hashedResetToken;
+        tokenEntity.expiryDate = expiryDate;
+        await manager.save(ResetToken, tokenEntity);
+        return resetToken;
+      }
+      const resetTokenEntity = new ResetToken({
+        token: hashedResetToken,
+        expiryDate: expiryDate,
+        user: user,
+      });
+      await manager.save(ResetToken, resetTokenEntity);
+      return resetToken;
+    });
+    return resultToken;
+  }
+
+  async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<Boolean> {
+    const resetToken = resetPasswordInput.resetToken;
+    const newPassword = resetPasswordInput.newPassword;
+
+    
+
+    return this.dataSource.transaction(async (manager) => {
+      // not match
+      const hashedToken = this.createHashedValue(resetToken);
+      const tokenEntity = await manager.findOne(ResetToken, {
+        where: {
+          token: hashedToken,
+          expiryDate: MoreThan(new Date()),
+        },
+        relations: ['user']
+      });
+      if (!tokenEntity) {
+        throw new BadRequestException('Invalid or expired reset token ');
+      }
+
+      if (new Date() > tokenEntity.expiryDate) {
+        throw new BadRequestException('Invalid or expired reset token');
+      }
+
+      const hashedPassword = await this.createHashPassword(newPassword);
+      await manager.update(User, tokenEntity.user.id, { password: hashedPassword });
+      await manager.delete(ResetToken, tokenEntity.id);
+
+      return true;
+    });
   }
 
   async loginGoogle(loginGoogleInput: LoginGoogleInput) {

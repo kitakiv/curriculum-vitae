@@ -101,6 +101,11 @@ const deleteSchema = (expectedId: string) =>
       .oneOf([expectedId], `ID must be ${expectedId}`),
   });
 
+
+
+const confirmPassword = Yup.string() .required("Please confirm your password")
+.oneOf([Yup.ref("newPassword")], "Passwords must match")
+
 const deleteManySchema = (phrase: string = "confirm delete") =>
   Yup.object({
     ids: Yup.array().required("IDs are required"),
@@ -186,6 +191,19 @@ const schema = {
         login: email,
         name,
         password
+    }),
+    forgotPassword: Yup.object().shape({
+        login: email
+    }),
+
+    resetPassword: Yup.object().shape({
+        newPassword: password,
+        confirmPassword
+    }),
+    changePassword: Yup.object().shape({
+        oldPassword: password,
+        newPassword: password,
+        confirmPassword
     }),
     profile: {
         profileEdit: Yup.object().shape({

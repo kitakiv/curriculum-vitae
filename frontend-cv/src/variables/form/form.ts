@@ -42,6 +42,43 @@ const form = {
         metadataDesctiption: "Login Form",
         loginFormLoading: "Loading..."
     },
+    forgotPasswordForm: {
+        initialValues: { login: "" },
+        inputs: [
+             { id: "login", label: "Enter your email to reset password", name: "login", placeholder: "Login", type: "text" },
+        ],
+        button: "Continue",
+        metadataTitle: "Forgot Password",
+        metadataDesctiption: "Forgot Password Form",
+        title: "Forgot Password",
+    },
+    resetPasswordForm: {
+        initialValues: { password: "", confirmPassword: "" },
+        inputs: [
+            { id: "newPassword", label: "New Password", name: "newPassword", placeholder: "New Password", type: "password" },
+            { id: "confirmPassword", label: "Confirm Password", name: "confirmPassword", placeholder: "Confirm Password", type: "password" },
+        ],
+        button: "Reset Password",
+        metadataTitle: "Reset Password",
+        metadataDesctiption: "Reset Password Form",
+        title: "Reset Password",
+    },
+    changePasswordForm: {
+        initialValues: { oldPassword: "", newPassword: "", confirmPassword: "" },
+        inputs: [
+            { id: "oldPassword", label: "Old Password", name: "oldPassword", placeholder: "Old Password", type: "password" },
+            { id: "newPassword", label: "New Password", name: "newPassword", placeholder: "New Password", type: "password" },
+            { id: "confirmPassword", label: "Confirm Password", name: "confirmPassword", placeholder: "Confirm Password", type: "password" },
+        ],
+        initialValuesProfile: { password: "" },
+        inputsProfile: [
+            { id: "password", label: "Password", name: "password", placeholder: "Password", type: "text" },
+        ],
+        button: "Change Password",
+        metadataTitle: "Change Password",
+        metadataDesctiption: "Change Password Form",
+        title: "Change Password",
+    },
     signupForm: {
         initialValues: { login: "", name: "", password: "" },
         inputs: [
@@ -278,8 +315,9 @@ const form = {
             { id: "id", phrase: "confirm delete", label: "Confirm Delete", name: "phrase", placeholder: "confirm delete", type: "text" },
         ],
         inputsEdit: [
-            { id: "name", label: "User Name", name: "name", placeholder: "User Name", type: "text" },
+            { id: "name", label: "User Name", name: "name", placeholder: "Name", type: "text" },
         ],
+    
         inputsEditImage: [
             { id: "avatarPhoto", label: "Avatar Photo", name: "avatarPhoto", placeholder: "Avatar Photo", type: "file" },
         ],

@@ -60,7 +60,7 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
             }}
         >
             {({ setFieldValue }) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col padding-elements gap-4 rounded-lg relative`}>
+                <Form className={`${tailwind} liquidGlass-elem liquidGlass-shadow flex flex-col padding-elements gap-4 rounded-lg relative`}>
                     <MainText tailwind="text-center">
                         {title}
                     </MainText>

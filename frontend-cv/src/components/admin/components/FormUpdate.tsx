@@ -9,6 +9,7 @@ import { PrevState, PrevStateFull } from '@/app/actions/action.type';
 import CustomizedSnackbars from '@/components/animation/Alert';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
+import LiquidGlassButton from '@/components/button/LiquidButton';
 
 interface FormElementProps<V> {
     children?: React.ReactNode;
@@ -61,7 +62,7 @@ export default function FormUpdate<V>({ children, tailwind, inputs, intialValues
             }}
         >
             {({ setFieldValue, resetForm, values }) => (
-                <Form className={`${tailwind} bg-adminGr33 flex flex-col pt-20 pb-2 lg:px-4 md:px-3 sm:px-3 px-2 gap-4 rounded-lg relative`}>
+                <Form className={`${tailwind} liquidGlass-elem liquidGlass-shadow flex flex-col pt-20 pb-2 lg:px-4 md:px-3 sm:px-3 px-2 gap-4 rounded-lg relative`}>
                     {children}
                     {state?.message && (
                         <>
@@ -108,20 +109,23 @@ function SubmitButton({ pending, children }: { pending: boolean, children: React
     const isDisabled = !isValid || hasErrors || pending;
 
     return (
-        <AdminButton type="submit"
+        <LiquidGlassButton
+             type="submit"
             disabled={isDisabled}
             pending={pending}
         >
             {pending ? 'Loading...' : children}
-        </AdminButton>
+        </LiquidGlassButton>
     );
 }
 
 function Button({ children, click }: { children: React.ReactNode, click: () => void }) {
     return (
-        <AdminButton type="button" click={click}
+        <LiquidGlassButton tailwind="w-11 h-11 flex items-center justify-center"
+        type= "button"
+        onClick={click}
         >
             {children}
-        </AdminButton>
+        </LiquidGlassButton>
     );
 }

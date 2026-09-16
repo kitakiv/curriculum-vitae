@@ -76,3 +76,12 @@
 & .MuiSvgIcon-root {
   color: var(--admin-tx100);
 }
+
+& .MuiDataGrid-overlay {
+  background-color: var(--admin-gr33);
+}
+
+& .MuiDataGrid-filler {
+  background-color: var(--admin-gr33);
+  color: var(--admin-tx0);
+}

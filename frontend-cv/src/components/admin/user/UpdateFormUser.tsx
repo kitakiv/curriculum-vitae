@@ -2,10 +2,9 @@
 
 import {  User } from "@/gql/graphql";
 import { Resource, resourceConfig } from "@/variables/admin/resource";
-import FormUpdate from "@/components/admin/components/FormUpdate";
 import MainText from "@/components/text/MainText";
 import { UpdateUserInput } from "@/gql/graphql";
-
+import FormUpdate from "@/components/admin/components/FormUpdate";
 interface Props {
     initialValues: User,
     resourceId: string,
@@ -33,9 +32,6 @@ export default function UpdateFormUser({initialValues, resourceId }: Props) {
             schema={userUpdate.schema}
             title={userUpdate.title}
         >
-            <MainText tailwind="text-center">
-                {userUpdate.title}
-            </MainText>
         </FormUpdate>
     )
 

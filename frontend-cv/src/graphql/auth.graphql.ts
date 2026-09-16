@@ -21,6 +21,33 @@ mutation RefreshTheTokens {
 `;
 
 
+const FORGOT_PASSWORD_MUTATION = gql`
+mutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {
+    forgotPassword(forgotPasswordInput: $forgotPasswordInput) {
+        message
+    }
+}
+`;
+
+const CHANGE_PASSWORD_MUTATION = gql`
+mutation ChangePassword($changePasswordInput: ChangePasswordInput!) {
+    changePassword(changePasswordInput: $changePasswordInput) {
+        user {
+            login
+        }
+    }
+}`
+
+const RESET_PASSWORD_MUTATION = gql`
+mutation ResetPassword($resetPasswordInput: ResetPasswordInput!) {
+    resetPassword(resetPasswordInput: $resetPasswordInput)
+}
+`;
+
+
+
+
+
 const LOGIN_AUTH_QUERY = gql`
     mutation Login($loginInput: LoginInput!) {
     login(loginInput: $loginInput) {
@@ -147,15 +174,19 @@ const LOGOUT_AUTH_QUERY = gql`
 }
 `;
 
-export { SIGNUP_AUTH_QUERY,
-     LOGIN_AUTH_QUERY,
-      GET_ME_USER,
-       REFRESH_TOKEN_QUERY,
-        USERS_GET_QUERY,
-         USER_ATTACH_ROLE_MUTATION,
-        USER_DELETE_QUERY,
-        USERS_DELETE_QUERY,
-        USER_GET_ONE_QUERY,
-        LOGOUT_AUTH_QUERY,
-        USER_UPDATE_MUTATION
+export {
+    SIGNUP_AUTH_QUERY,
+    LOGIN_AUTH_QUERY,
+    GET_ME_USER,
+    REFRESH_TOKEN_QUERY,
+    USERS_GET_QUERY,
+    USER_ATTACH_ROLE_MUTATION,
+    USER_DELETE_QUERY,
+    USERS_DELETE_QUERY,
+    USER_GET_ONE_QUERY,
+    LOGOUT_AUTH_QUERY,
+    USER_UPDATE_MUTATION,
+    FORGOT_PASSWORD_MUTATION,
+    CHANGE_PASSWORD_MUTATION,
+    RESET_PASSWORD_MUTATION
 };

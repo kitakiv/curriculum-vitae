@@ -1,7 +1,7 @@
 'use client'
 import { User } from "@/gql/graphql";
 import { Resource, resourceConfig } from "@/variables/admin/resource";
-import FormUpdate from "../components/FormUpdate";
+import FormUpdate from "@/components/admin/components/FormUpdate";
 import { useState } from "react";
 
 
@@ -30,7 +30,7 @@ export default function UpdateFormUserImage({ initialValues, resourceId }: Props
             schema={updateUserImage.schema}
             title={updateUserImage.title}
         >   
-           <img src={image as string} alt={intialValuesEmpty.avatarPhoto} className="w-72 h-fit rounded-lg" />
+           <img src={image as string} alt={intialValuesEmpty.avatarPhoto} className="w-72 h-fit rounded-full" />
         </FormUpdate>
     )
 }

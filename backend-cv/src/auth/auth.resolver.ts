@@ -41,6 +41,7 @@ import { S3Service } from '../s3/s3.service';
 import { UserImageService } from './authImage.server';
 import { ForgotPasswordInput } from './dto/forgotPassword.input';
 import { PasswordData } from './entities/forgotPasswordData.type';
+import { ResetPasswordInput } from './dto/resetPassword.input';
 
 
 @UseGuards(AuthorizationGuard, SuperAdminGuard)
@@ -72,6 +73,7 @@ export class AuthResolver {
     @Context() { res }: { res: Response },
   ) {
     const result = await this.authService.login(loginInput);
+    console.log(result);
     this.cookiesService.setCookies(
       res,
       result.tokens.refreshToken,
@@ -99,12 +101,22 @@ export class AuthResolver {
   }
 
   @Public()
+  @SuperAdmin()
   @Mutation(() => PasswordData)
   async forgotPassword(
     @Args('forgotPasswordInput', { type: () => ForgotPasswordInput })
     forgotPasswordInput: ForgotPasswordInput,
   ) {
     return await this.authService.forgotPassword(forgotPasswordInput);
+  }
+
+  @Public()
+  @Mutation(() => Boolean)
+  async resetPassword(
+    @Args('resetPasswordInput', { type: () => ResetPasswordInput })
+    resetPasswordInput: ResetPasswordInput,
+  ) {
+    return await this.authService.resetPassword(resetPasswordInput);
   }
 
   @Mutation(() => Boolean)
@@ -117,6 +129,7 @@ export class AuthResolver {
     return true;
   }
 
+  @SuperAdmin()
   @Mutation(() => User)
   async changePassword(
     @Args('changePasswordInput', { type: () => ChangePasswordInput })

@@ -12,6 +12,7 @@ import InputElement from '@/components/Input/Input';
 import { login } from 'app/actions/auth';
 import { startTransition, useActionState } from 'react';
 import GoogleButton from '@/components/button/GoogleButton';
+import ForgotPassword from './ForgotPassword';
 export default function FormLoginAdmin() {
   const [state, action, pending] = useActionState(login, undefined);
   return (
@@ -50,6 +51,7 @@ export default function FormLoginAdmin() {
               ))}
               <GoogleButton/>
               <SubmitButton pending={pending} />
+              <ForgotPassword/>
             </Form>
           )}
         </Formik>

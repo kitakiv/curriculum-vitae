@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { setAccessToken, getAccessToken } from "@/lib/auth"
  
-const protectedRoutes = ['/admin', '/profile']
-const authRoutes = ['/login', '/signup']
+const protectedRoutes = ['/admin', '/profile', '/password/change']
+const authRoutes = ['/login', '/signup', '/password/forgot', '/password/reset']
  
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname

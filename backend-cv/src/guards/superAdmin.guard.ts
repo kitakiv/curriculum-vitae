@@ -13,6 +13,8 @@ import { AuthService } from '../auth/auth.service';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ConfigService } from '@nestjs/config';
 import { IS_SUPERADMIN_KEY } from 'src/decorators/superadmin.deconrator';
+import { LoggerFactory } from 'typeorm/logger/LoggerFactory.js';
+import auth from '../variables/auth.variables';
 
 @Injectable()
 export class SuperAdminGuard implements CanActivate {
@@ -35,13 +37,28 @@ export class SuperAdminGuard implements CanActivate {
     if (ctxType === 'graphql') {
       const gqlCtx = GqlExecutionContext.create(context);
       const ctx = gqlCtx.getContext();
+
+      const args = gqlCtx.getArgs();
+      const adminUser = await this.authService.findOne(this.configService.get('ADMIN_LOGIN'));
       // GraphQL context
       request = ctx.req;
       if (!request['userId']) {
+        if (args.forgotPasswordInput) {
+          if (args.forgotPasswordInput.login === adminUser.login) {
+              this.logger.error('Super admin cannot be updated or deleted');
+              return false;
+          } else {
+              return true;
+          }
+      }
       throw new UnauthorizedException('User ID not found');
       }
-      const args = gqlCtx.getArgs();
-      const adminUser = await this.authService.findOne(this.configService.get('ADMIN_LOGIN'));
+
+      // user admin role cannot be updated
+      const currentUser = request['userId'];
+      if (currentUser === adminUser.id && args.changePasswordInput) {
+          throw new ForbiddenException('Super admin cannot be updated or deleted');
+      }
       if (args.id === adminUser.id) {
           throw new ForbiddenException('Super admin cannot be updated or deleted');
       }
@@ -72,6 +89,13 @@ export class SuperAdminGuard implements CanActivate {
           if (args.attachRoleInput.userId === adminUser.id) {
               throw new ForbiddenException('This role cannot be attached to super admin');
           }
+      }
+
+      if (args.forgotPasswordInput) {
+        if (args.forgotPasswordInput.login === adminUser.login) {
+            this.logger.error('Super admin cannot be updated or deleted');
+            return false;
+        }
       }
       
 

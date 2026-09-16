@@ -21,7 +21,7 @@ module.exports = {
         bg0: "var(--color-bg-0)",
         rn100: "var(--color-round-100)",
         rn0: "var(--color-round-0)",
-        txSecond: "var(--color-tx-second)",
+        txSecond: "rgb(var(--color-tx-second) / <alpha-value>)",
         txFirst100: "var(--color-tx-first-100)",
         txFirst0: "var(--color-tx-first-0)",
         light: "var(--color-light)",

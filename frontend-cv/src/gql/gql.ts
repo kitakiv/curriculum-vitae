@@ -16,6 +16,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        login\n        success\n        message\n    }\n}\n": typeof types.SignupDocument,
     "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n": typeof types.RefreshTheTokensDocument,
+    "\nmutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {\n    forgotPassword(forgotPasswordInput: $forgotPasswordInput) {\n        message\n    }\n}\n": typeof types.ForgotPasswordDocument,
+    "\nmutation ChangePassword($changePasswordInput: ChangePasswordInput!) {\n    changePassword(changePasswordInput: $changePasswordInput) {\n        login\n    }\n}\n": typeof types.ChangePasswordDocument,
+    "\nmutation ResetPassword($resetPasswordInput: ResetPasswordInput!) {\n    resetPassword(resetPasswordInput: $resetPasswordInput)\n}\n": typeof types.ResetPasswordDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": typeof types.LoginDocument,
     "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            id\n            name\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": typeof types.GetUserDocument,
     "\n    query GetUsers {\n    users {\n        id\n        login\n        name\n        avatarPhoto\n        isEmailVerified\n        role {\n            id\n            name\n            permissions {\n                actions\n                id\n                resource\n            }\n        }\n    }\n}\n": typeof types.GetUsersDocument,
@@ -77,6 +80,9 @@ type Documents = {
 const documents: Documents = {
     "\n    mutation Signup($signUpInput: SignUpInput!) {\n    signup(signUpInput: $signUpInput) {\n        login\n        success\n        message\n    }\n}\n": types.SignupDocument,
     "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n": types.RefreshTheTokensDocument,
+    "\nmutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {\n    forgotPassword(forgotPasswordInput: $forgotPasswordInput) {\n        message\n    }\n}\n": types.ForgotPasswordDocument,
+    "\nmutation ChangePassword($changePasswordInput: ChangePasswordInput!) {\n    changePassword(changePasswordInput: $changePasswordInput) {\n        login\n    }\n}\n": types.ChangePasswordDocument,
+    "\nmutation ResetPassword($resetPasswordInput: ResetPasswordInput!) {\n    resetPassword(resetPasswordInput: $resetPasswordInput)\n}\n": types.ResetPasswordDocument,
     "\n    mutation Login($loginInput: LoginInput!) {\n    login(loginInput: $loginInput) {\n        tokens {\n            accessToken\n        }\n        user {\n            login\n            name\n        }\n    }\n}\n": types.LoginDocument,
     "\n    mutation GetUser {\n    getUser {\n        id\n        login\n        name\n        avatarPhoto\n        role {\n            id\n            name\n            permissions {\n                actions\n                resource\n            }\n        }\n    }\n}": types.GetUserDocument,
     "\n    query GetUsers {\n    users {\n        id\n        login\n        name\n        avatarPhoto\n        isEmailVerified\n        role {\n            id\n            name\n            permissions {\n                actions\n                id\n                resource\n            }\n        }\n    }\n}\n": types.GetUsersDocument,
@@ -158,6 +164,18 @@ export function graphql(source: "\n    mutation Signup($signUpInput: SignUpInput
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n"): (typeof documents)["\nmutation RefreshTheTokens {\n    refreshTheTokens {\n        tokens {\n            accessToken\n        }\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {\n    forgotPassword(forgotPasswordInput: $forgotPasswordInput) {\n        message\n    }\n}\n"): (typeof documents)["\nmutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {\n    forgotPassword(forgotPasswordInput: $forgotPasswordInput) {\n        message\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation ChangePassword($changePasswordInput: ChangePasswordInput!) {\n    changePassword(changePasswordInput: $changePasswordInput) {\n        login\n    }\n}\n"): (typeof documents)["\nmutation ChangePassword($changePasswordInput: ChangePasswordInput!) {\n    changePassword(changePasswordInput: $changePasswordInput) {\n        login\n    }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation ResetPassword($resetPasswordInput: ResetPasswordInput!) {\n    resetPassword(resetPasswordInput: $resetPasswordInput)\n}\n"): (typeof documents)["\nmutation ResetPassword($resetPasswordInput: ResetPasswordInput!) {\n    resetPassword(resetPasswordInput: $resetPasswordInput)\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
