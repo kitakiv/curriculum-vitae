@@ -47,8 +47,13 @@ export class SuperAdminGuard implements CanActivate {
           if (args.forgotPasswordInput.login === adminUser.login) {
               this.logger.error('Super admin cannot be updated or deleted');
               return false;
+          } else if (args.resetPasswordInput) {
+              if (args.resetPasswordInput.login === adminUser.login) {
+                  this.logger.error('Super admin cannot be updated or deleted');
+                  return false;
+              }
           } else {
-              return true;
+            return true;
           }
       }
       throw new UnauthorizedException('User ID not found');

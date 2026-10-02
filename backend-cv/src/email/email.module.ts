@@ -6,6 +6,7 @@ import emailNoreplyConfig from '../config/email.config'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../auth/entities/user.entity';
 import adminConfig from '../config/admin.cofing';
+import { VerificationToken } from '../auth/entities/verificationToken.entity';
 
 @Module({
   providers: [EmailService, Logger],
@@ -13,7 +14,7 @@ import adminConfig from '../config/admin.cofing';
   imports: [
     ConfigModule.forFeature(emailNoreplyConfig),
     ConfigModule.forFeature(adminConfig),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, VerificationToken]),
   ],
   controllers: [EmailController],
 })

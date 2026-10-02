@@ -111,6 +111,7 @@ export class AuthResolver {
   }
 
   @Public()
+  @SuperAdmin()
   @Mutation(() => Boolean)
   async resetPassword(
     @Args('resetPasswordInput', { type: () => ResetPasswordInput })

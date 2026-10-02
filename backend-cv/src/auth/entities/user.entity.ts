@@ -6,6 +6,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { Exclude } from 'class-transformer';
 import { UserProvider } from 'src/common/types/types';
 import { ResetToken } from './resetToken.entity';
+import { VerificationToken } from './verificationToken.entity';
 
 @ObjectType()
 @Entity()
@@ -66,7 +67,7 @@ export class User extends AbstractEntity<User> {
   role?: Role;
 
   @Exclude()
-  @Field(() => String, { description: 'User surname', nullable: true })
-  @Column({ nullable: true })
-  verificationToken?: string;
+  @Field(() => VerificationToken, { description: 'Verification token', nullable: true })
+  @OneToOne(() => VerificationToken, (verificationToken) => verificationToken.user)
+  verificationToken?: VerificationToken;
 }

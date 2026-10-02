@@ -10,6 +10,8 @@ import { errors } from 'src/errors/errors.config';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { verifiedEmailPage, emailVerificatioMessage, newUserRegisteredEmail } from '../variables/email.variables';
 import Auth from '../variables/auth.variables';
+import { createHash } from 'crypto';
+import { VerificationToken } from '../auth/entities/verificationToken.entity';
 
 @Injectable()
 export class EmailService {
@@ -22,6 +24,8 @@ export class EmailService {
     private readonly adminEmailConfig: ConfigType<typeof adminConfig>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(VerificationToken)
+    private readonly verificationTokenRepository: Repository<VerificationToken>,
     private readonly logger: Logger,
   ) {
     const transportOptions: SMTPTransport.Options = {
@@ -34,6 +38,11 @@ export class EmailService {
       },
     };
     this.transporter = nodemailer.createTransport(transportOptions);
+  }
+
+  private createHashedValue(value: string) {
+    const hashed = createHash('sha256').update(value).digest('hex');
+    return hashed;
   }
 
   async sendVerificationEmail(email: string, token: string, name: string) {
@@ -89,17 +98,24 @@ export class EmailService {
   }
 
   async verifyEmail(token: string) {
-    const user = await this.userRepository.findOne({
-      where: { verificationToken: token }
+    const hashedToken = this.createHashedValue(token);
+    const tokenEntity = await this.verificationTokenRepository.findOne({
+      where: { token: hashedToken },
+      relations: ['user'],
     });
-
-    if (!user) {
+    if (!tokenEntity) {
       throw new BadRequestException('Invalid verification token');
     }
+    if (new Date() > tokenEntity.expiryDate) {
+      throw new BadRequestException('Verification token has expired');
+    }
+    const user = tokenEntity.user;
+   
     user.isEmailVerified = true;
     user.verificationToken = null;
     try {
       await this.userRepository.save(user);
+      await this.verificationTokenRepository.remove(tokenEntity);
       const frontendUrl = this.emailConfig.frontendUrl || 'http://localhost:3000';
       return verifiedEmailPage(frontendUrl);
     } catch (error) {

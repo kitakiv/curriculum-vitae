@@ -10,10 +10,11 @@ import { EmailModule } from '../email/email.module';
 import { UserImageService } from './authImage.server';
 import { S3Service } from '../s3/s3.service';
 import { ResetToken } from './entities/resetToken.entity';
+import { VerificationToken } from './entities/verificationToken.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, RefreshToken, Role, ResetToken]),
+    TypeOrmModule.forFeature([User, RefreshToken, Role, ResetToken, VerificationToken]),
     CommonModule,
     EmailModule,
   ],

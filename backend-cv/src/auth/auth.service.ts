@@ -22,7 +22,13 @@ import { AttachRoleInput } from './dto/attachRole.input';
 import { UpdateUserInput } from './dto/updateAuth.input';
 import { ConfigService } from '@nestjs/config';
 import { errors } from '../errors/errors.config';
-import { EXPIRE_DATE_RESET_TOKEN, expiryDate, NANO_ID_LENGTH, RESETPASSWORD_URL } from '../common/constants';
+import {
+  EXPIRE_DATE_RESET_TOKEN,
+  expiryDate,
+  NANO_ID_LENGTH,
+  RESETPASSWORD_URL,
+  EXPIRE_DATE_VERIFICATION_TOKEN
+} from '../common/constants';
 import { DataSource } from 'typeorm';
 import { REFRESH_TOKEN_EXPIRATION_DAYS } from '../common/constants';
 import { CookiesData } from './entities/cookiesData.type';
@@ -42,6 +48,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { resetPasswordPage } from '../variables/email.variables';
 import auth from '../variables/auth.variables';
+import { VerificationToken } from './entities/verificationToken.entity';
 
 
 @Injectable()
@@ -60,19 +67,21 @@ export class AuthService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly logger: Logger = new Logger(AuthService.name),
     private readonly emailService: EmailService
-  ) {}
+  ) { }
   async signUp(createAuthInput: SignUpInput): Promise<SignupData> {
     const emailInUse = await this.userRepository.findOneBy({
       login: createAuthInput.login,
     });
-    if (emailInUse) {
+    if (emailInUse && emailInUse.isEmailVerified) {
       throw new BadRequestException(errors.EMAIL_EXISTS);
+    } else if (emailInUse && !emailInUse.isEmailVerified) {
+
     }
     try {
-      const createdUser = await this.createUser(createAuthInput);
+      const { user: createdUser, token } = await this.createLocalUser(createAuthInput);
       await this.emailService.sendVerificationEmail(
         createdUser.login,
-        createdUser.verificationToken,
+        token,
         createdUser.name
       );
       return {
@@ -85,29 +94,98 @@ export class AuthService implements OnModuleInit {
     }
   }
 
+
+
   private async createUser(
     createAuthInput: SignUpInput | SignUpGoogleInput,
   ): Promise<User> {
-    let password: string | null;
-    let verificationToken: string | null;
-    if (createAuthInput instanceof SignUpGoogleInput) {
-      password = null;
-      verificationToken = null
-    } else if (createAuthInput instanceof SignUpInput) {
-      password = await this.createHashPassword(createAuthInput.password);
-      verificationToken = randomBytes(32).toString('hex');
+    try {
+      if (createAuthInput instanceof SignUpInput) {
+        const { user } = await this.createLocalUser(createAuthInput);
+        return user;
+      } else if (createAuthInput instanceof SignUpGoogleInput) {
+        return await this.createGoogleUser(createAuthInput);
+      }
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_CREATED('User'));
     }
+  }
+
+  private async createGoogleUser(createAuthInput: SignUpGoogleInput): Promise<User> {
     try {
       const createdUser = await this.dataSource.transaction(async (manager) => {
         const user = await manager.create(User, {
           ...createAuthInput,
-          password: password,
-          verificationToken: verificationToken
+          password: null,
+          verificationToken: null
         });
         await manager.save(User, user);
         return user;
       });
       return createdUser;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(errors.NOT_CREATED('User'));
+    }
+  }
+
+  private async createLocalUser(createAuthInput: SignUpInput): Promise<{ user: User; token: string }> {
+    const password = await this.createHashPassword(createAuthInput.password);
+    const verificationToken = randomBytes(32).toString('hex');
+    try {
+      const createdUser = await this.dataSource.transaction(async (manager) => {
+
+         const hashedVerificationToken = this.createHashedValue(verificationToken);
+         const expiryDate = new Date();
+         expiryDate.setHours(expiryDate.getHours() + EXPIRE_DATE_VERIFICATION_TOKEN);
+         const existingUser = await manager.findOne(User, { where: { login: createAuthInput.login } });
+
+        if (existingUser && !existingUser.isEmailVerified) {
+          await manager.update(User, existingUser.id, {
+            ...createAuthInput,
+            password: password,
+          });
+          const verificationTokenEntity = await manager.findOne(VerificationToken, { where: { user: { id: existingUser.id } } });
+          if (verificationTokenEntity) {
+            verificationTokenEntity.token = hashedVerificationToken;
+            verificationTokenEntity.expiryDate = expiryDate;
+            await manager.save(VerificationToken, verificationTokenEntity);
+          } else {
+            const verificationTokenEntity = this.dataSource.getRepository(VerificationToken).create({
+              token: hashedVerificationToken,
+              expiryDate: expiryDate,
+              user: existingUser,
+            });
+            await manager.save(VerificationToken, verificationTokenEntity);
+          }
+          return existingUser;
+        }
+
+
+
+
+          const user = await manager.create(User, {
+            ...createAuthInput,
+            password: password,
+          });
+          await manager.save(User, user);
+
+         
+          const verificationTokenEntity = this.dataSource.getRepository(VerificationToken).create({
+            token: hashedVerificationToken,
+            expiryDate: expiryDate,
+            user: user,
+          });
+          await manager.save(VerificationToken, verificationTokenEntity);
+          return user;
+        });
+
+        
+      return {
+        user: createdUser,
+        token: verificationToken
+      };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException(errors.NOT_CREATED('User'));
@@ -147,12 +225,12 @@ export class AuthService implements OnModuleInit {
 
   private async generateToken(user: User): Promise<Sign> {
     const accessToken = this.jwtService.sign({ userId: user.id });
-    
+
     const refreshToken = uuid.v4();
     try {
       await this.storeRefreshToken(user, refreshToken);
     } catch (error) {
-      
+
       throw new BadRequestException(error.message);
     }
     return { accessToken, refreshToken } as Sign;
@@ -170,7 +248,7 @@ export class AuthService implements OnModuleInit {
 
   private async storeRefreshToken(user: User, token: string) {
     const refreshToken = await this.findUserByRefreshToken(user.id);
-    
+
     if (refreshToken) {
       await this.updateRefreshToken(refreshToken.id, token);
       return;
@@ -268,7 +346,7 @@ export class AuthService implements OnModuleInit {
     return user;
   }
 
-  
+
 
 
   async findAllRoles(userId: string) {
@@ -540,12 +618,12 @@ export class AuthService implements OnModuleInit {
       const link = `${process.env.FRONTEND_URL}/${RESETPASSWORD_URL}?resetoken=${resetToken}`
       await this.emailService.sendEmail(user.login, 'Password Reset', resetPasswordPage(link));
     }
-    return {message: auth.forgotPassword.message};
+    return { message: auth.forgotPassword.message };
   }
 
   private createHashedValue(value: string) {
-   const hashed = createHash('sha256').update(value).digest('hex');
-   return hashed;
+    const hashed = createHash('sha256').update(value).digest('hex');
+    return hashed;
   }
 
   private async saveOrUpdateResetToken(user: User) {
@@ -553,7 +631,7 @@ export class AuthService implements OnModuleInit {
     const hashedResetToken = this.createHashedValue(resetToken);
     const expiryDate = new Date();
     expiryDate.setHours(expiryDate.getHours() + EXPIRE_DATE_RESET_TOKEN);
-    
+
     const resultToken = this.dataSource.transaction(async (manager) => {
       this.logger.log('saveOrUpdateResetToken');
       const tokenEntity = await manager.findOne(ResetToken, {
@@ -584,7 +662,7 @@ export class AuthService implements OnModuleInit {
     const resetToken = resetPasswordInput.resetToken;
     const newPassword = resetPasswordInput.newPassword;
 
-    
+
 
     return this.dataSource.transaction(async (manager) => {
       // not match

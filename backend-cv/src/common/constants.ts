@@ -6,6 +6,7 @@ const REFRESH_TOKEN_EXPIRATION_DAYS =
 const FILE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp', 'svg+xml'];
 const NANO_ID_LENGTH = 64;
 const EXPIRE_DATE_RESET_TOKEN = 1 * 60 * 60 * 1000; // 1 hour
+const EXPIRE_DATE_VERIFICATION_TOKEN = 24 * 60 * 60 * 1000; // 24 hours
 const directives: Record<string, string[]> =  {
   imgSrc: [
     `'self'`,
@@ -30,6 +31,7 @@ export {
   MB,
   FILE_EXTENSIONS,
   REFRESH_TOKEN_EXPIRATION_DAYS,
+  EXPIRE_DATE_VERIFICATION_TOKEN,
   NANO_ID_LENGTH,
   EXPIRE_DATE_RESET_TOKEN,
   RESETPASSWORD_URL,

@@ -508,8 +508,8 @@ type User {
   """User role"""
   role: Role
 
-  """User surname"""
-  verificationToken: String
+  """Verification token"""
+  verificationToken: VerificationToken
 }
 
 """Authentication provider type"""
@@ -517,6 +517,18 @@ enum UserProvider {
   BOTH
   GOOGLE
   LOCAL
+}
+
+type VerificationToken {
+  """Verification token expiry date"""
+  expiryDate: String!
+
+  """Verification token id"""
+  id: ID!
+
+  """Verification token"""
+  token: String!
+  user: User
 }
 
 type allPermission {
