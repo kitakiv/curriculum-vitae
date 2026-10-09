@@ -3,10 +3,11 @@ import UpdateFormUser from "@/components/admin/user/UpdateFormUser";
 import UpdateFormUserImage from "@/components/admin/user/UpdateFormUserImage";
 import { User } from "@/gql/graphql";
 import UpdatePasswordForm from "../admin/user/UpdatePasswordForm";
+import { GetUserMutation } from "@/gql/graphql";
 
 
 interface Props {
-   user: User
+   user: GetUserMutation['getUser'] | false
 }
 
 export default function ProfileComponent({ user }: Props) {

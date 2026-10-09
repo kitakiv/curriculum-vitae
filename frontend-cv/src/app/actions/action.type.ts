@@ -13,5 +13,5 @@ export type PrevStateFull<V> = {
         [K in keyof V]?: string[];
     };
     success?: boolean;
-    data: V;
+    data: V | null;
 }

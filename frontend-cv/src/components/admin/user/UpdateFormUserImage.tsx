@@ -15,7 +15,7 @@ export default function UpdateFormUserImage({ initialValues, resourceId }: Props
     const intialValuesEmpty = updateUserImage.initialValues;
     const [ image, setImage ] = useState(initialValues.avatarPhoto);
     return (
-        <FormUpdate<User["avatarPhoto"]>
+        <FormUpdate<User["avatarPhoto"] | null>
             inputs={updateUserImage.inputs}
             tailwind="flex flex-col items-center"
             intialValues={intialValuesEmpty}

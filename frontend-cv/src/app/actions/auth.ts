@@ -37,7 +37,7 @@ import { SignupMutation } from "@/gql/graphql";
 import { UpdateUserInput } from "@/gql/graphql";
 import { resourceConfig, Resource } from "@/variables/admin/resource";
 import { uploadFile } from "@/query/upload.http";
-import { ForgotPasswordInput } from "@/gql/graphql";
+import { PasswordData, ForgotPasswordInput } from "@/gql/graphql";
 import { ForgotPasswordMutation } from "@/gql/graphql";
 import { ForgotPasswordMutationVariables } from "@/gql/graphql";
 import { ResetPasswordInput } from "@/gql/graphql";
@@ -120,7 +120,7 @@ export async function login(prevState: LoginFormState | undefined, formData: For
     }
 }
 
-export async function resetPasswordAction(prevStateFull: PrevState<ResetPasswordInput> | undefined, formData: FormData, token: string): Promise<prevStateFull<ResetPasswordInput>> {
+export async function resetPasswordAction(prevStateFull: PrevStateFull<ResetPasswordInput> | undefined, formData: FormData, token: string): Promise<PrevStateFull<ResetPasswordInput>> {
     const password = formData.get('newPassword') as string;
     try {
         const resetPasswordInput: ResetPasswordInput = {
@@ -142,8 +142,8 @@ export async function resetPasswordAction(prevStateFull: PrevState<ResetPassword
             success: true,
             message: 'Password reset successfully redirecting to login page',
             data: {
-                token: null,
-                newPassword: null
+                resetToken: '',
+                newPassword: ''
             }
         };
     } catch(error) {
@@ -160,7 +160,7 @@ export async function changePasswordAction(prevStateFull: PrevStateFull<ChangePa
     const newPassword = formData.get('newPassword') as string;
     try {
         const changePasswordInput: ChangePasswordInput = {
-            currentPassword,
+            oldPassword: currentPassword,
             newPassword
         }
         await queryGraphQL<ChangePasswordMutation, ChangePasswordMutationVariables>(
@@ -185,9 +185,9 @@ export async function changePasswordAction(prevStateFull: PrevStateFull<ChangePa
     
 
 
-export async function forgotPasswordAction(prevState: PrevStateFull<ForgotPasswordInput> | undefined, formData: FormData): Promise < PrevStateFull < LoginInput >> {
+export async function forgotPasswordAction(prevState: PrevStateFull<PasswordData> | undefined, formData: FormData): Promise < PrevStateFull < PasswordData >> {
     const login = formData.get('login') as string;
-    console.log(formData);
+    
     try {
         const result = await queryGraphQL<ForgotPasswordMutation, ForgotPasswordMutationVariables>(
             FORGOT_PASSWORD_MUTATION,
@@ -287,7 +287,9 @@ export async function attachRoleToUserAction(prevState: PrevState<AttachRoleInpu
 export async function updateUserAction(prevState: PrevState<UpdateUserInput> | undefined, formData: FormData, intitalValues: UpdateUserInput, id: string):
     Promise<PrevState<UpdateUserInput>> {
 
-    const updateInput: UpdateUserInput = {};
+    const updateInput: UpdateUserInput = {
+        name: '',
+    };
 
     Object.entries(intitalValues).forEach(([key, value]) => {
         if (formData.get(key) !== value && key !== USER_IMAGE) {
@@ -324,8 +326,8 @@ export async function updateUserAction(prevState: PrevState<UpdateUserInput> | u
 
 }
 
-export async function updateUserImageAction(prevState: PrevStateFull<string | null> | undefined, formData: FormData, id: string):
-    Promise<PrevStateFull<string | null>> {
+export async function updateUserImageAction(prevState: PrevStateFull<User["avatarPhoto"] | null>, formData: FormData, id: string):
+    Promise<PrevStateFull<User["avatarPhoto"] | null>> {
     try {
         const res = await uploadFile(resourceConfig[Resource.USER].editFormImage.uploadConfig, formData, USER_IMAGE, id);
 
