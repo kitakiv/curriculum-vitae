@@ -110,7 +110,7 @@ function SubmitButton({ pending, children }: { pending: boolean, children: React
 
     return (
         <LiquidGlassButton
-             type="submit"
+            type="submit"
             disabled={isDisabled}
             pending={pending}
         >

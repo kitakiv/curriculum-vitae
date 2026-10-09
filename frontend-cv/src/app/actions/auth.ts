@@ -120,7 +120,7 @@ export async function login(prevState: LoginFormState | undefined, formData: For
     }
 }
 
-export async function resetPasswordAction(prevStateFull: PrevStateFull<ResetPasswordInput> | undefined, formData: FormData, token: string): Promise<PrevStateFull<ResetPasswordInput>> {
+export async function resetPasswordAction(prevStateFull: PrevState<ResetPasswordInput> | undefined, formData: FormData, token: string): Promise<PrevState<ResetPasswordInput>> {
     const password = formData.get('newPassword') as string;
     try {
         const resetPasswordInput: ResetPasswordInput = {
@@ -141,21 +141,18 @@ export async function resetPasswordAction(prevStateFull: PrevStateFull<ResetPass
         return {
             success: true,
             message: 'Password reset successfully redirecting to login page',
-            data: {
-                resetToken: '',
-                newPassword: ''
-            }
+            id: null
         };
     } catch(error) {
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Password reset failed',
-            data: null
+            id: null
         };
     }
 }
 
-export async function changePasswordAction(prevStateFull: PrevStateFull<ChangePasswordInput> | undefined, formData: FormData): Promise<PrevStateFull<ChangePasswordInput>> {
+export async function changePasswordAction(prevStateFull: PrevState<ChangePasswordInput> | undefined, formData: FormData): Promise<PrevState<ChangePasswordInput>> {
     const currentPassword = formData.get('oldPassword') as string;
     const newPassword = formData.get('newPassword') as string;
     try {
@@ -172,20 +169,20 @@ export async function changePasswordAction(prevStateFull: PrevStateFull<ChangePa
         return {
             success: true,
             message: 'Password changed successfully',
-            data: null
+            id: null
         };
     } catch(error) {
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Change password failed',
-            data: null
+            id: null
         }
     }
 }
     
 
 
-export async function forgotPasswordAction(prevState: PrevStateFull<PasswordData> | undefined, formData: FormData): Promise < PrevStateFull < PasswordData >> {
+export async function forgotPasswordAction(prevState: PrevState<ForgotPasswordInput> | undefined, formData: FormData): Promise < PrevState < ForgotPasswordInput >> {
     const login = formData.get('login') as string;
     
     try {
@@ -200,13 +197,13 @@ export async function forgotPasswordAction(prevState: PrevStateFull<PasswordData
         return {
             success: true,
             message: result.forgotPassword.message,
-            data: result.forgotPassword
+            id: null
         };
     } catch(error) {
         return {
             success: false,
             message: error instanceof Error ? error.message : 'Password reset failed',
-            data: null
+            id: null
         };
     }
 

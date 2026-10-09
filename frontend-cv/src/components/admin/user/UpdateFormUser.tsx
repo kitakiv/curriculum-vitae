@@ -5,8 +5,9 @@ import { Resource, resourceConfig } from "@/variables/admin/resource";
 import MainText from "@/components/text/MainText";
 import { UpdateUserInput } from "@/gql/graphql";
 import FormUpdate from "@/components/admin/components/FormUpdate";
+import { GetUserMutation } from "@/gql/graphql";
 interface Props {
-    initialValues: User,
+    initialValues: GetUserMutation['getUser'],
     resourceId: string,
 }
 export default function UpdateFormUser({initialValues, resourceId }: Props) {
@@ -30,6 +31,7 @@ export default function UpdateFormUser({initialValues, resourceId }: Props) {
                 )
             }
             schema={userUpdate.schema}
+            // @ts-ignore
             title={userUpdate.title}
         >
         </FormUpdate>

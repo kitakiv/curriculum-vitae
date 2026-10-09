@@ -17,14 +17,18 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
     const resource: keyof typeof resourceConfig = currentResource.toLowerCase() as keyof typeof resourceConfig;
     const resourceIds = useAppSelector(state => state.form.formDeleteMany.ids) as string[];
     const router = useRouter();
-    const inputs = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.inputs : [];
-    const formInitialValues = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.initialValues : {};
-    const schema = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.schema : null;
-    const title = resourceConfig[resource].deleteManyForm ? resourceConfig[resource].deleteManyForm.title : '';
     // @ts-ignore
-    const actionForm = resourceConfig[resource].deleteManyForm.action;
+    const inputs = resourceConfig[resource]?.deleteManyForm ? resourceConfig[resource].deleteManyForm.inputs : [];
     // @ts-ignore
-    const [state, action, pending] = useActionState(actionForm, undefined);
+    const formInitialValues = resourceConfig[resource]?.deleteManyForm ? resourceConfig[resource].deleteManyForm.initialValues : {};
+    // @ts-ignore
+    const schema = resourceConfig[resource]?.deleteManyForm ? resourceConfig[resource].deleteManyForm.schema : null;
+    // @ts-ignore
+    const title = resourceConfig[resource]?.deleteManyForm ? resourceConfig[resource].deleteManyForm.title : '';
+    // @ts-ignore
+    const actionForm = resourceConfig[resource]?.deleteManyForm.action;
+    // @ts-ignore
+    const [state, action, pending] = useActionState((prevState: PrevState<object> | undefined, formData: FormData) => actionForm(formData), undefined);
     // @ts-ignore
     const initialValues = {
         ...formInitialValues,
@@ -37,7 +41,7 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
             router.refresh();
         }
     }, [state?.success, router]);
-
+    // @ts-ignore
      if (!resourceConfig[resource].deleteManyForm) {
         return <></>;
     }
@@ -74,7 +78,7 @@ export default function FormDeleteMany({ tailwind, resourceId, currentResource }
                             </CustomizedSnackbars>
                         </>
                     )}
-                    {inputs.map((input) => (
+                    {inputs.map((input : InputType) => (
                         <InputElement
                             key={input.id}
                             inputData={input as InputType}
