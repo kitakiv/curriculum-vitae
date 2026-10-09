@@ -20,6 +20,7 @@ export default function ResetPassowrd({ resetToken }: Props) {
                 actionForm={(formData) => form.action(undefined, formData, resetToken)}
                 schema={form.schema}
                 title={form.button}
+                tailwind='padding-elements gap-4 grid xl:w-[30vw] lg:w-[40vw] md:w-[40vw] sm:w-full w-full  liquidGlass-elem liquidGlass-shadow rounded-lg '
             >
                 <MainText tailwind="text-center">
                     {form.title}
