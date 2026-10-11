@@ -59,7 +59,7 @@ sudo nano /etc/nginx/conf.d/cv-backend.conf
 
 server {
     listen 80;
-    server_name <your-ec2-ip-or-domain>;
+    server_name 18.202.249.110;
 
     location / {
         proxy_pass http://localhost:4000;

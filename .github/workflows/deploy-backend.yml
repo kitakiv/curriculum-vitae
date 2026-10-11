@@ -1,88 +1,49 @@
 name: Deploy Backend
-
 on:
-  push:
-    branches: [developer-backend, main]
-    paths:
-      - "backend-cv/**"
-
+  push: 
+    branches: [main, developer-integration]
+  workflow_dispatch:
+# Permissions needed for this workflow
+permissions:
+  contents: write
+# Define the jobs to be executed
 jobs:
-  build:
+  # Build job
+  Build:
+    # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
-
+    # Steps to be executed in the Build job
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./backend-cv
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cv-backend:latest
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3 
+      # Login to DockerHub using secrets for credentials
+      - name: Login to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+      # Build Docker image with a specific tag
+      - name: Build Docker Image
+        run: docker build -t kitakiv/cv-backend:latest .
+      # Push the built image to DockerHub
+      - name: Push to DockerHub
+        run: docker push kitakiv/cv-backend:latest 
+  # Deploy job
+  Deploy:
+    # Use a self-hosted runner for deployment
+    runs-on: self-hosted
+    # Steps to be executed in the Deploy job
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Pull the latest Docker image from DockerHub
+       - name: Stop Docker Compose container
+         run: cd app && sudo docker compose -f docker-compose.prod.yml stop backend
 
-      - name: Get GitHub Actions runner IP
-        id: runner_ip
-        run: echo "ip=$(curl -s https://checkip.amazonaws.com)" >> $GITHUB_OUTPUT
+       - name: Pull the latest Docker image
+         run: cd app && sudo docker compose -f docker-compose.prod.yml pull backend
 
-      - name: Allow runner IP in EC2 security group
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+       - name: Run the updated container
+         run: cd app && sudo docker compose -f docker-compose.prod.yml up -d --no-deps backend
 
-      - name: Add SSH rule to security group
-        run: |
-          aws ec2 authorize-security-group-ingress \
-            --group-id ${{ secrets.EC2_SG_ID }} \
-            --protocol tcp \
-            --port 22 \
-            --cidr ${{ steps.runner_ip.outputs.ip }}/32
-
-      - name: Copy docker-compose to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "backend-cv/docker-compose.prod.yml"
-          target: "/app"
-          strip_components: 1
-
-      - name: Pull image and restart on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /app
-            echo "${{ secrets.BACKEND_ENV }}" > .env
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cv-backend:latest
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d
-            docker image prune -f
-
-      - name: Remove runner IP from security group
-        if: always()
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ secrets.EC2_SG_ID }} \
-            --protocol tcp \
-            --port 22 \
-            --cidr ${{ steps.runner_ip.outputs.ip }}/32
+       - name: Check container status
+         run: cd app && sudo docker compose -f docker-compose.prod.yml ps

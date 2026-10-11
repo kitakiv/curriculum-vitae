@@ -74,9 +74,7 @@ export class AuthService implements OnModuleInit {
     });
     if (emailInUse && emailInUse.isEmailVerified) {
       throw new BadRequestException(errors.EMAIL_EXISTS);
-    } else if (emailInUse && !emailInUse.isEmailVerified) {
-
-    }
+    } 
     try {
       const { user: createdUser, token } = await this.createLocalUser(createAuthInput);
       await this.emailService.sendVerificationEmail(
@@ -227,8 +225,9 @@ export class AuthService implements OnModuleInit {
     const accessToken = this.jwtService.sign({ userId: user.id });
 
     const refreshToken = uuid.v4();
+    const hashedToken = this.createHashedValue(refreshToken);
     try {
-      await this.storeRefreshToken(user, refreshToken);
+      await this.storeRefreshToken(user, hashedToken);
     } catch (error) {
 
       throw new BadRequestException(error.message);
@@ -287,9 +286,10 @@ export class AuthService implements OnModuleInit {
   }
 
   async refreshToken(token: string): Promise<CookiesData> {
+    const hashedToken = this.createHashedValue(token);
     const refreshToken = await this.refreshTokenRepository.findOne({
       where: {
-        token,
+        token: hashedToken,
         expiryDate: MoreThanOrEqual(new Date()),
       },
       relations: {
