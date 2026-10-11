@@ -1,11 +1,9 @@
 node_modules
-package-lock.json
 README.md
-tsconfig.json
 terraform
 test
 *.spec.ts
 .eslintrc.js
 .prettierrc
-doceker-compose.prod.yml
+docker-compose.prod.yml
 docker-compose.yaml

@@ -123,3 +123,8 @@ sql
 If it's empty, the issue is TypeORM is connecting but not running CREATE TABLE. This happens when the database exists but was created without the public schema in some RDS setups.
 
 Fix it by running this in your RDS connection:
+
+terraform output github_actions_access_key_id
+terraform output -raw github_actions_secret_access_key
+
+ssh -i "ec2_cv_key_pair.pem" ec2-user@ec2-18-202-249-110.eu-west-1.compute.amazonaws.com

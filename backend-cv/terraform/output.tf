@@ -25,3 +25,19 @@ output "s3_aws_secret_access_key" {
   value     = aws_iam_access_key.cv_app_user_key.secret
   sensitive = true
 }
+
+output "github_actions_access_key_id" {
+  description = "Add this as AWS_ACCESS_KEY_ID in GitHub Secrets"
+  value       = aws_iam_access_key.github_actions.id
+}
+
+output "github_actions_secret_access_key" {
+  description = "Add this as AWS_SECRET_ACCESS_KEY in GitHub Secrets"
+  value       = aws_iam_access_key.github_actions.secret
+  sensitive   = true
+}
+
+output "security_group_id" {
+  description = "Security group ID for your EC2 instance — use this in GitHub Secrets"
+  value       = aws_security_group.ec2.id
+}
