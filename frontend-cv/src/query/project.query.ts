@@ -10,11 +10,11 @@ import { fetchGraphQL } from "./graphql";
 
 
 
-function getProjectsAll({ limit, page, techId }: { limit: number, page: number, techId?: string }) {
+function getProjectsAll({ limit, page, techId }: { limit: number, page: number, techId: string | null }) {
   return queryOptions({
     queryKey: ['projects', { limit, page, techId }],
     queryFn: ({ queryKey }): Promise<ProjectPaginationResponse> => {
-      const [_, { limit, page, techId }] = queryKey as [string, { limit: number, page: number, techId?: string }];
+      const [_, { limit, page, techId }] = queryKey as [string, { limit: number, page: number, techId: string | null }];
       return fetchProjects({ limit, page, techId });
     },
     placeholderData: keepPreviousData,
@@ -22,7 +22,7 @@ function getProjectsAll({ limit, page, techId }: { limit: number, page: number, 
 }
 
 
-const fetchProjects = async ({ limit, page, techId }: { limit: number, page: number, techId?: string }): Promise<ProjectPaginationResponse> => {
+const fetchProjects = async ({ limit, page, techId }: { limit: number, page: number, techId: string | null }): Promise<ProjectPaginationResponse> => {
   const responce = await fetchGraphQL<GetProjectsPaginationQuery, GetProjectsPaginationQueryVariables>(PROJECTS_GET_PAGINATED_QUERY, { variables: { limit, page, techId } });
   if (responce.data.projectsPagination) {
     return responce.data.projectsPagination;
