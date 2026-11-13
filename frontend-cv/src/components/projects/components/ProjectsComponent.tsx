@@ -29,7 +29,7 @@ export default function ProjectComponent({ columns = 2, techId = techStack.all }
                 : `lg:grid-cols-${columns}`;
 
 
-    const techStackId = techId === techStack.all ? undefined : techId;
+    const techStackId = techId === techStack.all ? null : techId;
     const { data, isFetching, error } =
         useQuery(getProjectsAll({ limit: defaultLimit, page: page, techId: techStackId }));
     return (

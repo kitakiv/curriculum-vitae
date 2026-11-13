@@ -43,5 +43,6 @@ const deafultProfile: Profile = {
     typingText: "Hi, I'm Victoria — a developer, dancer, and dream chaser. Creating digital",
     profilePhotos: ["/image/developer.jpg", "/image/developer3.jpg", "/image/developer2.jpg"],
 }
+
 export { deafultProfile };
 export default header;

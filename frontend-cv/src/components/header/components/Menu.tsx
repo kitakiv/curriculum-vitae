@@ -17,7 +17,7 @@ export default function BurgerMenu({ burgerMenu, children }: Props) {
     return (
         <>
             <div className="lg:flex lg:items-center sm:hidden hidden lg:flex-row w-full sm:flex-row-reverse sm:justify-start flex-row-reverse justify-start sm:gap-4 gap-4">
-                <nav className="w-full lg:block">
+                <nav className="w-full lg:block md:hidden hidden burger-menu-nav">
                     <ul className="flex w-full justify-around gap-4">
                         {burgerMenu.filter((item) => item.name !== "").map((item, index) => (
                             <FadeInSection delay={(index + 1) * 500} key={item.name} animation={{ visible: "translateX(0)", hidden: "translateX(-100%)" }}>

@@ -33,7 +33,7 @@ export default async function Page({ searchParams }: Props) {
       <ProjectSection selectedTechId={params[techStack.searchParam]} />
       <TechStackSection selectedCategoryId={params[techStack.searchParamCategory]}/>
       <ExperienceSection/>
-       <PhotoSection/>
+       {/* <PhotoSection/> */}
       </main>
       <Footer />
     </>

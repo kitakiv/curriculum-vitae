@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '320px',
+      },
       fontFamily: {
         strong: ['"BBH Bartle"', 'sans-serif'],
         crazy: ['"RubikStorm Regular"', 'sans-serif'],

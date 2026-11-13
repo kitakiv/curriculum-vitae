@@ -479,6 +479,16 @@
   transform: translateY(-20%);
 }
 
+@screen xs {
+  .robot {
+    position: static;
+    width: 45vw;
+    height: 45vw;
+    top: 30vh;
+    transform: translateX(0) translateY(0);
+  }
+}
+
 @screen sm {
   .image-mask {
     mask-image: linear-gradient(to left, black 10%, transparent),
@@ -489,7 +499,7 @@
 
   .robot {
     position: static;
-    width: 100%;
+    width: 80vw;
     height: 100vw;
     top: 30vh;
     transform: translateX(0) translateY(-20%);
@@ -605,6 +615,7 @@
 }
 
 .pin-spacer {
+  display: none;
   pointer-events: none;
 }
 
